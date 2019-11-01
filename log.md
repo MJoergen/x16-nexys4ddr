@@ -117,3 +117,9 @@ this is no problem.
 
 The next step is now to get the CPU running.
 
+## 2019-11-1
+
+I've added a simple memory map with 16 kB RAM and 16 kB ROM, moving another
+small step towards adding the CPU.  There is no banking and no I/O ports,
+except the VERA.
+

@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std_unsigned.all;
 
 -- This block is a dummy block that generates a number of writes from the CPU,
 -- simulating the KERNAL/BASIC ROM.
@@ -30,11 +31,11 @@ use ieee.std_logic_1164.all;
 entity cpu_dummy is
    port (
       clk_i     : in  std_logic;
-      addr_o    : out std_logic_vector(2 downto 0);
+      addr_o    : out std_logic_vector(15 downto 0);
       wr_en_o   : out std_logic;
-      wr_data_o : out std_logic_vector(7 downto 0);
+      wr_data_o : out std_logic_vector( 7 downto 0);
       rd_en_o   : out std_logic;
-      rd_data_i : in  std_logic_vector(7 downto 0)
+      rd_data_i : in  std_logic_vector( 7 downto 0)
    );
 end cpu_dummy;
 
@@ -2488,10 +2489,11 @@ begin
    p_wr : process (clk_i)
    begin
       if rising_edge(clk_i) then
+         addr_o <= X"9F20";
          wr_en_o <= '0';
          rd_en_o <= '0';
          if index < commands'length then
-            addr_o    <= commands(index).addr(2 downto 0);
+            addr_o(2 downto 0) <= commands(index).addr(2 downto 0);
             if commands(index).wr_en = '1' then
                wr_en_o   <= '1';
                wr_data_o <= commands(index).data;

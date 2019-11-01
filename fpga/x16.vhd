@@ -24,16 +24,16 @@ end x16;
 
 architecture structural of x16 is
 
-   constant C_ROM_INIT_FILE : string := "../rom.txt";       -- ROM contents.
+   constant C_ROM_INIT_FILE : string := "main/rom.txt";       -- ROM contents.
 
    signal vga_clk_s         : std_logic;   -- 25.2 MHz
 
-   signal cpu_clk_s         : std_logic;   --  8.33 MHz
-   signal cpu_addr_s        : std_logic_vector(15 downto 0);
-   signal cpu_wr_en_s       : std_logic;
-   signal cpu_wr_data_s     : std_logic_vector( 7 downto 0);
-   signal cpu_rd_en_s       : std_logic;
-   signal cpu_rd_data_s     : std_logic_vector( 7 downto 0);
+   signal main_clk_s        : std_logic;   --  8.33 MHz
+   signal main_addr_s       : std_logic_vector(15 downto 0);
+   signal main_wr_en_s      : std_logic;
+   signal main_wr_data_s    : std_logic_vector( 7 downto 0);
+   signal main_rd_en_s      : std_logic;
+   signal main_rd_data_s    : std_logic_vector( 7 downto 0);
 
 begin
 
@@ -45,7 +45,7 @@ begin
       port map (
          clk_in1 => clk_i,      -- 100 MHz
          vga_clk => vga_clk_s,  --  25.2 MHz
-         cpu_clk => cpu_clk_s   --   8.33 MHz
+         cpu_clk => main_clk_s  --   8.33 MHz
       ); -- i_clk
 
 
@@ -55,12 +55,12 @@ begin
 
    i_vera : entity work.vera
       port map (
-         cpu_clk_i     => cpu_clk_s,
-         cpu_addr_i    => cpu_addr_s(2 downto 0),
-         cpu_wr_en_i   => cpu_wr_en_s,
-         cpu_wr_data_i => cpu_wr_data_s,
-         cpu_rd_en_i   => cpu_rd_en_s,
-         cpu_rd_data_o => cpu_rd_data_s,
+         cpu_clk_i     => main_clk_s,
+         cpu_addr_i    => main_addr_s(2 downto 0),
+         cpu_wr_en_i   => main_wr_en_s,
+         cpu_wr_data_i => main_wr_data_s,
+         cpu_rd_en_i   => main_rd_en_s,
+         cpu_rd_data_o => main_rd_data_s,
          vga_clk_i     => vga_clk_s,
          vga_hs_o      => vga_hs_o,
          vga_vs_o      => vga_vs_o,
@@ -69,19 +69,28 @@ begin
 
 
    --------------------------------------------------
-   -- Instantiate dummy CPU module
-   -- TBD: To be replaced by the 65C02 processor
+   -- Instantiate main computer (CPU,RAM,ROM,etc.)
    --------------------------------------------------
 
-   i_cpu_dummy : entity work.cpu_dummy
+   i_main : entity work.main
+      generic map (
+         G_ROM_INIT_FILE => C_ROM_INIT_FILE
+      )
       port map (
-         clk_i     => cpu_clk_s,
-         addr_o    => cpu_addr_s(2 downto 0),
-         wr_en_o   => cpu_wr_en_s,
-         wr_data_o => cpu_wr_data_s,
-         rd_en_o   => cpu_rd_en_s,
-         rd_data_i => cpu_rd_data_s
-      ); -- i_cpu_dummy
+         clk_i          => main_clk_s,
+         vera_addr_o    => main_addr_s(2 downto 0),
+         vera_wr_en_o   => main_wr_en_s,
+         vera_wr_data_o => main_wr_data_s,
+         vera_rd_en_o   => main_rd_en_s,
+         vera_rd_data_i => main_rd_data_s
+      ); -- i_main
+      
+
+   --------------------------
+   -- Connect unused signals 
+   --------------------------
+
+   led_o <= (others => '0');
 
 end architecture structural;
 

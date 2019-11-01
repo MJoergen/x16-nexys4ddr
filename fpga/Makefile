@@ -5,10 +5,11 @@ SOURCES += clk.vhd
 SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd
 SOURCES += vera/cpu/mmu.vhd vera/cpu/cpu.vhd vera/cpu/config.vhd
 SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vhd
+SOURCES += main/main.vhd main/ram.vhd main/rom.vhd
 SOURCES += cpu_dummy.vhd
 
   
-x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile
+x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile main/rom.txt
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
 
 x16.tcl: Makefile

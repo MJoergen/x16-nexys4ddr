@@ -9,7 +9,7 @@ end tb;
 architecture simulation of tb is
 
    signal cpu_clk_s     : std_logic;                       -- 8.3 MHz
-   signal cpu_addr_s    : std_logic_vector(2 downto 0);
+   signal cpu_addr_s    : std_logic_vector(15 downto 0);
    signal cpu_wr_en_s   : std_logic;
    signal cpu_wr_data_s : std_logic_vector(7 downto 0);
    signal cpu_rd_en_s   : std_logic;
@@ -61,7 +61,7 @@ begin
    i_vera : entity work.vera
       port map (
          cpu_clk_i     => cpu_clk_s,
-         cpu_addr_i    => cpu_addr_s,
+         cpu_addr_i    => cpu_addr_s(2 downto 0),
          cpu_wr_en_i   => cpu_wr_en_s,
          cpu_wr_data_i => cpu_wr_data_s,
          cpu_rd_en_i   => cpu_rd_en_s,

@@ -35,6 +35,7 @@ entity cpu_dummy is
       wr_en_o   : out std_logic;
       wr_data_o : out std_logic_vector( 7 downto 0);
       rd_en_o   : out std_logic;
+      debug_o   : out std_logic_vector(15 downto 0);
       rd_data_i : in  std_logic_vector( 7 downto 0)
    );
 end cpu_dummy;
@@ -2505,6 +2506,8 @@ begin
          end if;
       end if;
    end process p_wr;
+
+   debug_o <= to_stdlogicvector(index, 16);
 
    -- This process verifies the result of the CPU reads.
    p_rd : process (clk_i)

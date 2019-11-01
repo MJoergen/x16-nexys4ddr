@@ -10,8 +10,8 @@ entity x16 is
 
       rstn_i     : in    std_logic;                       -- CPU reset, active low
 
-      sw_i       : in    std_logic_vector(7 downto 0);    -- Used for debugging.
-      led_o      : out   std_logic_vector(7 downto 0);    -- Used for debugging.
+      sw_i       : in    std_logic_vector(15 downto 0);    -- Used for debugging.
+      led_o      : out   std_logic_vector(15 downto 0);    -- Used for debugging.
 
       ps2_clk_i  : in    std_logic;                       -- Keyboard
       ps2_data_i : in    std_logic;
@@ -34,6 +34,8 @@ architecture structural of x16 is
    signal main_wr_data_s    : std_logic_vector( 7 downto 0);
    signal main_rd_en_s      : std_logic;
    signal main_rd_data_s    : std_logic_vector( 7 downto 0);
+   signal main_debug_s      : std_logic_vector(15 downto 0);
+   signal main_vera_debug_s : std_logic_vector(16 downto 0);
 
 begin
 
@@ -61,6 +63,7 @@ begin
          cpu_wr_data_i => main_wr_data_s,
          cpu_rd_en_i   => main_rd_en_s,
          cpu_rd_data_o => main_rd_data_s,
+         cpu_debug_o   => main_vera_debug_s,
          vga_clk_i     => vga_clk_s,
          vga_hs_o      => vga_hs_o,
          vga_vs_o      => vga_vs_o,
@@ -82,15 +85,17 @@ begin
          vera_wr_en_o   => main_wr_en_s,
          vera_wr_data_o => main_wr_data_s,
          vera_rd_en_o   => main_rd_en_s,
-         vera_rd_data_i => main_rd_data_s
+         vera_rd_data_i => main_rd_data_s,
+         vera_debug_o   => main_debug_s
       ); -- i_main
       
 
-   --------------------------
-   -- Connect unused signals 
-   --------------------------
+   --------------------------------
+   -- Connect debug output signals 
+   --------------------------------
 
-   led_o <= (others => '0');
+   led_o <= main_vera_debug_s(15 downto 0) when sw_i(0) = '1' else
+            main_debug_s;
 
 end architecture structural;
 

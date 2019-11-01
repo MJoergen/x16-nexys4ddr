@@ -20,6 +20,7 @@ entity vera is
       cpu_wr_data_i : in  std_logic_vector( 7 downto 0);
       cpu_rd_en_i   : in  std_logic;
       cpu_rd_data_o : out std_logic_vector( 7 downto 0);
+      cpu_debug_o   : out std_logic_vector(16 downto 0);
 
       vga_clk_i     : in  std_logic;                        -- 25.2 MHz
       vga_hs_o      : out std_logic;
@@ -94,6 +95,20 @@ begin
          map_base_o     => cpu_map_base_s,
          tile_base_o    => cpu_tile_base_s
       ); -- i_cpu
+
+
+   ------------------------------------------------------
+   -- Debug output. Last address written to in Video RAM
+   ------------------------------------------------------
+
+   p_debug : process (cpu_clk_i)
+   begin
+      if rising_edge(cpu_clk_i) then
+         if cpu_vram_wr_en_s = '1' then
+            cpu_debug_o <= cpu_vram_addr_s;
+         end if;
+      end if;
+   end process p_debug;
 
 
    --------------------------------
@@ -177,6 +192,7 @@ begin
          vs_o           => vga_vs_o,
          col_o          => vga_col_o
       ); -- i_vga
+
 
 end architecture structural;
 

@@ -123,3 +123,11 @@ I've added a simple memory map with 16 kB RAM and 16 kB ROM, moving another
 small step towards adding the CPU.  There is no banking and no I/O ports,
 except the VERA.
 
+I've added debug signals, so the LED's show either:
+* The last (internal) address written to in the VERA.
+* The current index. This will become the current instruction pointer, when
+the CPU is ready.
+
+Choosing between these two is done using switch number 0.
+
+

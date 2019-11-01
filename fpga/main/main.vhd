@@ -12,7 +12,8 @@ entity main is
       vera_wr_en_o   : out std_logic;
       vera_wr_data_o : out std_logic_vector(7 downto 0);
       vera_rd_en_o   : out std_logic;
-      vera_rd_data_i : in  std_logic_vector(7 downto 0)
+      vera_rd_data_i : in  std_logic_vector(7 downto 0);
+      vera_debug_o   : out std_logic_vector(15 downto 0)
    );
 end main;
 
@@ -23,6 +24,7 @@ architecture structural of main is
    signal cpu_wr_data_s : std_logic_vector( 7 downto 0);
    signal cpu_rd_en_s   : std_logic;
    signal cpu_rd_data_s : std_logic_vector( 7 downto 0);
+   signal cpu_debug_s   : std_logic_vector(15 downto 0);
 
    signal rom_rd_data_s : std_logic_vector( 7 downto 0);
    signal ram_rd_data_s : std_logic_vector( 7 downto 0);
@@ -48,6 +50,7 @@ begin
          wr_en_o   => cpu_wr_en_s,
          wr_data_o => cpu_wr_data_s,
          rd_en_o   => cpu_rd_en_s,
+         debug_o   => cpu_debug_s,
          rd_data_i => cpu_rd_data_s
       ); -- i_cpu_dummy
 
@@ -71,6 +74,7 @@ begin
    vera_wr_en_o   <= cpu_wr_en_s and vera_cs_s;
    vera_wr_data_o <= cpu_wr_data_s;
    vera_addr_o    <= cpu_addr_s(2 downto 0);
+   vera_debug_o   <= cpu_debug_s;
 
    ram_rd_en_s   <= cpu_rd_en_s and ram_cs_s;
    ram_wr_en_s   <= cpu_wr_en_s and ram_cs_s;

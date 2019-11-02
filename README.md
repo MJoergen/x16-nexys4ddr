@@ -41,9 +41,9 @@ this is TBD.
 # Try it out!
 Just go into the fpga directory and type "make fpga".
 
-## Runnning simulations
-To test the VERA in simulation, go into the fpga/vera directory and type "make".
-To test the CPU in simulation, go into the fpga/main directory and type "make".
+## Running simulations
+* To test the VERA in simulation, go into the fpga/vera directory and type "make".
+* To test the CPU in simulation, go into the fpga/main directory and type "make".
 
 # Implementation details
 

@@ -18,7 +18,8 @@ to the Commander X16. However, this is outside the scope of this project. The re
 features - I believe - should be designed by and driven by the Commander X16 team.
 
 The Nexys4DDR board is quite expensive, and it could be interesting looking into porting
-this project to a smaller board. However, this is not something I'm planning on doing.
+this project to a smaller board, e.g. the BASYS3. However, this is not something I'm
+planning on doing.
 
 # Technical details and limitations
 

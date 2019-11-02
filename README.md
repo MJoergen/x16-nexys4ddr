@@ -38,6 +38,13 @@ The FPGA on the Digilent board is a Xilinx Artix-7 (XC7A100T), which contains
 on the X16. It might be possible to use the DDR2 RAM avaiable on the board, but
 this is TBD.
 
+# Try it out!
+Just go into the fpga directory and type "make fpga".
+
+## Runnning simulations
+To test the VERA in simulation, go into the fpga/vera directory and type "make".
+To test the CPU in simulation, go into the fpga/main directory and type "make".
+
 # Implementation details
 
 ## Memory map

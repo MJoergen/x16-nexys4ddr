@@ -1,5 +1,7 @@
+# Specify install location of the Xilinx Vivado tool
 XILINX_DIR = /opt/Xilinx/Vivado/2018.2
 
+# This defines all the source files (VHDL) used in the project
 SOURCES  = x16.vhd
 SOURCES += clk.vhd
 SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd
@@ -8,10 +10,11 @@ SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vh
 SOURCES += main/main.vhd main/ram.vhd main/rom.vhd
 SOURCES += cpu_dummy.vhd
 
-  
+# Generate the bit-file used to configure the FPGA
 x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile main/rom.txt
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
 
+# Generate the build script used by Vivado
 x16.tcl: Makefile
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
@@ -23,9 +26,11 @@ x16.tcl: Makefile
 	echo "write_bitstream -force x16.bit" >> $@
 	echo "exit" >> $@
 
+# Configure the FPGA on the Nexys4DDR board with the generated bit-file
 fpga: x16.bit
 	djtgcfg prog -d Nexys4DDR -i 0 --file $<
 
+# Remove all generated files
 clean:
 	rm -rf usage_statistics_webtalk.*
 	rm -rf vivado*
@@ -34,5 +39,3 @@ clean:
 	rm -rf x16.tcl
 	rm -rf .Xil
 	rm -rf .cache
-
-

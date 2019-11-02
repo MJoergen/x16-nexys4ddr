@@ -24,75 +24,100 @@ end palette;
 
 architecture rtl of palette is
 
-   -- This defines a type containing an array of words.
-   type mem_t is array (0 to 255) of std_logic_vector(15 downto 0);
+   -- This defines a type containing an array of bytes.
+   type mem_t is array (0 to 511) of std_logic_vector(7 downto 0);
 
    -- Default palette. Copied from x16-emulator.
    signal mem_r : mem_t := ( 
-      X"0000", X"0FFF", X"0800", X"0AFE", X"0C4C", X"00C5", X"000A", X"0EE7",
-      X"0D85", X"0640", X"0F77", X"0333", X"0777", X"0AF6", X"008F", X"0BBB",
-      X"0000", X"0111", X"0222", X"0333", X"0444", X"0555", X"0666", X"0777",
-      X"0888", X"0999", X"0AAA", X"0BBB", X"0CCC", X"0DDD", X"0EEE", X"0FFF",
-      X"0211", X"0433", X"0644", X"0866", X"0A88", X"0C99", X"0FBB", X"0211",
-      X"0422", X"0633", X"0844", X"0A55", X"0C66", X"0F77", X"0200", X"0411",
-      X"0611", X"0822", X"0A22", X"0C33", X"0F33", X"0200", X"0400", X"0600",
-      X"0800", X"0A00", X"0C00", X"0F00", X"0221", X"0443", X"0664", X"0886",
-      X"0AA8", X"0CC9", X"0FEB", X"0211", X"0432", X"0653", X"0874", X"0A95",
-      X"0CB6", X"0FD7", X"0210", X"0431", X"0651", X"0862", X"0A82", X"0CA3",
-      X"0FC3", X"0210", X"0430", X"0640", X"0860", X"0A80", X"0C90", X"0FB0",
-      X"0121", X"0343", X"0564", X"0786", X"09A8", X"0BC9", X"0DFB", X"0121",
-      X"0342", X"0463", X"0684", X"08A5", X"09C6", X"0BF7", X"0120", X"0241",
-      X"0461", X"0582", X"06A2", X"08C3", X"09F3", X"0120", X"0240", X"0360",
-      X"0480", X"05A0", X"06C0", X"07F0", X"0121", X"0343", X"0465", X"0686",
-      X"08A8", X"09CA", X"0BFC", X"0121", X"0242", X"0364", X"0485", X"05A6",
-      X"06C8", X"07F9", X"0020", X"0141", X"0162", X"0283", X"02A4", X"03C5",
-      X"03F6", X"0020", X"0041", X"0061", X"0082", X"00A2", X"00C3", X"00F3",
-      X"0122", X"0344", X"0466", X"0688", X"08AA", X"09CC", X"0BFF", X"0122",
-      X"0244", X"0366", X"0488", X"05AA", X"06CC", X"07FF", X"0022", X"0144",
-      X"0166", X"0288", X"02AA", X"03CC", X"03FF", X"0022", X"0044", X"0066",
-      X"0088", X"00AA", X"00CC", X"00FF", X"0112", X"0334", X"0456", X"0668",
-      X"088A", X"09AC", X"0BCF", X"0112", X"0224", X"0346", X"0458", X"056A",
-      X"068C", X"079F", X"0002", X"0114", X"0126", X"0238", X"024A", X"035C",
-      X"036F", X"0002", X"0014", X"0016", X"0028", X"002A", X"003C", X"003F",
-      X"0112", X"0334", X"0546", X"0768", X"098A", X"0B9C", X"0DBF", X"0112",
-      X"0324", X"0436", X"0648", X"085A", X"096C", X"0B7F", X"0102", X"0214",
-      X"0416", X"0528", X"062A", X"083C", X"093F", X"0102", X"0204", X"0306",
-      X"0408", X"050A", X"060C", X"070F", X"0212", X"0434", X"0646", X"0868",
-      X"0A8A", X"0C9C", X"0FBE", X"0211", X"0423", X"0635", X"0847", X"0A59",
-      X"0C6B", X"0F7D", X"0201", X"0413", X"0615", X"0826", X"0A28", X"0C3A",
-      X"0F3C", X"0201", X"0403", X"0604", X"0806", X"0A08", X"0C09", X"0F0B"
+      X"00", X"00", X"FF", X"0F", X"00", X"08", X"FE", X"0A",
+      X"4C", X"0C", X"C5", X"00", X"0A", X"00", X"E7", X"0E",
+      X"85", X"0D", X"40", X"06", X"77", X"0F", X"33", X"03",
+      X"77", X"07", X"F6", X"0A", X"8F", X"00", X"BB", X"0B",
+      X"00", X"00", X"11", X"01", X"22", X"02", X"33", X"03",
+      X"44", X"04", X"55", X"05", X"66", X"06", X"77", X"07",
+      X"88", X"08", X"99", X"09", X"AA", X"0A", X"BB", X"0B",
+      X"CC", X"0C", X"DD", X"0D", X"EE", X"0E", X"FF", X"0F",
+      X"11", X"02", X"33", X"04", X"44", X"06", X"66", X"08",
+      X"88", X"0A", X"99", X"0C", X"BB", X"0F", X"11", X"02",
+      X"22", X"04", X"33", X"06", X"44", X"08", X"55", X"0A",
+      X"66", X"0C", X"77", X"0F", X"00", X"02", X"11", X"04",
+      X"11", X"06", X"22", X"08", X"22", X"0A", X"33", X"0C",
+      X"33", X"0F", X"00", X"02", X"00", X"04", X"00", X"06",
+      X"00", X"08", X"00", X"0A", X"00", X"0C", X"00", X"0F",
+      X"21", X"02", X"43", X"04", X"64", X"06", X"86", X"08",
+      X"A8", X"0A", X"C9", X"0C", X"EB", X"0F", X"11", X"02",
+      X"32", X"04", X"53", X"06", X"74", X"08", X"95", X"0A",
+      X"B6", X"0C", X"D7", X"0F", X"10", X"02", X"31", X"04",
+      X"51", X"06", X"62", X"08", X"82", X"0A", X"A3", X"0C",
+      X"C3", X"0F", X"10", X"02", X"30", X"04", X"40", X"06",
+      X"60", X"08", X"80", X"0A", X"90", X"0C", X"B0", X"0F",
+      X"21", X"01", X"43", X"03", X"64", X"05", X"86", X"07",
+      X"A8", X"09", X"C9", X"0B", X"FB", X"0D", X"21", X"01",
+      X"42", X"03", X"63", X"04", X"84", X"06", X"A5", X"08",
+      X"C6", X"09", X"F7", X"0B", X"20", X"01", X"41", X"02",
+      X"61", X"04", X"82", X"05", X"A2", X"06", X"C3", X"08",
+      X"F3", X"09", X"20", X"01", X"40", X"02", X"60", X"03",
+      X"80", X"04", X"A0", X"05", X"C0", X"06", X"F0", X"07",
+      X"21", X"01", X"43", X"03", X"65", X"04", X"86", X"06",
+      X"A8", X"08", X"CA", X"09", X"FC", X"0B", X"21", X"01",
+      X"42", X"02", X"64", X"03", X"85", X"04", X"A6", X"05",
+      X"C8", X"06", X"F9", X"07", X"20", X"00", X"41", X"01",
+      X"62", X"01", X"83", X"02", X"A4", X"02", X"C5", X"03",
+      X"F6", X"03", X"20", X"00", X"41", X"00", X"61", X"00",
+      X"82", X"00", X"A2", X"00", X"C3", X"00", X"F3", X"00",
+      X"22", X"01", X"44", X"03", X"66", X"04", X"88", X"06",
+      X"AA", X"08", X"CC", X"09", X"FF", X"0B", X"22", X"01",
+      X"44", X"02", X"66", X"03", X"88", X"04", X"AA", X"05",
+      X"CC", X"06", X"FF", X"07", X"22", X"00", X"44", X"01",
+      X"66", X"01", X"88", X"02", X"AA", X"02", X"CC", X"03",
+      X"FF", X"03", X"22", X"00", X"44", X"00", X"66", X"00",
+      X"88", X"00", X"AA", X"00", X"CC", X"00", X"FF", X"00",
+      X"12", X"01", X"34", X"03", X"56", X"04", X"68", X"06",
+      X"8A", X"08", X"AC", X"09", X"CF", X"0B", X"12", X"01",
+      X"24", X"02", X"46", X"03", X"58", X"04", X"6A", X"05",
+      X"8C", X"06", X"9F", X"07", X"02", X"00", X"14", X"01",
+      X"26", X"01", X"38", X"02", X"4A", X"02", X"5C", X"03",
+      X"6F", X"03", X"02", X"00", X"14", X"00", X"16", X"00",
+      X"28", X"00", X"2A", X"00", X"3C", X"00", X"3F", X"00",
+      X"12", X"01", X"34", X"03", X"46", X"05", X"68", X"07",
+      X"8A", X"09", X"9C", X"0B", X"BF", X"0D", X"12", X"01",
+      X"24", X"03", X"36", X"04", X"48", X"06", X"5A", X"08",
+      X"6C", X"09", X"7F", X"0B", X"02", X"01", X"14", X"02",
+      X"16", X"04", X"28", X"05", X"2A", X"06", X"3C", X"08",
+      X"3F", X"09", X"02", X"01", X"04", X"02", X"06", X"03",
+      X"08", X"04", X"0A", X"05", X"0C", X"06", X"0F", X"07",
+      X"12", X"02", X"34", X"04", X"46", X"06", X"68", X"08",
+      X"8A", X"0A", X"9C", X"0C", X"BE", X"0F", X"11", X"02",
+      X"23", X"04", X"35", X"06", X"47", X"08", X"59", X"0A",
+      X"6B", X"0C", X"7D", X"0F", X"01", X"02", X"13", X"04",
+      X"15", X"06", X"26", X"08", X"28", X"0A", X"3A", X"0C",
+      X"3C", X"0F", X"01", X"02", X"03", X"04", X"04", X"06",
+      X"06", X"08", X"08", X"0A", X"09", X"0C", X"0B", X"0F"
    );
  
-   signal mem_rd_data_r : std_logic_vector(15 downto 0);
-   signal cpu_addr_r    : std_logic;
-
 begin
 
    ---------------
    -- CPU access.
    ---------------
 
-   p_cpu : process (cpu_clk_i)
+   p_cpu_write : process (cpu_clk_i)
    begin
       if falling_edge(cpu_clk_i) then
          if cpu_wr_en_i = '1' then
-            if cpu_addr_i(0) = '0' then
-               mem_r(to_integer(cpu_addr_i(8 downto 1)))( 7 downto 0) <= cpu_wr_data_i;
-            else
-               mem_r(to_integer(cpu_addr_i(8 downto 1)))(15 downto 8) <= cpu_wr_data_i;
-            end if;
-         end if;
-         if cpu_rd_en_i = '1' then
-            mem_rd_data_r <= mem_r(to_integer(cpu_addr_i(8 downto 1)));
-            cpu_addr_r    <= cpu_addr_i(0);
+            mem_r(to_integer(cpu_addr_i)) <= cpu_wr_data_i;
          end if;
       end if;
-   end process p_cpu;
+   end process p_cpu_write;
 
-   -- This multiplexer must be outside the read process, in order to get
-   -- the Vivado tool to infer a block RAM.
-   cpu_rd_data_o <= mem_rd_data_r(7 downto 0) when cpu_addr_r = '0' else
-                    mem_rd_data_r(15 downto 8);
+   p_cpu_read : process (cpu_clk_i)
+   begin
+      if falling_edge(cpu_clk_i) then
+         if cpu_rd_en_i = '1' then
+            cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i));
+         end if;
+      end if;
+   end process p_cpu_read;
 
 
    ---------------
@@ -103,7 +128,8 @@ begin
    begin
       if rising_edge(vga_clk_i) then
          if vga_rd_en_i = '1' then
-            vga_rd_data_o <= mem_r(to_integer(vga_rd_addr_i))(11 downto 0);
+            vga_rd_data_o(11 downto 8) <= mem_r(to_integer(vga_rd_addr_i & "1"))(3 downto 0);
+            vga_rd_data_o(7 downto 0)  <= mem_r(to_integer(vga_rd_addr_i & "0"));
          end if;
       end if;
    end process p_vga;

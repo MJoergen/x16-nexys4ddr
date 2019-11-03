@@ -12,7 +12,7 @@ be added later.
 This module can be tested separately in simulation. To do this, just type
 "make". This will assemble and execute the small program in test/rom.s.
 
-# Memory map
+# Memory map (not yet implemented)
 * 0x0000 - 0x9EFF : Low RAM
 * 0x9F00 - 0x9FFF : I/O
 * 0xA000 - 0xBFFF : Banked RAM (256 banks of 8 kB)

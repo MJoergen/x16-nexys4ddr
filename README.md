@@ -47,7 +47,7 @@ So to use this project on real hardware you need the following:
 * A keyboard (with USB connector).
 
 # Try it out!
-Just go into the fpga directory and type "make fpga".
+Just go into the fpga directory and type "make".
 
 ## Running simulations
 * To test the VERA in simulation, go into the fpga/vera directory and type "make".

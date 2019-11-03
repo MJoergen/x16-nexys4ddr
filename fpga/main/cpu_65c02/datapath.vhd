@@ -22,7 +22,7 @@ entity datapath is
       pc_sel_i   : in  std_logic_vector(5 downto 0);
       addr_sel_i : in  std_logic_vector(3 downto 0);
       data_sel_i : in  std_logic_vector(2 downto 0);
-      alu_sel_i  : in  std_logic_vector(4 downto 0);
+      alu_sel_i  : in  std_logic_vector(5 downto 0);
       sr_sel_i   : in  std_logic_vector(3 downto 0);
       sp_sel_i   : in  std_logic_vector(1 downto 0);
       xr_sel_i   : in  std_logic;

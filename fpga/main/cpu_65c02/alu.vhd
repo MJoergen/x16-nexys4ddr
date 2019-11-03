@@ -21,7 +21,7 @@ entity alu is
       a_i    : in  std_logic_vector(7 downto 0);
       b_i    : in  std_logic_vector(7 downto 0);
       sr_i   : in  std_logic_vector(7 downto 0);
-      func_i : in  std_logic_vector(4 downto 0);
+      func_i : in  std_logic_vector(5 downto 0);
       a_o    : out std_logic_vector(7 downto 0);
       sr_o   : out std_logic_vector(7 downto 0)
    );
@@ -40,31 +40,48 @@ architecture structural of alu is
    constant SR_Z : integer := 1;
    constant SR_C : integer := 0;
 
-   constant ALU_ORA   : std_logic_vector(4 downto 0) := B"00000";
-   constant ALU_AND   : std_logic_vector(4 downto 0) := B"00001";
-   constant ALU_EOR   : std_logic_vector(4 downto 0) := B"00010";
-   constant ALU_ADC   : std_logic_vector(4 downto 0) := B"00011";
-   constant ALU_STA   : std_logic_vector(4 downto 0) := B"00100";
-   constant ALU_LDA   : std_logic_vector(4 downto 0) := B"00101";
-   constant ALU_CMP   : std_logic_vector(4 downto 0) := B"00110";
-   constant ALU_SBC   : std_logic_vector(4 downto 0) := B"00111";
+   constant ALU_ORA   : std_logic_vector(5 downto 0) := B"000000";
+   constant ALU_AND   : std_logic_vector(5 downto 0) := B"000001";
+   constant ALU_EOR   : std_logic_vector(5 downto 0) := B"000010";
+   constant ALU_ADC   : std_logic_vector(5 downto 0) := B"000011";
+   constant ALU_STA   : std_logic_vector(5 downto 0) := B"000100";
+   constant ALU_LDA   : std_logic_vector(5 downto 0) := B"000101";
+   constant ALU_CMP   : std_logic_vector(5 downto 0) := B"000110";
+   constant ALU_SBC   : std_logic_vector(5 downto 0) := B"000111";
 
-   constant ALU_ASL_A : std_logic_vector(4 downto 0) := B"01000";
-   constant ALU_ROL_A : std_logic_vector(4 downto 0) := B"01001";
-   constant ALU_LSR_A : std_logic_vector(4 downto 0) := B"01010";
-   constant ALU_ROR_A : std_logic_vector(4 downto 0) := B"01011";
-   constant ALU_BIT_A : std_logic_vector(4 downto 0) := B"01100";
-   constant ALU_DEC_A : std_logic_vector(4 downto 0) := B"01110";
-   constant ALU_INC_A : std_logic_vector(4 downto 0) := B"01111";
-   constant ALU_LDA_A : std_logic_vector(4 downto 0) := B"01101";
+   constant ALU_ASL_A : std_logic_vector(5 downto 0) := B"001000";
+   constant ALU_ROL_A : std_logic_vector(5 downto 0) := B"001001";
+   constant ALU_LSR_A : std_logic_vector(5 downto 0) := B"001010";
+   constant ALU_ROR_A : std_logic_vector(5 downto 0) := B"001011";
+   constant ALU_BIT_A : std_logic_vector(5 downto 0) := B"001100";
+   constant ALU_DEC_A : std_logic_vector(5 downto 0) := B"001110";
+   constant ALU_INC_A : std_logic_vector(5 downto 0) := B"001111";
+   constant ALU_LDA_A : std_logic_vector(5 downto 0) := B"001101";
 
-   constant ALU_ASL_B : std_logic_vector(4 downto 0) := B"10000";
-   constant ALU_ROL_B : std_logic_vector(4 downto 0) := B"10001";
-   constant ALU_LSR_B : std_logic_vector(4 downto 0) := B"10010";
-   constant ALU_ROR_B : std_logic_vector(4 downto 0) := B"10011";
-   constant ALU_BIT_B : std_logic_vector(4 downto 0) := B"10100";
-   constant ALU_DEC_B : std_logic_vector(4 downto 0) := B"10110";
-   constant ALU_INC_B : std_logic_vector(4 downto 0) := B"10111";
+   constant ALU_ASL_B : std_logic_vector(5 downto 0) := B"010000";
+   constant ALU_ROL_B : std_logic_vector(5 downto 0) := B"010001";
+   constant ALU_LSR_B : std_logic_vector(5 downto 0) := B"010010";
+   constant ALU_ROR_B : std_logic_vector(5 downto 0) := B"010011";
+   constant ALU_BIT_B : std_logic_vector(5 downto 0) := B"010100";
+   constant ALU_DEC_B : std_logic_vector(5 downto 0) := B"010110";
+   constant ALU_INC_B : std_logic_vector(5 downto 0) := B"010111";
+
+   constant ALU_RMB0  : std_logic_vector(5 downto 0) := B"101000";
+   constant ALU_RMB1  : std_logic_vector(5 downto 0) := B"101001";
+   constant ALU_RMB2  : std_logic_vector(5 downto 0) := B"101010";
+   constant ALU_RMB3  : std_logic_vector(5 downto 0) := B"101011";
+   constant ALU_RMB4  : std_logic_vector(5 downto 0) := B"101100";
+   constant ALU_RMB5  : std_logic_vector(5 downto 0) := B"101101";
+   constant ALU_RMB6  : std_logic_vector(5 downto 0) := B"101110";
+   constant ALU_RMB7  : std_logic_vector(5 downto 0) := B"101111";
+   constant ALU_SMB0  : std_logic_vector(5 downto 0) := B"111000";
+   constant ALU_SMB1  : std_logic_vector(5 downto 0) := B"111001";
+   constant ALU_SMB2  : std_logic_vector(5 downto 0) := B"111010";
+   constant ALU_SMB3  : std_logic_vector(5 downto 0) := B"111011";
+   constant ALU_SMB4  : std_logic_vector(5 downto 0) := B"111100";
+   constant ALU_SMB5  : std_logic_vector(5 downto 0) := B"111101";
+   constant ALU_SMB6  : std_logic_vector(5 downto 0) := B"111110";
+   constant ALU_SMB7  : std_logic_vector(5 downto 0) := B"111111";
 
    -- An 8-input OR gate
    function or_all(arg : std_logic_vector(7 downto 0)) return std_logic is
@@ -156,6 +173,54 @@ begin
          when ALU_INC_B =>
             a(7 downto 0) <= b_i + 1;
 
+         when ALU_RMB0 =>
+            a(0) <= '0';
+
+         when ALU_RMB1 =>
+            a(1) <= '0';
+
+         when ALU_RMB2 =>
+            a(2) <= '0';
+
+         when ALU_RMB3 =>
+            a(3) <= '0';
+
+         when ALU_RMB4 =>
+            a(4) <= '0';
+
+         when ALU_RMB5 =>
+            a(5) <= '0';
+
+         when ALU_RMB6 =>
+            a(6) <= '0';
+
+         when ALU_RMB7 =>
+            a(7) <= '0';
+
+         when ALU_SMB0 =>
+            a(0) <= '1';
+
+         when ALU_SMB1 =>
+            a(1) <= '1';
+
+         when ALU_SMB2 =>
+            a(2) <= '1';
+
+         when ALU_SMB3 =>
+            a(3) <= '1';
+
+         when ALU_SMB4 =>
+            a(4) <= '1';
+
+         when ALU_SMB5 =>
+            a(5) <= '1';
+
+         when ALU_SMB6 =>
+            a(6) <= '1';
+
+         when ALU_SMB7 =>
+            a(7) <= '1';
+
          when others =>
             null;
 
@@ -187,6 +252,7 @@ begin
             sr(SR_C) <= a(8);
 
          when ALU_STA =>
+            null;
 
          when ALU_LDA =>
             sr(SR_S) <= a(7);
@@ -242,6 +308,24 @@ begin
          when ALU_LDA_A =>
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
+
+         when ALU_RMB0 => null;
+         when ALU_RMB1 => null;
+         when ALU_RMB2 => null;
+         when ALU_RMB3 => null;
+         when ALU_RMB4 => null;
+         when ALU_RMB5 => null;
+         when ALU_RMB6 => null;
+         when ALU_RMB7 => null;
+
+         when ALU_SMB0 => null;
+         when ALU_SMB1 => null;
+         when ALU_SMB2 => null;
+         when ALU_SMB3 => null;
+         when ALU_SMB4 => null;
+         when ALU_SMB5 => null;
+         when ALU_SMB6 => null;
+         when ALU_SMB7 => null;
 
          when others =>
             null;

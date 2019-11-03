@@ -19,7 +19,7 @@ entity ctl is
       pc_sel_o   : out std_logic_vector(5 downto 0);
       addr_sel_o : out std_logic_vector(3 downto 0);
       data_sel_o : out std_logic_vector(2 downto 0);
-      alu_sel_o  : out std_logic_vector(4 downto 0);
+      alu_sel_o  : out std_logic_vector(5 downto 0);
       sr_sel_o   : out std_logic_vector(3 downto 0);
       sp_sel_o   : out std_logic_vector(1 downto 0);
       xr_sel_o   : out std_logic;
@@ -34,11 +34,11 @@ end entity ctl;
 
 architecture structural of ctl is
 
-   subtype t_ctl is std_logic_vector(38 downto 0);
+   subtype t_ctl is std_logic_vector(39 downto 0);
 
-   constant NOP     : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0000_000000_000_000_0";
-   constant PC_INC  : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0000_000001_000_000_0";
-   constant ADDR_PC : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0001_000000_000_000_0";
+   constant NOP     : t_ctl := B"0_00_00_0_0_00_0000_000000_0_000_0000_000000_000_000_0";
+   constant PC_INC  : t_ctl := B"0_00_00_0_0_00_0000_000000_0_000_0000_000001_000_000_0";
+   constant ADDR_PC : t_ctl := B"0_00_00_0_0_00_0000_000000_0_000_0001_000000_000_000_0";
 
    signal ir  : std_logic_vector(7 downto 0);   -- Instruction register
    signal cnt : std_logic_vector(2 downto 0);   -- Cycle counter
@@ -55,14 +55,14 @@ architecture structural of ctl is
    alias addr_sel  : std_logic_vector(3 downto 0) is ctl(16 downto 13);
    alias data_sel  : std_logic_vector(2 downto 0) is ctl(19 downto 17);
    alias last_s    : std_logic                    is ctl(20);
-   alias invalid_s : std_logic                    is ctl(21);
-   alias alu_sel   : std_logic_vector(4 downto 0) is ctl(26 downto 22);
+   alias alu_sel   : std_logic_vector(5 downto 0) is ctl(26 downto 21);
    alias sr_sel    : std_logic_vector(3 downto 0) is ctl(30 downto 27);
    alias sp_sel    : std_logic_vector(1 downto 0) is ctl(32 downto 31);
    alias xr_sel    : std_logic                    is ctl(33);
    alias yr_sel    : std_logic                    is ctl(34);
    alias reg_sel   : std_logic_vector(1 downto 0) is ctl(36 downto 35);
    alias zp_sel    : std_logic_vector(1 downto 0) is ctl(38 downto 37);
+   alias invalid_s : std_logic                    is ctl(39);
 
 
    -- Interrupt Source
@@ -217,8 +217,8 @@ begin
    debug_o( 2 downto  0) <= cnt;    -- One byte
    debug_o( 7 downto  3) <= (others => '0');
    debug_o(15 downto  8) <= data_i when cnt = 0 else ir;     -- One byte
-   debug_o(54 downto 16) <= ctl;    -- Two bytes
-   debug_o(63 downto 55) <= (others => '0');
+   debug_o(55 downto 16) <= ctl;    -- Two bytes
+   debug_o(63 downto 56) <= (others => '0');
 
 end architecture structural;
 

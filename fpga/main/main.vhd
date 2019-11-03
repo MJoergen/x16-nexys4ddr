@@ -8,6 +8,9 @@ entity main is
 
    port (
       clk_i          : in  std_logic;
+      rst_i          : in  std_logic;
+      nmi_i          : in  std_logic;
+      irq_i          : in  std_logic;
       vera_addr_o    : out std_logic_vector(2 downto 0);
       vera_wr_en_o   : out std_logic;
       vera_wr_data_o : out std_logic_vector(7 downto 0);
@@ -24,7 +27,7 @@ architecture structural of main is
    signal cpu_wr_data_s : std_logic_vector( 7 downto 0);
    signal cpu_rd_en_s   : std_logic;
    signal cpu_rd_data_s : std_logic_vector( 7 downto 0);
-   signal cpu_debug_s   : std_logic_vector(15 downto 0);
+   signal cpu_debug_s   : std_logic_vector(111 downto 0);
 
    signal rom_rd_data_s : std_logic_vector( 7 downto 0);
    signal ram_rd_data_s : std_logic_vector( 7 downto 0);
@@ -43,9 +46,12 @@ begin
    -- Instantiate 65C02 CPU module
    --------------------------------------------------
 
-   i_cpu_dummy : entity work.cpu_dummy
+   i_cpu_65c02 : entity work.cpu_65c02
       port map (
          clk_i     => clk_i,
+         rst_i     => rst_i,
+         nmi_i     => nmi_i,
+         irq_i     => irq_i,
          addr_o    => cpu_addr_s,
          wr_en_o   => cpu_wr_en_s,
          wr_data_o => cpu_wr_data_s,
@@ -74,7 +80,7 @@ begin
    vera_wr_en_o   <= cpu_wr_en_s and vera_cs_s;
    vera_wr_data_o <= cpu_wr_data_s;
    vera_addr_o    <= cpu_addr_s(2 downto 0);
-   vera_debug_o   <= cpu_debug_s;
+   vera_debug_o   <= cpu_debug_s(15 downto 0);  -- Program Counter.
 
    ram_rd_en_s   <= cpu_rd_en_s and ram_cs_s;
    ram_wr_en_s   <= cpu_wr_en_s and ram_cs_s;

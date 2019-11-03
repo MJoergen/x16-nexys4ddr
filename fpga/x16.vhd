@@ -37,7 +37,20 @@ architecture structural of x16 is
    signal main_debug_s      : std_logic_vector(15 downto 0);
    signal main_vera_debug_s : std_logic_vector(16 downto 0);
 
+   signal main_rst_s        : std_logic_vector( 3 downto 0) := (others => '1');
+
 begin
+
+   p_main_rst : process (main_clk_s)
+   begin
+      if rising_edge(main_clk_s) then
+         main_rst_s <= main_rst_s(2 downto 0) & "0";  -- Shift left one bit
+         if rstn_i = '0' then
+            main_rst_s <= (others => '1');
+         end if;
+      end if;
+   end process p_main_rst;
+
 
    --------------------------------------------------
    -- Instantiate Clock generation
@@ -81,6 +94,9 @@ begin
       )
       port map (
          clk_i          => main_clk_s,
+         rst_i          => main_rst_s(3),
+         nmi_i          => '0',
+         irq_i          => '0',
          vera_addr_o    => main_addr_s(2 downto 0),
          vera_wr_en_o   => main_wr_en_s,
          vera_wr_data_o => main_wr_data_s,

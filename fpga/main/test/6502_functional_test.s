@@ -1,3 +1,4 @@
+.export end
 ;
 ; 6 5 0 2   F U N C T I O N A L   T E S T
 ;
@@ -83,7 +84,7 @@
 ;ROM_vectors writable (0=no, 1=yes)
 ;if ROM vectors can not be used interrupts will not be trapped
 ;as a consequence BRK can not be tested but will be emulated to test RTI
-ROM_vectors = 1
+ROM_vectors = 0
 
 ;load_data_direct (0=move from code segment, 1=load directly)
 ;loading directly is preferred but may not be supported by your platform
@@ -5424,6 +5425,7 @@ bin_rti_ret :
 
 ; S U C C E S S ************************************************
 ; -------------       
+end:
         success         ;if you get here everything went well
 ; -------------       
 ; S U C C E S S ************************************************

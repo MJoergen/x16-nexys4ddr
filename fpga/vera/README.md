@@ -54,3 +54,10 @@ The 65C02 processor requires combinatorial reads, i.e. the data should be
 available before the next clock cycle. To achieve this all the Block RAMs are
 clocked on the falling edge of the CPU clock.
 
+# Testing in simulation
+To run a simulation test just type "make". The simulation will run for some
+time corresponding to about ten scan lines, i.e.  just enough to see how the
+colour generation of the first two rows of tiles works. The test bench
+instantiates a dummy CPU which generates a sequence of writes identical to
+those done by the KERNAL/BASIC ROM during startup.
+

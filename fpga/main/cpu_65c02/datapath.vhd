@@ -61,6 +61,7 @@ architecture structural of datapath is
    constant DATA_PCLO : std_logic_vector(2 downto 0) := B"100";
    constant DATA_PCHI : std_logic_vector(2 downto 0) := B"101";
    constant DATA_SRI  : std_logic_vector(2 downto 0) := B"110";
+   constant DATA_Z    : std_logic_vector(2 downto 0) := B"111";
 
    constant REG_AR    : std_logic_vector(1 downto 0) := B"00";
    constant REG_XR    : std_logic_vector(1 downto 0) := B"01";
@@ -304,6 +305,7 @@ begin
            pc(7 downto 0)  when data_sel_i = DATA_PCLO else
            pc(15 downto 8) when data_sel_i = DATA_PCHI else
            sr_irq          when data_sel_i = DATA_SRI  else
+           (others => '0') when data_sel_i = DATA_Z    else
            (others => '0');
 
    wren <= '1' when data_sel_i = DATA_AR   or
@@ -311,6 +313,7 @@ begin
                     data_sel_i = DATA_ALU  or
                     data_sel_i = DATA_PCLO or
                     data_sel_i = DATA_PCHI or
+                    data_sel_i = DATA_Z    or
                     data_sel_i = DATA_SRI  else
            '0';
 

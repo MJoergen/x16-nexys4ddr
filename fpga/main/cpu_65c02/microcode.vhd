@@ -60,6 +60,7 @@ architecture structural of microcode is
    constant DATA_PCLO   : t_ctl := B"00_00_0_0_00_0000_00000_0_0_100_0000_000000_000_000_0";
    constant DATA_PCHI   : t_ctl := B"00_00_0_0_00_0000_00000_0_0_101_0000_000000_000_000_0";
    constant DATA_SRI    : t_ctl := B"00_00_0_0_00_0000_00000_0_0_110_0000_000000_000_000_0";
+   constant DATA_Z      : t_ctl := B"00_00_0_0_00_0000_00000_0_0_111_0000_000000_000_000_0";
    --
    constant LAST        : t_ctl := B"00_00_0_0_00_0000_00000_0_1_000_0000_000000_000_000_0";
    --
@@ -127,7 +128,7 @@ architecture structural of microcode is
       ADDR_SP + DATA_PCHI + SP_DEC,
       ADDR_SP + DATA_PCLO + SP_DEC,
       ADDR_SP + DATA_SR + SP_DEC,
-      ADDR_IRQ + LO_DATA + SR_SEI,
+      ADDR_IRQ + LO_DATA + SR_SEI + SR_CLD,
       ADDR_IRQ1 + HI_DATA,
       PC_HL + LAST,
 
@@ -141,9 +142,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 02
-      INVALID,
-      INVALID,
+-- 02 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -151,9 +152,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 03
-      INVALID,
-      INVALID,
+-- 03 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -231,9 +232,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 0B
-      INVALID,
-      INVALID,
+-- 0B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -311,9 +312,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 13
-      INVALID,
-      INVALID,
+-- 13 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -391,9 +392,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 1B
-      INVALID,
-      INVALID,
+-- 1B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -461,9 +462,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 22
-      INVALID,
-      INVALID,
+-- 22 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -471,9 +472,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 23
-      INVALID,
-      INVALID,
+-- 23 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -551,9 +552,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 2B
-      INVALID,
-      INVALID,
+-- 2B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -631,9 +632,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 33
-      INVALID,
-      INVALID,
+-- 33 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -711,9 +712,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 3B
-      INVALID,
-      INVALID,
+-- 3B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -781,19 +782,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 42
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-
--- 43
-      INVALID,
-      INVALID,
+-- 42 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -801,9 +792,19 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 44
+-- 43 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
+      INVALID,
+      INVALID,
+      INVALID,
+      INVALID,
+
+-- 44 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -871,9 +872,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 4B
-      INVALID,
-      INVALID,
+-- 4B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -951,9 +952,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 53
-      INVALID,
-      INVALID,
+-- 53 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -961,9 +962,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 54
-      INVALID,
-      INVALID,
+-- 54 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1021,19 +1022,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 5A
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-
--- 5B
-      INVALID,
-      INVALID,
+-- 5A PHY
+      ADDR_PC + PC_INC,
+      ADDR_LO + REG_YR + ALU_STA + DATA_ALU + SP_DEC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1041,10 +1032,20 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 5C
+-- 5B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
+      INVALID,
+      INVALID,
+      INVALID,
+
+-- 5C NOP
+      ADDR_PC + PC_INC,
+      PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1101,19 +1102,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 62
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-
--- 63
-      INVALID,
-      INVALID,
+-- 62 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1121,10 +1112,20 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 64
+-- 63 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
+      INVALID,
+      INVALID,
+      INVALID,
+
+-- 64 STZ d
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + DATA_Z + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1191,9 +1192,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 6B
-      INVALID,
-      INVALID,
+-- 6B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1271,9 +1272,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 73
-      INVALID,
-      INVALID,
+-- 73 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1281,11 +1282,11 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 74
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 74 STX d,X
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      HI_ADDX + LO_ADDX,
+      ADDR_LO + DATA_Z + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1341,19 +1342,19 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 7A
-      INVALID,
-      INVALID,
-      INVALID,
+-- 7A PLY
+      ADDR_PC + PC_INC,
+      SP_INC,
+      ADDR_SP + ALU_LDA + YR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
       INVALID,
       INVALID,
 
--- 7B
-      INVALID,
-      INVALID,
+-- 7B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1421,9 +1422,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 82
-      INVALID,
-      INVALID,
+-- 82 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1431,9 +1432,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 83
-      INVALID,
-      INVALID,
+-- 83 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1511,9 +1512,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 8B
-      INVALID,
-      INVALID,
+-- 8B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1591,9 +1592,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 93
-      INVALID,
-      INVALID,
+-- 93 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1671,9 +1672,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 9B
-      INVALID,
-      INVALID,
+-- 9B NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1681,11 +1682,11 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 9C
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 9C STZ a
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_PC + PC_INC + HI_DATA,
+      ADDR_HL + DATA_Z + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1701,12 +1702,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 9E
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 9E STZ a,X
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_PC + PC_INC + HI_DATA,
+      HI_ADDX + LO_ADDX,
+      ADDR_HL + DATA_Z + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1751,9 +1752,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- A3
-      INVALID,
-      INVALID,
+-- A3 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1831,9 +1832,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- AB
-      INVALID,
-      INVALID,
+-- AB NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1911,9 +1912,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- B3
-      INVALID,
-      INVALID,
+-- B3 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1991,9 +1992,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- BB
-      INVALID,
-      INVALID,
+-- BB NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2061,9 +2062,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- C2
-      INVALID,
-      INVALID,
+-- C2 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2071,9 +2072,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- C3
-      INVALID,
-      INVALID,
+-- C3 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2151,9 +2152,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- CB
-      INVALID,
-      INVALID,
+-- CB NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2231,9 +2232,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- D3
-      INVALID,
-      INVALID,
+-- D3 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2241,9 +2242,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- D4
-      INVALID,
-      INVALID,
+-- D4 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2301,19 +2302,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- DA
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-
--- DB
-      INVALID,
-      INVALID,
+-- DA PHX
+      ADDR_PC + PC_INC,
+      ADDR_LO + REG_XR + ALU_STA + DATA_ALU + SP_DEC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2321,10 +2312,20 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- DC
+-- DB NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
+      INVALID,
+      INVALID,
+      INVALID,
+
+-- DC NOP
+      ADDR_PC + PC_INC,
+      PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2381,9 +2382,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- E2
-      INVALID,
-      INVALID,
+-- E2 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2391,9 +2392,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- E3
-      INVALID,
-      INVALID,
+-- E3 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2471,9 +2472,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- EB
-      INVALID,
-      INVALID,
+-- EB NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2551,9 +2552,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- F3
-      INVALID,
-      INVALID,
+-- F3 NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2561,9 +2562,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- F4
-      INVALID,
-      INVALID,
+-- F4 NOP
+      ADDR_PC + PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2621,9 +2622,19 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- FA
+-- FA PLX
+      ADDR_PC + PC_INC,
+      SP_INC,
+      ADDR_SP + ALU_LDA + XR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
+      INVALID,
+      INVALID,
+      INVALID,
+
+-- FB NOP
+      ADDR_PC + PC_INC,
+      LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2631,20 +2642,10 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- FB
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-
--- FC
-      INVALID,
-      INVALID,
-      INVALID,
+-- FC NOP
+      ADDR_PC + PC_INC,
+      PC_INC,
+      PC_INC + LAST,
       INVALID,
       INVALID,
       INVALID,

@@ -33,6 +33,9 @@ x16.tcl: Makefile
 	echo "write_bitstream -force x16.bit" >> $@
 	echo "exit" >> $@
 
+main/rom.txt:
+	make -C main rom.txt
+
 # Remove all generated files
 clean:
 	rm -rf usage_statistics_webtalk.*

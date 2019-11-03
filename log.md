@@ -130,4 +130,16 @@ the CPU is ready.
 
 Choosing between these two is done using switch number 0.
 
+## 2019-11-3
+
+I've now copied over the 6502 implementation from my other project
+[dyoc](https://github.com/MJoergen/nexys4ddr/tree/master/dyoc). I've done a
+little bit of cleanup, and I've tested the CPU using the 6502 functional test
+suite.
+
+So the status is that the project can now execute programs for the 6502
+processor.  I've written a short test program in assembly that prints a few
+squares on the screen.
+
+Next step is to augment the CPU with the 65C02 instructions.
 

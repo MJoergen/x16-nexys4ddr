@@ -8,6 +8,10 @@ performs address decoding of the CPU's memory map.
 TBD: So far, there is no support for RAM or ROM banking. This will
 be added later.
 
+# Test in simulation
+This module can be tested separately in simulation. To do this, just type
+"make". This will assemble and execute the small program in test/rom.s.
+
 # Memory map
 * 0x0000 - 0x9EFF : Low RAM
 * 0x9F00 - 0x9FFF : I/O

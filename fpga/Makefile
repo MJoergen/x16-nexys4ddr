@@ -10,6 +10,10 @@ SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vh
 SOURCES += main/main.vhd main/ram.vhd main/rom.vhd
 SOURCES += cpu_dummy.vhd
 
+# Configure the FPGA on the Nexys4DDR board with the generated bit-file
+fpga: x16.bit
+	djtgcfg prog -d Nexys4DDR -i 0 --file $<
+
 # Generate the bit-file used to configure the FPGA
 x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile main/rom.txt
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
@@ -25,10 +29,6 @@ x16.tcl: Makefile
 	echo "write_checkpoint -force x16.dcp" >> $@
 	echo "write_bitstream -force x16.bit" >> $@
 	echo "exit" >> $@
-
-# Configure the FPGA on the Nexys4DDR board with the generated bit-file
-fpga: x16.bit
-	djtgcfg prog -d Nexys4DDR -i 0 --file $<
 
 # Remove all generated files
 clean:

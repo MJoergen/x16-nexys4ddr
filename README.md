@@ -39,6 +39,13 @@ The FPGA on the Digilent board is a Xilinx Artix-7 (XC7A100T), which contains
 on the X16. It might be possible to use the DDR2 RAM avaiable on the board, but
 this is TBD.
 
+# Pre-requisites
+So to use this project on real hardware you need the following:
+* A Nexys4DDR board from Digilent, with USB cable for FPGA configuration.
+* The Vivado tool chain installed.
+* A VGA cable from the board to a VGA monitor.
+* A keyboard (with USB connector).
+
 # Try it out!
 Just go into the fpga directory and type "make fpga".
 

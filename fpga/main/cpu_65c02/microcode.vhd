@@ -40,6 +40,7 @@ architecture structural of microcode is
    constant PC_BEQ      : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0000_111100_000_000_0";
    constant PC_D_HI     : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0000_000101_000_000_0";
    constant PC_D_LO     : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0000_000110_000_000_0";
+   constant PC_BRA      : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0000_000111_000_000_0";
    --
    constant ADDR_PC     : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0001_000000_000_000_0";
    constant ADDR_HL     : t_ctl := B"00_00_0_0_00_0000_00000_0_0_000_0010_000000_000_000_0";
@@ -300,12 +301,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 12
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 12 ORA (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_ORA + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -380,9 +381,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 1A
-      INVALID,
-      INVALID,
+-- 1A INC
+      ADDR_PC + PC_INC,
+      REG_AR + ALU_INC_A + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -620,12 +621,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 32
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 32 AND (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_AND + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -640,11 +641,11 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 34
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 34 BIT d,X
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      HI_ADDX + LO_ADDX,
+      ADDR_LO + ALU_BIT_B + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -700,9 +701,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 3A
-      INVALID,
-      INVALID,
+-- 3A DEC
+      ADDR_PC + PC_INC,
+      REG_AR + ALU_DEC_A + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -720,12 +721,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 3C
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 3C BIT a,X
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_PC + PC_INC + HI_DATA,
+      HI_ADDX + LO_ADDX,
+      ADDR_LO + ALU_BIT_B + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -940,12 +941,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 52
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 52 EOR (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_EOR + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1260,12 +1261,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 72
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 72 ADC (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_ADC + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1360,13 +1361,13 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 7C
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 7C JMP (a,X)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_PC + PC_INC + HI_DATA,
+      HI_ADDX + LO_ADDX,
+      ADDR_HL + PC_D_LO + HI_INC + LO_INC,
+      ADDR_HL + PC_D_HI + LAST,
       INVALID,
       INVALID,
 
@@ -1400,9 +1401,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 80
-      INVALID,
-      INVALID,
+-- 80 BRA
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_BRA + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1490,9 +1491,9 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 89
-      INVALID,
-      INVALID,
+-- 89 BIT #
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ALU_BIT_A + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1580,12 +1581,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- 92
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- 92 STA (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + DATA_AR + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1900,12 +1901,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- B2
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- B2 LDA (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_LDA + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2220,12 +2221,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- D2
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- D2 CMP (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_CMP + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2540,12 +2541,12 @@ architecture structural of microcode is
       INVALID,
       INVALID,
 
--- F2
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
-      INVALID,
+-- F2 SBC (d)
+      ADDR_PC + PC_INC,
+      ADDR_PC + PC_INC + ZP_DATA,
+      ADDR_ZP + LO_DATA + ZP_INC,
+      ADDR_ZP + HI_DATA,
+      ADDR_HL + ALU_SBC + AR_ALU + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,

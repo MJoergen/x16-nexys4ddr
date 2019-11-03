@@ -223,10 +223,8 @@ begin
             sr(SR_Z) <= not or_all(a(7 downto 0));
             sr(SR_C) <= a(8);
 
-         when ALU_BIT_A => -- BIT   SZV
-            sr(SR_S) <= a_i(7);
+         when ALU_BIT_A => -- BIT   Z
             sr(SR_Z) <= not or_all(tmp(7 downto 0));
-            sr(SR_V) <= a_i(6);
 
          when ALU_BIT_B => -- BIT   SZV
             sr(SR_S) <= b_i(7);

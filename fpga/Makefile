@@ -8,7 +8,10 @@ SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd
 SOURCES += vera/cpu/mmu.vhd vera/cpu/cpu.vhd vera/cpu/config.vhd
 SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vhd
 SOURCES += main/main.vhd main/ram.vhd main/rom.vhd
-SOURCES += cpu_dummy.vhd
+SOURCES += main/cpu_65c02/cpu_65c02.vhd main/cpu_65c02/ctl.vhd main/cpu_65c02/datapath.vhd
+SOURCES += main/cpu_65c02/alu.vhd main/cpu_65c02/ar.vhd main/cpu_65c02/hi.vhd main/cpu_65c02/lo.vhd
+SOURCES += main/cpu_65c02/pc.vhd main/cpu_65c02/sp.vhd main/cpu_65c02/sr.vhd main/cpu_65c02/xr.vhd
+SOURCES += main/cpu_65c02/yr.vhd main/cpu_65c02/zp.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file
 fpga: x16.bit

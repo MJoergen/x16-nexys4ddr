@@ -66,14 +66,14 @@ architecture structural of alu is
    constant ALU_DEC_B : std_logic_vector(5 downto 0) := B"010110";
    constant ALU_INC_B : std_logic_vector(5 downto 0) := B"010111";
 
-   constant ALU_RMB0  : std_logic_vector(5 downto 0) := B"101000";
-   constant ALU_RMB1  : std_logic_vector(5 downto 0) := B"101001";
-   constant ALU_RMB2  : std_logic_vector(5 downto 0) := B"101010";
-   constant ALU_RMB3  : std_logic_vector(5 downto 0) := B"101011";
-   constant ALU_RMB4  : std_logic_vector(5 downto 0) := B"101100";
-   constant ALU_RMB5  : std_logic_vector(5 downto 0) := B"101101";
-   constant ALU_RMB6  : std_logic_vector(5 downto 0) := B"101110";
-   constant ALU_RMB7  : std_logic_vector(5 downto 0) := B"101111";
+   constant ALU_RMB0  : std_logic_vector(5 downto 0) := B"110000";
+   constant ALU_RMB1  : std_logic_vector(5 downto 0) := B"110001";
+   constant ALU_RMB2  : std_logic_vector(5 downto 0) := B"110010";
+   constant ALU_RMB3  : std_logic_vector(5 downto 0) := B"110011";
+   constant ALU_RMB4  : std_logic_vector(5 downto 0) := B"110100";
+   constant ALU_RMB5  : std_logic_vector(5 downto 0) := B"110101";
+   constant ALU_RMB6  : std_logic_vector(5 downto 0) := B"110110";
+   constant ALU_RMB7  : std_logic_vector(5 downto 0) := B"110111";
    constant ALU_SMB0  : std_logic_vector(5 downto 0) := B"111000";
    constant ALU_SMB1  : std_logic_vector(5 downto 0) := B"111001";
    constant ALU_SMB2  : std_logic_vector(5 downto 0) := B"111010";
@@ -174,51 +174,67 @@ begin
             a(7 downto 0) <= b_i + 1;
 
          when ALU_RMB0 =>
+            a <= c & b_i;  -- Default value
             a(0) <= '0';
 
          when ALU_RMB1 =>
+            a <= c & b_i;  -- Default value
             a(1) <= '0';
 
          when ALU_RMB2 =>
+            a <= c & b_i;  -- Default value
             a(2) <= '0';
 
          when ALU_RMB3 =>
+            a <= c & b_i;  -- Default value
             a(3) <= '0';
 
          when ALU_RMB4 =>
+            a <= c & b_i;  -- Default value
             a(4) <= '0';
 
          when ALU_RMB5 =>
+            a <= c & b_i;  -- Default value
             a(5) <= '0';
 
          when ALU_RMB6 =>
+            a <= c & b_i;  -- Default value
             a(6) <= '0';
 
          when ALU_RMB7 =>
+            a <= c & b_i;  -- Default value
             a(7) <= '0';
 
          when ALU_SMB0 =>
+            a <= c & b_i;  -- Default value
             a(0) <= '1';
 
          when ALU_SMB1 =>
+            a <= c & b_i;  -- Default value
             a(1) <= '1';
 
          when ALU_SMB2 =>
+            a <= c & b_i;  -- Default value
             a(2) <= '1';
 
          when ALU_SMB3 =>
+            a <= c & b_i;  -- Default value
             a(3) <= '1';
 
          when ALU_SMB4 =>
+            a <= c & b_i;  -- Default value
             a(4) <= '1';
 
          when ALU_SMB5 =>
+            a <= c & b_i;  -- Default value
             a(5) <= '1';
 
          when ALU_SMB6 =>
+            a <= c & b_i;  -- Default value
             a(6) <= '1';
 
          when ALU_SMB7 =>
+            a <= c & b_i;  -- Default value
             a(7) <= '1';
 
          when others =>

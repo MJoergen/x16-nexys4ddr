@@ -24,7 +24,8 @@ entity ctl is
       sp_sel_o   : out std_logic_vector(1 downto 0);
       xr_sel_o   : out std_logic;
       yr_sel_o   : out std_logic;
-      reg_sel_o  : out std_logic_vector(1 downto 0);
+      mr_sel_o   : out std_logic;
+      reg_sel_o  : out std_logic_vector(2 downto 0);
       zp_sel_o   : out std_logic_vector(1 downto 0);
 
       invalid_o  : out std_logic_vector(7 downto 0);
@@ -34,11 +35,11 @@ end entity ctl;
 
 architecture structural of ctl is
 
-   subtype t_ctl is std_logic_vector(39 downto 0);
+   subtype t_ctl is std_logic_vector(41 downto 0);
 
-   constant NOP     : t_ctl := B"0_00_00_0_0_00_0000_000000_0_000_0000_000000_000_000_0";
-   constant PC_INC  : t_ctl := B"0_00_00_0_0_00_0000_000000_0_000_0000_000001_000_000_0";
-   constant ADDR_PC : t_ctl := B"0_00_00_0_0_00_0000_000000_0_000_0001_000000_000_000_0";
+   constant NOP     : t_ctl := B"0_0_00_000_0_0_00_0000_000000_0_000_0000_000000_000_000_0";
+   constant PC_INC  : t_ctl := B"0_0_00_000_0_0_00_0000_000000_0_000_0000_000001_000_000_0";
+   constant ADDR_PC : t_ctl := B"0_0_00_000_0_0_00_0000_000000_0_000_0001_000000_000_000_0";
 
    signal ir  : std_logic_vector(7 downto 0);   -- Instruction register
    signal cnt : std_logic_vector(2 downto 0);   -- Cycle counter
@@ -60,9 +61,10 @@ architecture structural of ctl is
    alias sp_sel    : std_logic_vector(1 downto 0) is ctl(32 downto 31);
    alias xr_sel    : std_logic                    is ctl(33);
    alias yr_sel    : std_logic                    is ctl(34);
-   alias reg_sel   : std_logic_vector(1 downto 0) is ctl(36 downto 35);
-   alias zp_sel    : std_logic_vector(1 downto 0) is ctl(38 downto 37);
-   alias invalid_s : std_logic                    is ctl(39);
+   alias reg_sel   : std_logic_vector(2 downto 0) is ctl(37 downto 35);
+   alias zp_sel    : std_logic_vector(1 downto 0) is ctl(39 downto 38);
+   alias mr_sel    : std_logic                    is ctl(40);
+   alias invalid_s : std_logic                    is ctl(41);
 
 
    -- Interrupt Source
@@ -205,6 +207,7 @@ begin
    sp_sel_o   <= sp_sel;
    xr_sel_o   <= xr_sel;
    yr_sel_o   <= yr_sel;
+   mr_sel_o   <= mr_sel;
    reg_sel_o  <= reg_sel;
    zp_sel_o   <= zp_sel;
 
@@ -217,8 +220,8 @@ begin
    debug_o( 2 downto  0) <= cnt;    -- One byte
    debug_o( 7 downto  3) <= (others => '0');
    debug_o(15 downto  8) <= data_i when cnt = 0 else ir;     -- One byte
-   debug_o(55 downto 16) <= ctl;    -- Two bytes
-   debug_o(63 downto 56) <= (others => '0');
+   debug_o(57 downto 16) <= ctl;    -- Two bytes
+   debug_o(63 downto 58) <= (others => '0');
 
 end architecture structural;
 

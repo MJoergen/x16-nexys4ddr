@@ -11,7 +11,7 @@ SOURCES += main/main.vhd main/ram.vhd main/rom.vhd
 SOURCES += main/cpu_65c02/cpu_65c02.vhd main/cpu_65c02/ctl.vhd main/cpu_65c02/datapath.vhd main/cpu_65c02/microcode.vhd
 SOURCES += main/cpu_65c02/alu.vhd main/cpu_65c02/ar.vhd main/cpu_65c02/hi.vhd main/cpu_65c02/lo.vhd
 SOURCES += main/cpu_65c02/pc.vhd main/cpu_65c02/sp.vhd main/cpu_65c02/sr.vhd main/cpu_65c02/xr.vhd
-SOURCES += main/cpu_65c02/yr.vhd main/cpu_65c02/zp.vhd
+SOURCES += main/cpu_65c02/yr.vhd main/cpu_65c02/zp.vhd main/cpu_65c02/mr.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file
 fpga: x16.bit

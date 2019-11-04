@@ -27,7 +27,8 @@ entity datapath is
       sp_sel_i   : in  std_logic_vector(1 downto 0);
       xr_sel_i   : in  std_logic;
       yr_sel_i   : in  std_logic;
-      reg_sel_i  : in  std_logic_vector(1 downto 0);
+      mr_sel_i   : in  std_logic;
+      reg_sel_i  : in  std_logic_vector(2 downto 0);
       zp_sel_i   : in  std_logic_vector(1 downto 0);
 
       -- Debug output containing internal registers
@@ -63,10 +64,11 @@ architecture structural of datapath is
    constant DATA_SRI  : std_logic_vector(2 downto 0) := B"110";
    constant DATA_Z    : std_logic_vector(2 downto 0) := B"111";
 
-   constant REG_AR    : std_logic_vector(1 downto 0) := B"00";
-   constant REG_XR    : std_logic_vector(1 downto 0) := B"01";
-   constant REG_YR    : std_logic_vector(1 downto 0) := B"10";
-   constant REG_SP    : std_logic_vector(1 downto 0) := B"11";
+   constant REG_AR    : std_logic_vector(2 downto 0) := B"000";
+   constant REG_XR    : std_logic_vector(2 downto 0) := B"001";
+   constant REG_YR    : std_logic_vector(2 downto 0) := B"010";
+   constant REG_SP    : std_logic_vector(2 downto 0) := B"011";
+   constant REG_MR    : std_logic_vector(2 downto 0) := B"100";
 
    -- Input to ALU
    signal alu_reg : std_logic_vector(7 downto 0);
@@ -86,6 +88,9 @@ architecture structural of datapath is
 
    -- 'Y' register
    signal yr : std_logic_vector(7 downto 0);
+
+   -- 'M' register
+   signal mr : std_logic_vector(7 downto 0);
 
    -- Stack Pointer
    signal sp : std_logic_vector(7 downto 0);
@@ -116,6 +121,7 @@ begin
    alu_reg <= ar when reg_sel_i = REG_AR else
               xr when reg_sel_i = REG_XR else
               yr when reg_sel_i = REG_YR else
+              mr when reg_sel_i = REG_MR else
               sp when reg_sel_i = REG_SP else
               (others => '0');
 
@@ -192,6 +198,20 @@ begin
       alu_ar_i => alu_ar,
       yr_o     => yr
    ); -- yr_inst
+
+
+   ----------------------------
+   -- Instantiate 'M' register
+   ----------------------------
+
+   mr_inst : entity work.mr
+   port map (
+      clk_i    => clk_i,
+      wait_i   => wait_i,
+      mr_sel_i => mr_sel_i,
+      alu_mr_i => data_i,
+      mr_o     => mr
+   ); -- mr_inst
 
 
    -----------------------------

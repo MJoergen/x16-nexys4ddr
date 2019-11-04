@@ -32,7 +32,8 @@ architecture structural of cpu_65c02 is
    signal sp_sel   : std_logic_vector(1 downto 0);
    signal xr_sel   : std_logic;
    signal yr_sel   : std_logic;
-   signal reg_sel  : std_logic_vector(1 downto 0);
+   signal mr_sel   : std_logic;
+   signal reg_sel  : std_logic_vector(2 downto 0);
    signal zp_sel   : std_logic_vector(1 downto 0);
    signal sri      : std_logic;
 
@@ -63,6 +64,7 @@ begin
          sp_sel_i   => sp_sel,
          xr_sel_i   => xr_sel,
          yr_sel_i   => yr_sel,
+         mr_sel_i   => mr_sel,
          reg_sel_i  => reg_sel,
          zp_sel_i   => zp_sel,
          debug_o    => debug_o
@@ -93,6 +95,7 @@ begin
          sp_sel_o   => sp_sel,
          xr_sel_o   => xr_sel,
          yr_sel_o   => yr_sel,
+         mr_sel_o   => mr_sel,
          reg_sel_o  => reg_sel,
          zp_sel_o   => zp_sel,
          invalid_o  => open,

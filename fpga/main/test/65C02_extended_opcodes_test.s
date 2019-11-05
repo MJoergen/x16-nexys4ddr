@@ -2284,109 +2284,110 @@ tadd1:  ora adrh        ;merge C to expected flags
         trap_ne         ;sp push/pop mismatch
         next_test
 
-;; decimal add/subtract test
-;; *** WARNING - tests documented behavior only! ***
-;;   only valid BCD operands are tested, the V flag is ignored
-;;   although V is declared as beeing valid on the 65C02 it has absolutely
-;;   no use in BCD math. No sign = no overflow!
-;; iterates through all valid combinations of operands and carry input
-;; uses increments/decrements to predict result & carry flag
-;        sed 
-;        ldx #ad2        ;for indexed test
-;        ldy #$ff        ;max range
-;        lda #$99        ;start with adding 99 to 99 with carry
-;        sta ad1         ;operand 1 - accumulator
-;        sta ad2         ;operand 2 - memory or immediate
-;        sta ada2        ;non zp
-;        sta adrl        ;expected result bits 0-7
-;        lda #1          ;set carry in & out
-;        sta adfc        ;carry in - for diag
-;        sta adrh        ;expected result bit 8 (carry out)
-;        lda #$81        ;set N & C (99 + 99 + C = 99 + C)
-;        sta adrf
-;        lda #0          ;complemented operand 2 for subtract
-;        sta sb2
-;        sta sba2        ;non zp
-;tdad:   sec             ;test with carry set
-;        jsr chkdad
-;        dec adfc        ;now with carry clear
-;        lda adrl        ;decimal adjust result
-;        bne tdad1       ;skip clear carry & preset result 99 (9A-1)
-;        dec adrh
-;        lda #$99
-;        sta adrl
-;        bne tdad3
-;tdad1:  and #$f         ;lower nibble mask
-;        bne tdad2       ;no decimal adjust needed
-;        dec adrl        ;decimal adjust (?0-6)
-;        dec adrl
-;        dec adrl
-;        dec adrl
-;        dec adrl
-;        dec adrl
-;tdad2:  dec adrl        ;result -1
-;tdad3:  php             ;save valid flags
-;        pla
-;        and #$82        ;N-----Z-
-;        ora adrh        ;N-----ZC
-;        sta adrf
-;        clc             ;test with carry clear
-;        jsr chkdad
-;        inc adfc        ;same for operand -1 but with carry
-;        lda ad1         ;decimal adjust operand 1
-;        beq tdad5       ;iterate operand 2
-;        and #$f         ;lower nibble mask
-;        bne tdad4       ;skip decimal adjust
-;        dec ad1         ;decimal adjust (?0-6)
-;        dec ad1
-;        dec ad1
-;        dec ad1
-;        dec ad1
-;        dec ad1
-;tdad4:  dec ad1         ;operand 1 -1
-;        jmp tdad        ;iterate op1
-;
-;tdad5:  lda #$99        ;precharge op1 max
-;        sta ad1
-;        lda ad2         ;decimal adjust operand 2
-;        beq tdad7       ;end of iteration
-;        and #$f         ;lower nibble mask
-;        bne tdad6       ;skip decimal adjust
-;        dec ad2         ;decimal adjust (?0-6)
-;        dec ad2
-;        dec ad2
-;        dec ad2
-;        dec ad2
-;        dec ad2
-;        inc sb2         ;complemented decimal adjust for subtract (?9+6)
-;        inc sb2
-;        inc sb2
-;        inc sb2
-;        inc sb2
-;        inc sb2
-;tdad6:  dec ad2         ;operand 2 -1
-;        inc sb2         ;complemented operand for subtract
-;        lda sb2
-;        sta sba2        ;copy as non zp operand
-;        lda ad2
-;        sta ada2        ;copy as non zp operand
-;        sta adrl        ;new result since op1+carry=00+carry +op2=op2
-;        php             ;save flags
-;        pla
-;        and #$82        ;N-----Z-
-;        ora #1          ;N-----ZC
-;        sta adrf
-;        inc adrh        ;result carry
-;        jmp tdad        ;iterate op2
-;
-;tdad7:  cpx #ad2
-;        trap_ne         ;x altered during test
-;        cpy #$ff
-;        trap_ne         ;y altered during test 
-;        tsx
-;        cpx #$ff
-;        trap_ne         ;sp push/pop mismatch
-;        cld
+decimal:
+; decimal add/subtract test
+; *** WARNING - tests documented behavior only! ***
+;   only valid BCD operands are tested, the V flag is ignored
+;   although V is declared as beeing valid on the 65C02 it has absolutely
+;   no use in BCD math. No sign = no overflow!
+; iterates through all valid combinations of operands and carry input
+; uses increments/decrements to predict result & carry flag
+        sed 
+        ldx #ad2        ;for indexed test
+        ldy #$ff        ;max range
+        lda #$99        ;start with adding 99 to 99 with carry
+        sta ad1         ;operand 1 - accumulator
+        sta ad2         ;operand 2 - memory or immediate
+        sta ada2        ;non zp
+        sta adrl        ;expected result bits 0-7
+        lda #1          ;set carry in & out
+        sta adfc        ;carry in - for diag
+        sta adrh        ;expected result bit 8 (carry out)
+        lda #$81        ;set N & C (99 + 99 + C = 99 + C)
+        sta adrf
+        lda #0          ;complemented operand 2 for subtract
+        sta sb2
+        sta sba2        ;non zp
+tdad:   sec             ;test with carry set
+        jsr chkdad
+        dec adfc        ;now with carry clear
+        lda adrl        ;decimal adjust result
+        bne tdad1       ;skip clear carry & preset result 99 (9A-1)
+        dec adrh
+        lda #$99
+        sta adrl
+        bne tdad3
+tdad1:  and #$f         ;lower nibble mask
+        bne tdad2       ;no decimal adjust needed
+        dec adrl        ;decimal adjust (?0-6)
+        dec adrl
+        dec adrl
+        dec adrl
+        dec adrl
+        dec adrl
+tdad2:  dec adrl        ;result -1
+tdad3:  php             ;save valid flags
+        pla
+        and #$82        ;N-----Z-
+        ora adrh        ;N-----ZC
+        sta adrf
+        clc             ;test with carry clear
+        jsr chkdad
+        inc adfc        ;same for operand -1 but with carry
+        lda ad1         ;decimal adjust operand 1
+        beq tdad5       ;iterate operand 2
+        and #$f         ;lower nibble mask
+        bne tdad4       ;skip decimal adjust
+        dec ad1         ;decimal adjust (?0-6)
+        dec ad1
+        dec ad1
+        dec ad1
+        dec ad1
+        dec ad1
+tdad4:  dec ad1         ;operand 1 -1
+        jmp tdad        ;iterate op1
+
+tdad5:  lda #$99        ;precharge op1 max
+        sta ad1
+        lda ad2         ;decimal adjust operand 2
+        beq tdad7       ;end of iteration
+        and #$f         ;lower nibble mask
+        bne tdad6       ;skip decimal adjust
+        dec ad2         ;decimal adjust (?0-6)
+        dec ad2
+        dec ad2
+        dec ad2
+        dec ad2
+        dec ad2
+        inc sb2         ;complemented decimal adjust for subtract (?9+6)
+        inc sb2
+        inc sb2
+        inc sb2
+        inc sb2
+        inc sb2
+tdad6:  dec ad2         ;operand 2 -1
+        inc sb2         ;complemented operand for subtract
+        lda sb2
+        sta sba2        ;copy as non zp operand
+        lda ad2
+        sta ada2        ;copy as non zp operand
+        sta adrl        ;new result since op1+carry=00+carry +op2=op2
+        php             ;save flags
+        pla
+        and #$82        ;N-----Z-
+        ora #1          ;N-----ZC
+        sta adrf
+        inc adrh        ;result carry
+        jmp tdad        ;iterate op2
+
+tdad7:  cpx #ad2
+        trap_ne         ;x altered during test
+        cpy #$ff
+        trap_ne         ;y altered during test 
+        tsx
+        cpx #$ff
+        trap_ne         ;sp push/pop mismatch
+        cld
 
         lda test_case
         cmp #test_num

@@ -180,6 +180,6 @@ The only caveat is that it takes nearly 3 hours to generate a bit-file, where
 the bulk of the time is spent reading the 128 kByte ROM image. I don't know
 why this takes so long, and I've filed yet another issue on Xilinx' forum.
 
-Next step is to get the SD card working, implement RAM banking, as well
-implementing the remaining VERA modes.
+Next step is to get the SD card working (i.e. the VERA SPI support), implement
+RAM banking, and implement the remaining VERA modes.
 

@@ -58,13 +58,9 @@ architecture structural of alu is
    constant ALU_INC_A : std_logic_vector(5 downto 0) := B"001111";
    constant ALU_LDA_A : std_logic_vector(5 downto 0) := B"001101";
 
-   constant ALU_ASL_B : std_logic_vector(5 downto 0) := B"010000";
-   constant ALU_ROL_B : std_logic_vector(5 downto 0) := B"010001";
-   constant ALU_LSR_B : std_logic_vector(5 downto 0) := B"010010";
-   constant ALU_ROR_B : std_logic_vector(5 downto 0) := B"010011";
    constant ALU_BIT_B : std_logic_vector(5 downto 0) := B"010100";
-   constant ALU_DEC_B : std_logic_vector(5 downto 0) := B"010110";
-   constant ALU_INC_B : std_logic_vector(5 downto 0) := B"010111";
+   constant ALU_TRB   : std_logic_vector(5 downto 0) := B"010101";
+   constant ALU_TSB   : std_logic_vector(5 downto 0) := B"010110";
 
    constant ALU_RMB0  : std_logic_vector(5 downto 0) := B"110000";
    constant ALU_RMB1  : std_logic_vector(5 downto 0) := B"110001";
@@ -152,26 +148,16 @@ begin
          when ALU_LDA_A =>
             null;
 
-         when ALU_ASL_B =>
-            a <= b_i(7 downto 0) & '0';
-
-         when ALU_ROL_B =>
-            a <= b_i(7 downto 0) & c;
-
-         when ALU_LSR_B =>
-            a <= b_i(0) & '0' & b_i(7 downto 1);
-
-         when ALU_ROR_B =>
-            a <= b_i(0) & c & b_i(7 downto 1);
-
          when ALU_BIT_B =>
             tmp(7 downto 0) <= a_i and b_i;
 
-         when ALU_DEC_B =>
-            a(7 downto 0) <= b_i - 1;
+         when ALU_TRB =>
+            tmp(7 downto 0) <= a_i and b_i;
+            a(7 downto 0)   <= (not a_i) and b_i;
 
-         when ALU_INC_B =>
-            a(7 downto 0) <= b_i + 1;
+         when ALU_TSB =>
+            tmp(7 downto 0) <= a_i and b_i;
+            a(7 downto 0)   <= a_i or b_i;
 
          when ALU_RMB0 =>
             a <= c & b_i;  -- Default value
@@ -285,22 +271,22 @@ begin
             sr(SR_V) <= (a_i(7) xor b_i(7)) and (a_i(7) xor a(7));
             sr(SR_C) <= a(8);
 
-         when ALU_ASL_A | ALU_ASL_B => -- ASL   SZC
+         when ALU_ASL_A => -- ASL   SZC
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
             sr(SR_C) <= a(8);
 
-         when ALU_ROL_A | ALU_ROL_B => -- ROL   SZC
+         when ALU_ROL_A => -- ROL   SZC
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
             sr(SR_C) <= a(8);
 
-         when ALU_LSR_A | ALU_LSR_B => -- LSR   SZC
+         when ALU_LSR_A => -- LSR   SZC
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
             sr(SR_C) <= a(8);
 
-         when ALU_ROR_A | ALU_ROR_B => -- ROR   SZC
+         when ALU_ROR_A => -- ROR   SZC
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
             sr(SR_C) <= a(8);
@@ -313,11 +299,17 @@ begin
             sr(SR_Z) <= not or_all(tmp(7 downto 0));
             sr(SR_V) <= b_i(6);
 
-         when ALU_DEC_A | ALU_DEC_B => -- DEC   SZ
+         when ALU_TRB =>   -- TRB   Z
+            sr(SR_Z) <= not or_all(tmp(7 downto 0));
+
+         when ALU_TSB =>   -- TSB   Z
+            sr(SR_Z) <= not or_all(tmp(7 downto 0));
+
+         when ALU_DEC_A => -- DEC   SZ
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
 
-         when ALU_INC_A | ALU_INC_B => -- INC   SZ
+         when ALU_INC_A => -- INC   SZ
             sr(SR_S) <= a(7);
             sr(SR_Z) <= not or_all(a(7 downto 0));
 

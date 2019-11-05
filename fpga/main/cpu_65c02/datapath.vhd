@@ -19,7 +19,7 @@ entity datapath is
       ar_sel_i   : in  std_logic;
       hi_sel_i   : in  std_logic_vector(2 downto 0);
       lo_sel_i   : in  std_logic_vector(2 downto 0);
-      pc_sel_i   : in  std_logic_vector(5 downto 0);
+      pc_sel_i   : in  std_logic_vector(6 downto 0);
       addr_sel_i : in  std_logic_vector(3 downto 0);
       data_sel_i : in  std_logic_vector(2 downto 0);
       alu_sel_i  : in  std_logic_vector(5 downto 0);
@@ -27,7 +27,7 @@ entity datapath is
       sp_sel_i   : in  std_logic_vector(1 downto 0);
       xr_sel_i   : in  std_logic;
       yr_sel_i   : in  std_logic;
-      mr_sel_i   : in  std_logic;
+      mr_sel_i   : in  std_logic_vector(1 downto 0);
       reg_sel_i  : in  std_logic_vector(2 downto 0);
       zp_sel_i   : in  std_logic_vector(1 downto 0);
 
@@ -153,6 +153,7 @@ begin
       hi_i     => hi,
       lo_i     => lo,
       sr_i     => sr,
+      mr_i     => mr,
       data_i   => data_i,
       pc_o     => pc
    ); -- pc_inst
@@ -209,7 +210,8 @@ begin
       clk_i    => clk_i,
       wait_i   => wait_i,
       mr_sel_i => mr_sel_i,
-      alu_mr_i => data_i,
+      data_i   => data_i,
+      alu_ar_i => alu_ar,
       mr_o     => mr
    ); -- mr_inst
 

@@ -37,6 +37,7 @@ architecture structural of alu is
    -- The Status Register contains: SV-BDIZC
    constant SR_S : integer := 7;
    constant SR_V : integer := 6;
+   constant SR_D : integer := 3;
    constant SR_Z : integer := 1;
    constant SR_C : integer := 0;
 
@@ -96,6 +97,8 @@ begin
 
    -- Calculate the result
    p_a : process (c, a_i, b_i, sr_i, func_i)
+      variable lo_v : std_logic_vector(4 downto 0);
+      variable hi_v : std_logic_vector(4 downto 0);
    begin
       tmp <= (others => '0');
       a <= c & a_i;  -- Default value
@@ -111,6 +114,18 @@ begin
 
          when ALU_ADC =>
             a <= ('0' & a_i) + ('0' & b_i) + (X"00" & c);
+            if sr_i(SR_D) = '1' then   -- Decimal mode
+               lo_v := ('0' & a_i(3 downto 0)) + ('0' & b_i(3 downto 0)) + (X"0" & c);
+               hi_v := ('0' & a_i(7 downto 4)) + ('0' & b_i(7 downto 4));
+               if lo_v >= 10 then
+                  lo_v := lo_v - 10;
+                  hi_v := hi_v + 1;
+               end if;
+               if hi_v >= 10 then
+                  hi_v := hi_v - 10 + 16;
+               end if;
+               a <= hi_v & lo_v(3 downto 0);
+            end if;
 
          when ALU_STA =>
             null;
@@ -123,6 +138,18 @@ begin
 
          when ALU_SBC =>
             a <= ('0' & a_i) + ('0' & not b_i) + (X"00" & c);
+            if sr_i(SR_D) = '1' then   -- Decimal mode
+               lo_v := ('0' & a_i(3 downto 0)) + "01001" - ('0' & b_i(3 downto 0)) + (X"0" & c);
+               hi_v := ('0' & a_i(7 downto 4)) + "01001" - ('0' & b_i(7 downto 4));
+               if lo_v >= 10 then
+                  lo_v := lo_v - 10;
+                  hi_v := hi_v + 1;
+               end if;
+               if hi_v >= 10 then
+                  hi_v := hi_v - 10 + 16;
+               end if;
+               a <= hi_v & lo_v(3 downto 0);
+            end if;
 
          when ALU_ASL_A =>
             a <= a_i(7 downto 0) & '0';

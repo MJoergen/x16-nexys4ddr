@@ -46,6 +46,9 @@ begin
                when X"F5" => null;                                               -- Sprite attributes
                when X"F6" => null;                                               -- Audio
                when X"F7" => null;                                               -- SPI
+                  -- F7000 : spi_data. Initiate transmit upon write.
+                  -- F7001 : spi_ctl. Read Bit 7 is high = busy.
+                  --                  Write Bit 0 high = select
                when X"F8" => null;                                               -- UART
                when others => null;
             end case;

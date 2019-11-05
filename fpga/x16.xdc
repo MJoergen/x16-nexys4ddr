@@ -59,6 +59,20 @@ set_property -dict { PACKAGE_PIN B2  IOSTANDARD LVCMOS33 } [get_ports { ps2_data
 set_property PULLUP TRUE [get_ports { ps2_clk_i } ]
 set_property PULLUP TRUE [get_ports { ps2_data_i } ]
 
+set_property -dict { PACKAGE_PIN E2  IOSTANDARD LVCMOS33 } [get_ports { sd_reset_o }];       # SD_RESET
+set_property -dict { PACKAGE_PIN F1  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[2] }];     # SD_DAT2
+set_property -dict { PACKAGE_PIN E1  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[1] }];     # SD_DAT1
+set_property -dict { PACKAGE_PIN C1  IOSTANDARD LVCMOS33 } [get_ports { sd_cmd_io }];        # SD_CMD
+set_property -dict { PACKAGE_PIN B1  IOSTANDARD LVCMOS33 } [get_ports { sd_sck_io }];        # SD_SCK
+set_property -dict { PACKAGE_PIN D2  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[3] }];     # SD_DAT3
+set_property -dict { PACKAGE_PIN C2  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[0] }];     # SD_DAT0
+set_property -dict { PACKAGE_PIN A1  IOSTANDARD LVCMOS33 } [get_ports { sd_cd_i }];          # SD_CD
+
+set_property PULLUP TRUE [get_ports { sd_dat_io[0] } ]
+set_property PULLUP TRUE [get_ports { sd_dat_io[1] } ]
+set_property PULLUP TRUE [get_ports { sd_dat_io[2] } ]
+set_property PULLUP TRUE [get_ports { sd_dat_io[3] } ]
+
 # Clock definition
 create_clock -name sys_clk -period 10.00 [get_ports {clk_i}];
 

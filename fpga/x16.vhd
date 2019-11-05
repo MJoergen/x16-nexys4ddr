@@ -6,19 +6,25 @@ use ieee.std_logic_1164.all;
 
 entity x16 is
    port (
-      clk_i      : in    std_logic;                       -- 100 MHz
+      clk_i       : in    std_logic;                       -- 100 MHz
 
-      rstn_i     : in    std_logic;                       -- CPU reset, active low
+      rstn_i      : in    std_logic;                       -- CPU reset, active low
 
-      sw_i       : in    std_logic_vector(15 downto 0);    -- Used for debugging.
-      led_o      : out   std_logic_vector(15 downto 0);    -- Used for debugging.
+      sw_i        : in    std_logic_vector(15 downto 0);   -- Used for debugging.
+      led_o       : out   std_logic_vector(15 downto 0);   -- Used for debugging.
 
-      ps2_clk_i  : in    std_logic;                       -- Keyboard
-      ps2_data_i : in    std_logic;
+      ps2_clk_io  : inout std_logic;                       -- Keyboard
+      ps2_data_io : inout std_logic;
 
-      vga_hs_o   : out   std_logic;                       -- VGA
-      vga_vs_o   : out   std_logic;
-      vga_col_o  : out   std_logic_vector(11 downto 0)    -- 4 bits for each colour RGB.
+      sd_reset_o  : out   std_logic;                       -- SD card
+      sd_dat_io   : inout std_logic_vector(3 downto 0);    -- miso, cs
+      sd_cmd_io   : inout std_logic;                       -- mosi
+      sd_sck_io   : inout std_logic;
+      sd_cd_i     : in    std_logic;
+
+      vga_hs_o    : out   std_logic;                       -- VGA
+      vga_vs_o    : out   std_logic;
+      vga_col_o   : out   std_logic_vector(11 downto 0)    -- 4 bits for each colour RGB.
    );
 end x16;
 
@@ -97,6 +103,8 @@ begin
          rst_i          => main_rst_s(3),
          nmi_i          => '0',
          irq_i          => '0',
+         ps2_clk_i      => ps2_clk_i,
+         ps2_data_i     => ps2_data_i,
          vera_addr_o    => main_addr_s(2 downto 0),
          vera_wr_en_o   => main_wr_en_s,
          vera_wr_data_o => main_wr_data_s,

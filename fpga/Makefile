@@ -7,7 +7,7 @@ SOURCES += clk.vhd
 SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd
 SOURCES += vera/cpu/mmu.vhd vera/cpu/cpu.vhd vera/cpu/config.vhd
 SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vhd
-SOURCES += main/main.vhd main/ram.vhd main/rom.vhd
+SOURCES += main/main.vhd main/ram.vhd main/rom.vhd main/via.vhd
 SOURCES += main/cpu_65c02/cpu_65c02.vhd main/cpu_65c02/ctl.vhd main/cpu_65c02/datapath.vhd main/cpu_65c02/microcode.vhd
 SOURCES += main/cpu_65c02/alu.vhd main/cpu_65c02/ar.vhd main/cpu_65c02/hi.vhd main/cpu_65c02/lo.vhd
 SOURCES += main/cpu_65c02/pc.vhd main/cpu_65c02/sp.vhd main/cpu_65c02/sr.vhd main/cpu_65c02/xr.vhd
@@ -26,6 +26,7 @@ x16.tcl: Makefile
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
 	echo "read_xdc x16.xdc" >> $@
+	echo "set_param synth.elaboration.rodinMoreOptions \"rt::set_parameter max_loop_limit 200000\"" >> $@
 	echo "synth_design -top x16 -part xc7a100tcsg324-1 -flatten_hierarchy none" >> $@
 	echo "place_design" >> $@
 	echo "route_design" >> $@
@@ -38,6 +39,7 @@ main/rom.txt:
 
 # Remove all generated files
 clean:
+	make -C main clean
 	rm -rf usage_statistics_webtalk.*
 	rm -rf vivado*
 	rm -rf x16.bit

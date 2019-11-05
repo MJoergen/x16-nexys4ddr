@@ -171,5 +171,7 @@ removed this simultaneous read-and-write-in-same-cycle behaviour.  This will
 lead to instructions like INC taking one more clock cycle than before, but on
 the other hand will more closely mimic the real 6502/65C02 processor.
 
-Next step is to implement decimal mode, and then add the two VIA I/O controllers.
+I've added support for decimal mode. That was surprisingly easy.
+
+Next step is to add the two VIA I/O controllers.
 

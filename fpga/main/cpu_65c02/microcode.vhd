@@ -160,8 +160,8 @@ architecture structural of microcode is
       ADDR_SP + DATA_PCHI + SP_DEC,
       ADDR_SP + DATA_PCLO + SP_DEC,
       ADDR_SP + DATA_SR + SP_DEC,
-      ADDR_IRQ + LO_DATA + SR_SEI + SR_CLD,
-      ADDR_IRQ1 + HI_DATA,
+      ADDR_IRQ + LO_DATA + SR_SEI,
+      ADDR_IRQ1 + HI_DATA + SR_CLD,
       PC_HL + LAST,
 
 -- 01 ORA (d,X)
@@ -759,7 +759,7 @@ architecture structural of microcode is
       ADDR_PC + PC_INC + LO_DATA,
       ADDR_PC + PC_INC + HI_DATA,
       HI_ADDX + LO_ADDX,
-      ADDR_LO + ALU_BIT_B + SR_ALU + LAST,
+      ADDR_HL + ALU_BIT_B + SR_ALU + LAST,
       INVALID,
       INVALID,
       INVALID,

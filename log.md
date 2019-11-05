@@ -144,32 +144,32 @@ squares on the screen.
 Next step is to augment the CPU with the 65C02 instructions.
 
 ## 2019-11-5
-I'm in the process of modifying the CPU implementation with the 65C02
-instructions and in the process I've uncovered what I believe is a bug in
-Vivado.
+I've modified the CPU implementation with the 65C02 instructions and in the
+process I've uncovered what I believe is a bug in Vivado.
 
-But first, I noticed a very bad design decisiion in my 6502 implementation. For
-some instructions the processor needs to do a read-modify-write operation on a
-given memory address. I had implememted that by having the processor do the
-read and the write in the same clock cycle. That does actually work, because
-the read happens on the falling edge, while the write happens on the following
-rising edge.
+But first, I noticed a very bad design decision in my 6502 implementation. For
+some instructions (e.g. INC d) the processor needs to do a read-modify-write
+operation on a given memory address. I had implememted that by having the
+processor do the read and the write in the same clock cycle. That does actually
+work, because the read happens on the falling edge, while the write takes place
+on the following rising edge.
 
 However, in the current design I need the RAM to process both read and writes
 on the falling clock edge, in order to match the behaviour of the VERA block.
-But changing the RAM to read and write on falling edge will of course not work
-without changing the design, because one can no longer do the read and the
-write in the same clock cycle. However, I realized that the design
-(unexpectedly) DOES work in hardware where it (expectedly) fails in simulation.
+But changing the RAM to do both read and write on the falling edge will of
+course not work without changing the design, because one can no longer do the
+read and the write in the same clock cycle. However, I discovered that the design
+(unexpectedly) DOES work in hardware, whereas it (expectedly) fails in simulation.
 After investigating this discrepancy it appears the Vivado synthesis
 incorrectly clocks the write signal to the Block RAM on the rising edge,
 despite having specified falling edge in the RTL. I've reported this issue in
 the Xilinx forum
 [here](https://forums.xilinx.com/t5/Synthesis/falling-edge-not-supported-in-inferred-RAM/m-p/1039276).
 
-Despite this setback, and while waiting for a response from Xilinx, I'm
-proceeding by first of all removing this simultaneous
-read-and-write-in-same-cycle behaviour.  This will lead to instructions like
-INC taking one more clock cycle than before, but on the other hand will more
-closely mimic the real 6502/65C02 processor.
+Despite this setback, and while waiting for a response from Xilinx, I've
+removed this simultaneous read-and-write-in-same-cycle behaviour.  This will
+lead to instructions like INC taking one more clock cycle than before, but on
+the other hand will more closely mimic the real 6502/65C02 processor.
+
+Next step is to implement decimal mode, and then add the two VIA I/O controllers.
 

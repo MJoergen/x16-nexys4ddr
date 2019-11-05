@@ -32,7 +32,7 @@ begin
 
    p_write : process (clk_i)
    begin
-      if rising_edge(clk_i) then
+      if falling_edge(clk_i) then
          if wr_en_i = '1' then
             mem_r(to_integer(addr_i)) <= wr_data_i;
          end if;

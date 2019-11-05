@@ -13,8 +13,8 @@ entity x16 is
       sw_i        : in    std_logic_vector(15 downto 0);   -- Used for debugging.
       led_o       : out   std_logic_vector(15 downto 0);   -- Used for debugging.
 
-      ps2_clk_io  : inout std_logic;                       -- Keyboard
-      ps2_data_io : inout std_logic;
+      ps2_clk_i   : in    std_logic;                       -- Keyboard
+      ps2_data_i  : in    std_logic;
 
       sd_reset_o  : out   std_logic;                       -- SD card
       sd_dat_io   : inout std_logic_vector(3 downto 0);    -- miso, cs

@@ -306,9 +306,9 @@ architecture structural of microcode is
 
 -- 0F BBR0 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR0 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -466,9 +466,9 @@ architecture structural of microcode is
 
 -- 1F BBR1 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR1 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -626,9 +626,9 @@ architecture structural of microcode is
 
 -- 2F BBR2 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR2 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -786,9 +786,9 @@ architecture structural of microcode is
 
 -- 3F BBR3 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR3 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -946,9 +946,9 @@ architecture structural of microcode is
 
 -- 4F BBR4 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR4 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -1056,7 +1056,7 @@ architecture structural of microcode is
 
 -- 5A PHY
       ADDR_PC + PC_INC,
-      ADDR_LO + REG_YR + ALU_STA + DATA_ALU + SP_DEC + LAST,
+      ADDR_SP + REG_YR + ALU_STA + DATA_ALU + SP_DEC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -1106,9 +1106,9 @@ architecture structural of microcode is
 
 -- 5F BBR5 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR5 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -1266,9 +1266,9 @@ architecture structural of microcode is
 
 -- 6F BBR6 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR6 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -1426,9 +1426,9 @@ architecture structural of microcode is
 
 -- 7F BBR7 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBR7 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -1586,9 +1586,9 @@ architecture structural of microcode is
 
 -- 8F BBS0 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS0 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -1746,9 +1746,9 @@ architecture structural of microcode is
 
 -- 9F BBS1 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS1 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -1906,9 +1906,9 @@ architecture structural of microcode is
 
 -- AF BBS2 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS2 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -2066,9 +2066,9 @@ architecture structural of microcode is
 
 -- BF BBS3 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS3 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -2226,9 +2226,9 @@ architecture structural of microcode is
 
 -- CF BBS4 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS4 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -2336,7 +2336,7 @@ architecture structural of microcode is
 
 -- DA PHX
       ADDR_PC + PC_INC,
-      ADDR_LO + REG_XR + ALU_STA + DATA_ALU + SP_DEC + LAST,
+      ADDR_SP + REG_XR + ALU_STA + DATA_ALU + SP_DEC + LAST,
       INVALID,
       INVALID,
       INVALID,
@@ -2386,9 +2386,9 @@ architecture structural of microcode is
 
 -- DF BBS5 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS5 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -2546,9 +2546,9 @@ architecture structural of microcode is
 
 -- EF BBS6 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS6 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,
@@ -2706,9 +2706,9 @@ architecture structural of microcode is
 
 -- FF BBS7 d,r
       ADDR_PC + PC_INC,
-      ADDR_PC + MR_DATA + PC_INC,
+      ADDR_PC + PC_INC + LO_DATA,
+      ADDR_LO + MR_DATA,
       ADDR_PC + PC_BBS7 + LAST,
-      INVALID,
       INVALID,
       INVALID,
       INVALID,

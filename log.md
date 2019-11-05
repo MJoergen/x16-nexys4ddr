@@ -171,7 +171,12 @@ removed this simultaneous read-and-write-in-same-cycle behaviour.  This will
 lead to instructions like INC taking one more clock cycle than before, but on
 the other hand will more closely mimic the real 6502/65C02 processor.
 
-I've added support for decimal mode. That was surprisingly easy.
+I've added support for decimal mode. I've added the two VIA I/O controllers, as
+well as keyboard support and ROM banking.
 
-Next step is to add the two VIA I/O controllers.
+I'm now running the official r34 ROM on the Nexys 4 DDR board !!
+
+Next step is to get the SD card working, as well implementing the remaining
+VERA modes.
+
 

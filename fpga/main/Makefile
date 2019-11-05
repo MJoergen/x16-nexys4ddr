@@ -22,11 +22,12 @@ SAVE     = test/tb.gtkw
 sim: $(SOURCES) rom.txt
 	ghdl -i --std=08 --work=work $(SOURCES)
 	ghdl -m --std=08 --ieee=synopsys -frelaxed-rules $(TB)
-	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=650000ns
+	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=2650us
 	gtkwave $(WAVE) $(SAVE)
 
 # Uncomment the line below to run the 6502 functional test suite.
-rom.txt: test/6502_functional_test.s
+rom.txt: test/65C02_extended_opcodes_test.s
+#rom.txt: test/6502_functional_test.s
 #rom.txt: test/rom.s
 	ca65 $^ -o test/rom.o
 	ld65 -vm -m test/rom.map -C test/ld.cfg test/rom.o

@@ -14,15 +14,22 @@ SOURCES += main/cpu_65c02/pc.vhd main/cpu_65c02/sp.vhd main/cpu_65c02/sr.vhd mai
 SOURCES += main/cpu_65c02/yr.vhd main/cpu_65c02/zp.vhd main/cpu_65c02/mr.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file
-fpga: x16.bit
+fpga: x16-rom.bit
 	djtgcfg prog -d Nexys4DDR -i 0 --file $<
 
+x16-rom.bit: x16.bit x16.mmi rom.mem
+	updatemem -debug -meminfo x16.mmi -data rom.mem -proc i_main/i_rom -bit x16.bit -out x16-rom.bit -force > updatemem.txt
+
+rom.mem: main/rom.txt
+	echo "@0000" > $@
+	cat $< >> $@
+
 # Generate the bit-file used to configure the FPGA
-x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile main/rom.txt
+x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
 
 # Generate the build script used by Vivado
-x16.tcl: Makefile
+x16.tcl: Makefile rom.tcl
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
 	echo "read_xdc x16.xdc" >> $@
@@ -32,6 +39,7 @@ x16.tcl: Makefile
 	echo "place_design" >> $@
 	echo "route_design" >> $@
 	echo "write_checkpoint -force x16.dcp" >> $@
+	echo "source rom.tcl" >> $@
 	echo "write_bitstream -force x16.bit" >> $@
 	echo "exit" >> $@
 
@@ -43,8 +51,12 @@ clean:
 	make -C main clean
 	rm -rf usage_statistics_webtalk.*
 	rm -rf vivado*
+	rm -rf updatemem*
+	rm -rf x16-rom.bit
 	rm -rf x16.bit
 	rm -rf x16.dcp
 	rm -rf x16.tcl
 	rm -rf .Xil
 	rm -rf .cache
+	rm -rf rom.mem
+	rm -rf x16.mmi

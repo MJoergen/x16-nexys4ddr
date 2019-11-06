@@ -40,9 +40,9 @@ architecture structural of main is
    signal rom_cs_s        : std_logic;   -- 0xC000 - 0xFFFF
 
    -- ROM and RAM banking
-   signal hiram_addr_s    : std_logic_vector(18 downto 0);  -- 512 kB
+   signal hiram_addr_s    : std_logic_vector(16 downto 0);  -- 128 kB
    signal rom_addr_s      : std_logic_vector(16 downto 0);  -- 128 kB
-   signal hiram_bank_s    : std_logic_vector( 5 downto 0);  -- 64 pages of  8 kB = 512 kB
+   signal hiram_bank_s    : std_logic_vector( 3 downto 0);  -- 16 pages of  8 kB = 128 kB
    signal rom_bank_s      : std_logic_vector( 2 downto 0);  --  8 pages of 16 kB = 128 kB
 
    -- Write enable
@@ -77,7 +77,7 @@ begin
    -- VIA1 port mapping
    -----------------------
 
-   hiram_bank_s <= via1_porta_s(5 downto 0); -- TBD: Should be 7 downto 0.
+   hiram_bank_s <= via1_porta_s(3 downto 0); -- TBD: Should be 7 downto 0.
    rom_bank_s   <= via1_portb_s(2 downto 0);
 
 
@@ -194,7 +194,7 @@ begin
 
    i_hiram : entity work.ram
       generic map (
-         G_ADDR_BITS => 19                   -- 2^19 = 512 kB
+         G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
          clk_i     => clk_i,
@@ -213,11 +213,11 @@ begin
    i_rom : entity work.rom
       generic map (
          G_INIT_FILE => G_ROM_INIT_FILE,
-         G_ADDR_BITS => 17                   -- 2^17 = 128 kB
+         G_ADDR_BITS => 14                   -- 2^17 = 128 kB
       )
       port map (
          clk_i     => clk_i,
-         addr_i    => rom_addr_s,
+         addr_i    => rom_addr_s(13 downto 0),
          rd_en_i   => rom_rd_en_s,
          rd_data_o => rom_rd_data_s
       ); -- i_rom

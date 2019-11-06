@@ -110,7 +110,7 @@ begin
 
    p_debug : process (cpu_clk_i)
    begin
-      if rising_edge(cpu_clk_i) then
+      if falling_edge(cpu_clk_i) then
          if cpu_vram_wr_en_s = '1' then
             cpu_debug_o <= cpu_vram_addr_s;
          end if;
@@ -171,7 +171,7 @@ begin
          G_SIZE => 36
       )
       port map (
-         src_clk_i               => cpu_clk_i,
+         src_clk_i               => not cpu_clk_i,
          src_dat_i(17 downto  0) => cpu_map_base_s,
          src_dat_i(35 downto 18) => cpu_tile_base_s,
          dst_clk_i               => vga_clk_i,
@@ -210,7 +210,7 @@ begin
       port map (
          src_clk_i   => vga_clk_i,
          src_pulse_i => vga_vsync_irq_s,
-         dst_clk_i   => cpu_clk_i,
+         dst_clk_i   => not cpu_clk_i,
          dst_pulse_o => cpu_vsync_irq_s
       ); -- i_pulse_conv
 

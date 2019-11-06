@@ -1,11 +1,16 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
+-- This block instantiates everything else except the VERA.
+-- I.e here you have the CPU, ROM, RAM, and VIA.
+--
+-- Notice that the ROM, RAM, and VIA have inverted clocks. This is to simulate
+-- a conbinatiorial read.
+
 entity main is
    generic (
       G_ROM_INIT_FILE : string
    );
-
    port (
       clk_i          : in    std_logic;
       rst_i          : in    std_logic;
@@ -132,7 +137,7 @@ begin
          G_ADDR_BITS => 15                   -- 2^15 = 32 kB
       )
       port map (
-         clk_i     => clk_i,
+         clk_i     => not clk_i,
          addr_i    => cpu_addr_s(14 downto 0),
          wr_en_i   => loram_wr_en_s,
          wr_data_i => cpu_wr_data_s,
@@ -156,7 +161,7 @@ begin
    
    i_via1 : entity work.via
       port map (
-         clk_i     => clk_i,
+         clk_i     => not clk_i,
          rst_i     => rst_i,
          addr_i    => cpu_addr_s(3 downto 0),
          wr_en_i   => via1_wr_en_s,
@@ -174,7 +179,7 @@ begin
    
    i_via2 : entity work.via
       port map (
-         clk_i       => clk_i,
+         clk_i       => not clk_i,
          rst_i       => rst_i,
          addr_i      => cpu_addr_s(3 downto 0),
          wr_en_i     => via2_wr_en_s,
@@ -197,7 +202,7 @@ begin
          G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
-         clk_i     => clk_i,
+         clk_i     => not clk_i,
          addr_i    => hiram_addr_s,
          wr_en_i   => hiram_wr_en_s,
          wr_data_i => cpu_wr_data_s,
@@ -216,7 +221,7 @@ begin
          G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
-         clk_i     => clk_i,
+         clk_i     => not clk_i,
          addr_i    => rom_addr_s,
          rd_en_i   => rom_rd_en_s,
          rd_data_o => rom_rd_data_s

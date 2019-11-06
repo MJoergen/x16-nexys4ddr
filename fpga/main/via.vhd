@@ -36,7 +36,7 @@ begin
 
    p_write : process (clk_i)
    begin
-      if falling_edge(clk_i) then
+      if rising_edge(clk_i) then
          if wr_en_i = '1' then
             case addr_i is
                when "0000" => portb_r <= wr_data_i;
@@ -66,7 +66,7 @@ begin
 
    p_read : process (clk_i)
    begin
-      if falling_edge(clk_i) then
+      if rising_edge(clk_i) then
          if rd_en_i = '1' then
             case addr_i is
                when "0000" => rd_data_o <= portb_io;

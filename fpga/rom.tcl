@@ -10,6 +10,7 @@ set memSort [lsort -decreasing $memInsts]
 
 foreach memInst $memSort {
    set loc              [get_property LOC              $memInst]
+   set loc              [string trimleft $loc RAMB36_]
    set bram_addr_begin  [get_property bram_addr_begin  $memInst]
    set bram_addr_end    [get_property bram_addr_end    $memInst]
    set bram_slice_begin [get_property bram_slice_begin $memInst]

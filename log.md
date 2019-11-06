@@ -183,3 +183,7 @@ why this takes so long, and I've filed yet another issue on Xilinx' forum.
 Next step is to get the SD card working (i.e. the VERA SPI support), implement
 RAM banking, and implement the remaining VERA modes.
 
+## 2019-11-6
+I've added RAM banking, but only for 128 kB so far. I've added VSYNC interrupt
+from the VERA, which the KERNAL uses as a 60 Hz timer.
+

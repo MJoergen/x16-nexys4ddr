@@ -13,8 +13,8 @@ entity x16 is
       sw_i        : in    std_logic_vector(15 downto 0);   -- Used for debugging.
       led_o       : out   std_logic_vector(15 downto 0);   -- Used for debugging.
 
-      ps2_clk_i   : in    std_logic;                       -- Keyboard
-      ps2_data_i  : in    std_logic;
+      ps2_clk_io  : inout std_logic;                       -- Keyboard
+      ps2_data_io : inout std_logic;
 
       sd_reset_o  : out   std_logic;                       -- SD card
       sd_dat_io   : inout std_logic_vector(3 downto 0);    -- miso, cs
@@ -89,6 +89,8 @@ begin
          vga_col_o     => vga_col_o
       ); -- i_vera
 
+   sd_reset_o <= '0';   
+
 
    --------------------------------------------------
    -- Instantiate main computer (CPU,RAM,ROM,etc.)
@@ -103,8 +105,8 @@ begin
          rst_i          => main_rst_s(3),
          nmi_i          => '0',
          irq_i          => '0',
-         ps2_clk_i      => ps2_clk_i,
-         ps2_data_i     => ps2_data_i,
+         ps2_clk_io     => ps2_clk_io,
+         ps2_data_io    => ps2_data_io,
          vera_addr_o    => main_addr_s(2 downto 0),
          vera_wr_en_o   => main_wr_en_s,
          vera_wr_data_o => main_wr_data_s,

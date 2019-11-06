@@ -53,11 +53,11 @@ set_property -dict { PACKAGE_PIN V11 IOSTANDARD LVCMOS33 } [get_ports { led_o[15
 
 set_property -dict { PACKAGE_PIN C12 IOSTANDARD LVCMOS33 } [get_ports { rstn_i }];           # CPU_RESETN
 
-set_property -dict { PACKAGE_PIN F4  IOSTANDARD LVCMOS33 } [get_ports { ps2_clk_i }];        # PS2_CLK
-set_property -dict { PACKAGE_PIN B2  IOSTANDARD LVCMOS33 } [get_ports { ps2_data_i }];       # PS2_DATA
+set_property -dict { PACKAGE_PIN F4  IOSTANDARD LVCMOS33 } [get_ports { ps2_clk_io }];       # PS2_CLK
+set_property -dict { PACKAGE_PIN B2  IOSTANDARD LVCMOS33 } [get_ports { ps2_data_io }];      # PS2_DATA
 
-set_property PULLUP TRUE [get_ports { ps2_clk_i } ]
-set_property PULLUP TRUE [get_ports { ps2_data_i } ]
+set_property PULLUP TRUE [get_ports { ps2_clk_io } ]
+set_property PULLUP TRUE [get_ports { ps2_data_io } ]
 
 set_property -dict { PACKAGE_PIN E2  IOSTANDARD LVCMOS33 } [get_ports { sd_reset_o }];       # SD_RESET
 set_property -dict { PACKAGE_PIN F1  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[2] }];     # SD_DAT2
@@ -72,6 +72,8 @@ set_property PULLUP TRUE [get_ports { sd_dat_io[0] } ]
 set_property PULLUP TRUE [get_ports { sd_dat_io[1] } ]
 set_property PULLUP TRUE [get_ports { sd_dat_io[2] } ]
 set_property PULLUP TRUE [get_ports { sd_dat_io[3] } ]
+set_property PULLUP TRUE [get_ports { sd_cmd_io } ]
+set_property PULLUP TRUE [get_ports { sd_sck_io } ]
 
 # Clock definition
 create_clock -name sys_clk -period 10.00 [get_ports {clk_i}];

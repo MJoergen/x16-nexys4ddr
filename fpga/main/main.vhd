@@ -7,18 +7,18 @@ entity main is
    );
 
    port (
-      clk_i          : in  std_logic;
-      rst_i          : in  std_logic;
-      nmi_i          : in  std_logic;
-      irq_i          : in  std_logic;
-      ps2_clk_i      : in  std_logic;
-      ps2_data_i     : in  std_logic;
-      vera_addr_o    : out std_logic_vector(2 downto 0);
-      vera_wr_en_o   : out std_logic;
-      vera_wr_data_o : out std_logic_vector(7 downto 0);
-      vera_rd_en_o   : out std_logic;
-      vera_rd_data_i : in  std_logic_vector(7 downto 0);
-      vera_debug_o   : out std_logic_vector(15 downto 0)
+      clk_i          : in    std_logic;
+      rst_i          : in    std_logic;
+      nmi_i          : in    std_logic;
+      irq_i          : in    std_logic;
+      ps2_clk_io     : inout std_logic;
+      ps2_data_io    : inout std_logic;
+      vera_addr_o    : out   std_logic_vector(2 downto 0);
+      vera_wr_en_o   : out   std_logic;
+      vera_wr_data_o : out   std_logic_vector(7 downto 0);
+      vera_rd_en_o   : out   std_logic;
+      vera_rd_data_i : in    std_logic_vector(7 downto 0);
+      vera_debug_o   : out   std_logic_vector(15 downto 0)
    );
 end main;
 
@@ -115,12 +115,10 @@ begin
          rd_en_i   => via2_rd_en_s,
          rd_data_o => via2_rd_data_s,
          porta_io  => via2_porta_s,
-         portb_io  => via2_portb_s
+         portb_io(7 downto 2)  => via2_portb_s(7 downto 2),
+         portb_io(1)  => ps2_clk_io, -- Keyboard / Mouse
+         portb_io(0)  => ps2_data_io
       ); -- i_via2
-
-   -- Keyboard / Mouse
-   via2_portb_s(0) <= ps2_data_i;
-   via2_portb_s(1) <= ps2_clk_i;
 
 
    --------------------

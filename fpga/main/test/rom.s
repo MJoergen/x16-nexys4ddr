@@ -3,6 +3,17 @@
 .segment "CODE"
 
 main:
+   SEI         ; Disable CPU interrupts
+   LDA #$01
+   STA $9F26   ; Enable VERA VSYNC IRQ
+   STA $9F27   ; Clear pending VERA VSYNC IRQ
+
+wat:
+   LDA $9F27   ; Wait until next interrupt
+   BEQ wat
+   STA $9F27   ; Clear pending
+
+
    LDA #$00    ; Select address port 0
    STA $9F25
 
@@ -40,6 +51,10 @@ main:
 
    NOP
    NOP
+
+   LDA $9F27
+error:
+   BEQ error   ; There should be no pending now.
 
    LDA #$50    ; Set address to 0x02150 and increment to 1.
    STA $9F20

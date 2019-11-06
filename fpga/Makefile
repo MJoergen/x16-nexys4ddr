@@ -28,7 +28,7 @@ x16.tcl: Makefile
 	echo "read_xdc x16.xdc" >> $@
 	echo "set_param synth.elaboration.rodinMoreOptions \"rt::set_parameter max_loop_limit 200000\"" >> $@
 	echo "synth_design -top x16 -part xc7a100tcsg324-1 -flatten_hierarchy none" >> $@
-	echo "opt_design" >> $@
+	echo "opt_design -directive NoBramPowerOpt" >> $@
 	echo "place_design" >> $@
 	echo "route_design" >> $@
 	echo "write_checkpoint -force x16.dcp" >> $@

@@ -26,9 +26,9 @@ sim: $(SOURCES) rom.txt
 	gtkwave $(WAVE) $(SAVE)
 
 # Uncomment the line below to run the 6502 functional test suite.
-rom.txt: test/65C02_extended_opcodes_test.s
+#rom.txt: test/65C02_extended_opcodes_test.s
 #rom.txt: test/6502_functional_test.s
-#rom.txt: test/rom.s
+rom.txt: test/rom.s
 	ca65 $^ -o test/rom.o
 	ld65 -vm -m test/rom.map -C test/ld.cfg test/rom.o
 	./bin2hex.py rom.bin rom.txt

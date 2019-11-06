@@ -21,6 +21,7 @@ entity vera is
       cpu_rd_en_i   : in  std_logic;
       cpu_rd_data_o : out std_logic_vector( 7 downto 0);
       cpu_debug_o   : out std_logic_vector(16 downto 0);
+      cpu_irq_o     : out std_logic;
 
       vga_clk_i     : in  std_logic;                        -- 25.2 MHz
       vga_hs_o      : out std_logic;
@@ -50,6 +51,8 @@ architecture structural of vera is
    -- configuration registers
    signal cpu_map_base_s     : std_logic_vector(17 downto 0);
    signal cpu_tile_base_s    : std_logic_vector(17 downto 0);
+   -- interrupt
+   signal cpu_vsync_irq_s    : std_logic;
 
 
    ---------------------------------------------
@@ -67,6 +70,8 @@ architecture structural of vera is
    -- configuration registers
    signal vga_map_base_r     : std_logic_vector(17 downto 0);
    signal vga_tile_base_r    : std_logic_vector(17 downto 0);
+   -- interrupt
+   signal vga_vsync_irq_s    : std_logic;
 
 begin
 
@@ -82,6 +87,7 @@ begin
          wr_data_i      => cpu_wr_data_i,
          rd_en_i        => cpu_rd_en_i,
          rd_data_o      => cpu_rd_data_o,
+         irq_o          => cpu_irq_o,
          vram_addr_o    => cpu_vram_addr_s,
          vram_wr_en_o   => cpu_vram_wr_en_s,
          vram_wr_data_o => cpu_vram_wr_data_s,
@@ -93,7 +99,8 @@ begin
          pal_rd_en_o    => cpu_pal_rd_en_s,
          pal_rd_data_i  => cpu_pal_rd_data_s,
          map_base_o     => cpu_map_base_s,
-         tile_base_o    => cpu_tile_base_s
+         tile_base_o    => cpu_tile_base_s,
+         vsync_irq_i    => cpu_vsync_irq_s
       ); -- i_cpu
 
 
@@ -188,11 +195,24 @@ begin
          pal_rd_data_i  => vga_pal_rd_data_s,
          map_base_i     => vga_map_base_r,
          tile_base_i    => vga_tile_base_r,
+         vsync_irq_o    => vga_vsync_irq_s,
          hs_o           => vga_hs_o,
          vs_o           => vga_vs_o,
          col_o          => vga_col_o
       ); -- i_vga
 
+
+   --------------------------
+   -- Clock domain crossing
+   --------------------------
+
+   i_pulse_conv : entity work.pulse_conv
+      port map (
+         src_clk_i   => vga_clk_i,
+         src_pulse_i => vga_vsync_irq_s,
+         dst_clk_i   => cpu_clk_i,
+         dst_pulse_o => cpu_vsync_irq_s
+      ); -- i_pulse_conv
 
 end architecture structural;
 

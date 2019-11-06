@@ -1,5 +1,10 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std_unsigned.all;
+
+-- A VERY basic implementation of the VIA 6522 chip.
+-- Currently, it only suppors the two general purpose
+-- I/O ports, as well as the free-running timer 1.
 
 entity via is
    port (
@@ -17,10 +22,11 @@ end via;
 
 architecture structural of via is
 
-   signal porta_r : std_logic_vector(7 downto 0);
-   signal portb_r : std_logic_vector(7 downto 0);
-   signal dira_r  : std_logic_vector(7 downto 0);  -- 0 means input, 1 means output
-   signal dirb_r  : std_logic_vector(7 downto 0);
+   signal porta_r  : std_logic_vector( 7 downto 0);
+   signal portb_r  : std_logic_vector( 7 downto 0);
+   signal dira_r   : std_logic_vector( 7 downto 0);  -- 0 means input, 1 means output
+   signal dirb_r   : std_logic_vector( 7 downto 0);
+   signal timer1_r : std_logic_vector(15 downto 0);
 
 begin
 
@@ -40,12 +46,15 @@ begin
                when others => null;
             end case;
          end if;
+
+         timer1_r <= timer1_r - 1;
          
          if rst_i = '1' then
-            porta_r <= (others => '0');
-            portb_r <= (others => '0');
-            dira_r  <= (others => '0');
-            dirb_r  <= (others => '0');
+            porta_r  <= (others => '0');
+            portb_r  <= (others => '0');
+            dira_r   <= (others => '0');
+            dirb_r   <= (others => '0');
+            timer1_r <= (others => '0');
          end if;
       end if;
    end process p_write;
@@ -64,6 +73,8 @@ begin
                when "0001" => rd_data_o <= porta_io;
                when "0010" => rd_data_o <= dirb_r;
                when "0011" => rd_data_o <= dira_r;
+               when "0100" => rd_data_o <= timer1_r(7 downto 0);
+               when "0101" => rd_data_o <= timer1_r(15 downto 8);
                when others => rd_data_o <= (others => '0');
             end case;
          end if;

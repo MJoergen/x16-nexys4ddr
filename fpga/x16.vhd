@@ -42,6 +42,7 @@ architecture structural of x16 is
    signal main_rd_data_s    : std_logic_vector( 7 downto 0);
    signal main_debug_s      : std_logic_vector(15 downto 0);
    signal main_vera_debug_s : std_logic_vector(16 downto 0);
+   signal main_vera_irq_s   : std_logic;
 
    signal main_rst_s        : std_logic_vector( 3 downto 0) := (others => '1');
 
@@ -83,6 +84,7 @@ begin
          cpu_rd_en_i   => main_rd_en_s,
          cpu_rd_data_o => main_rd_data_s,
          cpu_debug_o   => main_vera_debug_s,
+         cpu_irq_o     => main_vera_irq_s,
          vga_clk_i     => vga_clk_s,
          vga_hs_o      => vga_hs_o,
          vga_vs_o      => vga_vs_o,
@@ -104,7 +106,7 @@ begin
          clk_i          => main_clk_s,
          rst_i          => main_rst_s(3),
          nmi_i          => '0',
-         irq_i          => '0',
+         irq_i          => main_vera_irq_s,
          ps2_clk_io     => ps2_clk_io,
          ps2_data_io    => ps2_data_io,
          vera_addr_o    => main_addr_s(2 downto 0),

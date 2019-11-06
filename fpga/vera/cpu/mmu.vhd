@@ -36,12 +36,15 @@ entity mmu is
       cpu_wr_data_i  : in  std_logic_vector( 7 downto 0);
       cpu_rd_en_i    : in  std_logic;
       cpu_rd_data_o  : out std_logic_vector( 7 downto 0);
+      cpu_irq_o      : out std_logic;
       -- Internal memory map
       vera_addr_o    : out std_logic_vector(19 downto 0);
       vera_wr_en_o   : out std_logic;
       vera_wr_data_o : out std_logic_vector( 7 downto 0);
       vera_rd_en_o   : out std_logic;
-      vera_rd_data_i : in  std_logic_vector( 7 downto 0)
+      vera_rd_data_i : in  std_logic_vector( 7 downto 0);
+      -- Interrupt
+      vsync_irq_i    : in  std_logic
    );
 end mmu;
 
@@ -52,6 +55,8 @@ architecture structural of mmu is
    signal addr_sel_r    : std_logic := '0';              -- Default port 0
    signal vera_rd_en_d  : std_logic;
    signal mmu_rd_data_r : std_logic_vector( 7 downto 0);
+   signal ien           : std_logic_vector( 7 downto 0) := (others => '0');
+   signal isr           : std_logic_vector( 7 downto 0) := (others => '0');
 
    -- Convert the 4-bit increment setting to a 20-bit increment value.
    function get_increment(arg : std_logic_vector) return std_logic_vector is
@@ -103,9 +108,9 @@ begin
 
                when "101" => addr_sel_r <= cpu_wr_data_i(0);                        -- VERA_ADDR_CTRL
                
-               when "110" => null;                                                  -- VERA_IEN
+               when "110" => ien <= cpu_wr_data_i;                                  -- VERA_IEN
 
-               when "111" => null;                                                  -- VERA_ISR
+               when "111" => isr <= isr and not cpu_wr_data_i;                      -- VERA_ISR
 
                when others => null;
             end case;
@@ -139,13 +144,15 @@ begin
 
                when "101" => mmu_rd_data_r <= "0000000" & addr_sel_r;               -- VERA_ADDR_CTRL
                
-               when "110" => null;                                                  -- VERA_IEN
+               when "110" => mmu_rd_data_r <= ien;                                  -- VERA_IEN
 
-               when "111" => null;                                                  -- VERA_ISR
+               when "111" => mmu_rd_data_r <= isr;                                  -- VERA_ISR
 
                when others => null;
             end case;
          end if; -- if cpu_rd_en_i = '1' then
+
+         isr(0) <= isr(0) or vsync_irq_i;
 
          vera_rd_en_d <= vera_rd_en_o;
       end if;
@@ -164,5 +171,7 @@ begin
    cpu_rd_data_o  <= vera_rd_data_i when vera_rd_en_d = '1' else
                      mmu_rd_data_r;
                    
+   cpu_irq_o <= isr(0);
+
 end architecture structural;
 

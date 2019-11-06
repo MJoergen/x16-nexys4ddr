@@ -9,15 +9,16 @@ use ieee.numeric_std_unsigned.all;
 
 entity sync is
    port (
-      clk_i     : in  std_logic;
+      clk_i       : in  std_logic;
 
-      pix_x_i   : in  std_logic_vector( 9 downto 0);
-      pix_y_i   : in  std_logic_vector( 9 downto 0);
-      col_i     : in  std_logic_vector(11 downto 0);
+      pix_x_i     : in  std_logic_vector( 9 downto 0);
+      pix_y_i     : in  std_logic_vector( 9 downto 0);
+      col_i       : in  std_logic_vector(11 downto 0);
+      vsync_irq_o : out std_logic;
 
-      vga_hs_o  : out std_logic;
-      vga_vs_o  : out std_logic;
-      vga_col_o : out std_logic_vector(11 downto 0)
+      vga_hs_o    : out std_logic;
+      vga_vs_o    : out std_logic;
+      vga_col_o   : out std_logic_vector(11 downto 0)
    );
 end sync;
 
@@ -67,6 +68,13 @@ begin
          -- Make sure colour is black outside visible screen
          if pix_x_i >= H_PIXELS or pix_y_i >= V_PIXELS then
             vga_col_o <= (others => '0');    -- Black
+         end if;
+
+         -- Interrupt when reached bottom right corner.
+         if pix_x_i = H_PIXELS-1 and pix_y_i = V_PIXELS-1 then
+            vsync_irq_o <= '1';
+         else
+            vsync_irq_o <= '0';
          end if;
       end if;
    end process p_vga;

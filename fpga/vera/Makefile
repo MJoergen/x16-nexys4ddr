@@ -3,7 +3,7 @@
 # in your OS repository, otherwise it may be downloaded from here:
 # https://github.com/ghdl/ghdl
 
-SOURCES  = vera.vhd vram.vhd palette.vhd cdc.vhd                  # Mixed clock domain
+SOURCES  = vera.vhd vram.vhd palette.vhd cdc.vhd pulse_conv.vhd   # Mixed clock domain
 SOURCES += cpu/mmu.vhd cpu/config.vhd cpu/cpu.vhd                 # All CPU clock domain
 SOURCES += vga/pix.vhd vga/sync.vhd vga/vga.vhd vga/layer.vhd     # All VGA clock domain
 SOURCES += test/tb.vhd test/cpu_dummy.vhd

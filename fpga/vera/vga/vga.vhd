@@ -18,6 +18,8 @@ entity vga is
       -- configuration settings
       map_base_i     : in  std_logic_vector(17 downto 0);
       tile_base_i    : in  std_logic_vector(17 downto 0);
+      -- interrupt
+      vsync_irq_o    : out std_logic;
       -- VGA output
       hs_o           : out std_logic;
       vs_o           : out std_logic;
@@ -80,14 +82,16 @@ begin
 
    i_sync : entity work.sync
       port map (
-         clk_i     => clk_i,
-         pix_x_i   => pix_x_out_s,
-         pix_y_i   => pix_y_out_s,
-         col_i     => col_out_s,
-         vga_hs_o  => hs_o,
-         vga_vs_o  => vs_o,
-         vga_col_o => col_o
+         clk_i       => clk_i,
+         pix_x_i     => pix_x_out_s,
+         pix_y_i     => pix_y_out_s,
+         col_i       => col_out_s,
+         vsync_irq_o => vsync_irq_o,
+         vga_hs_o    => hs_o,
+         vga_vs_o    => vs_o,
+         vga_col_o   => col_o
       ); -- i_sync
+
 
 end architecture structural;
 

@@ -15,6 +15,7 @@ entity cpu is
       wr_data_i      : in  std_logic_vector( 7 downto 0);
       rd_en_i        : in  std_logic;
       rd_data_o      : out std_logic_vector( 7 downto 0);
+      irq_o          : out std_logic;
 
       -- Video RAM
       vram_addr_o    : out std_logic_vector(16 downto 0);
@@ -30,7 +31,9 @@ entity cpu is
       pal_rd_data_i  : in  std_logic_vector( 7 downto 0);
       -- configruation settings
       map_base_o     : out std_logic_vector(17 downto 0);
-      tile_base_o    : out std_logic_vector(17 downto 0)
+      tile_base_o    : out std_logic_vector(17 downto 0);
+      -- interrupt
+      vsync_irq_i    : in  std_logic
    );
 end cpu;
 
@@ -61,12 +64,15 @@ begin
          cpu_wr_data_i  => wr_data_i,
          cpu_rd_en_i    => rd_en_i,
          cpu_rd_data_o  => rd_data_o,
+         cpu_irq_o      => irq_o,
          -- Internal memory map
          vera_addr_o    => internal_addr_s,
          vera_wr_en_o   => internal_wr_en_s,
          vera_wr_data_o => internal_wr_data_s,
          vera_rd_en_o   => internal_rd_en_s,
-         vera_rd_data_i => internal_rd_data_s
+         vera_rd_data_i => internal_rd_data_s,
+         -- Interrupt
+         vsync_irq_i    => vsync_irq_i
       ); -- i_cpu_interface
 
 

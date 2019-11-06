@@ -4,7 +4,7 @@ XILINX_DIR = /opt/Xilinx/Vivado/2018.2
 # This defines all the source files (VHDL) used in the project
 SOURCES  = x16.vhd
 SOURCES += clk.vhd
-SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd
+SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd vera/pulse_conv.vhd
 SOURCES += vera/cpu/mmu.vhd vera/cpu/cpu.vhd vera/cpu/config.vhd
 SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vhd
 SOURCES += main/main.vhd main/ram.vhd main/rom.vhd main/via.vhd

@@ -213,11 +213,11 @@ begin
    i_rom : entity work.rom
       generic map (
          G_INIT_FILE => G_ROM_INIT_FILE,
-         G_ADDR_BITS => 14                   -- 2^17 = 128 kB
+         G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
          clk_i     => clk_i,
-         addr_i    => rom_addr_s(13 downto 0),
+         addr_i    => rom_addr_s,
          rd_en_i   => rom_rd_en_s,
          rd_data_o => rom_rd_data_s
       ); -- i_rom

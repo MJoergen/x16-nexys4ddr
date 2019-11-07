@@ -9,7 +9,7 @@ architecture simulation of tb is
    signal clk_s          : std_logic;
    signal rst_s          : std_logic;
    signal nmi_s          : std_logic;
-   signal irq_s          : std_logic;
+   signal vera_irq_s     : std_logic;
    signal vera_addr_s    : std_logic_vector(2 downto 0);
    signal vera_wr_en_s   : std_logic;
    signal vera_wr_data_s : std_logic_vector(7 downto 0);
@@ -31,7 +31,6 @@ begin
 
    rst_s <= '1', '0' after 30*4 ns;
    nmi_s <= '0';
-   irq_s <= '0';
 
 
    --------------------------
@@ -46,7 +45,7 @@ begin
          clk_i          => clk_s,
          rst_i          => rst_s,
          nmi_i          => nmi_s,
-         irq_i          => irq_s,
+         irq_i          => vera_irq_s,
          vera_addr_o    => vera_addr_s,
          vera_wr_en_o   => vera_wr_en_s,
          vera_wr_data_o => vera_wr_data_s,
@@ -68,6 +67,7 @@ begin
          wr_data_i      => vera_wr_data_s,
          rd_en_i        => vera_rd_en_s,
          rd_data_o      => vera_rd_data_s,
+         irq_o          => vera_irq_s,
          vram_addr_o    => open,
          vram_wr_en_o   => open,
          vram_wr_data_o => open,
@@ -79,7 +79,8 @@ begin
          pal_rd_en_o    => open,
          pal_rd_data_i  => (others => '0'),
          map_base_o     => open,
-         tile_base_o    => open
+         tile_base_o    => open,
+         vsync_irq_i    => '0'
       ); -- i_vera
 
 end architecture simulation;

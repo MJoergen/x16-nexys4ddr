@@ -29,6 +29,8 @@ end main;
 
 architecture structural of main is
 
+   signal clkn_s          : std_logic;
+
    signal cpu_addr_s      : std_logic_vector( 15 downto 0);
    signal cpu_wr_en_s     : std_logic;
    signal cpu_wr_data_s   : std_logic_vector(  7 downto 0);
@@ -77,6 +79,9 @@ architecture structural of main is
    signal via2_portb_s    : std_logic_vector(7 downto 0);
 
 begin
+
+   clkn_s <= not clk_i;
+
 
    -----------------------
    -- VIA1 port mapping
@@ -137,7 +142,7 @@ begin
          G_ADDR_BITS => 15                   -- 2^15 = 32 kB
       )
       port map (
-         clk_i     => not clk_i,
+         clk_i     => clkn_s,
          addr_i    => cpu_addr_s(14 downto 0),
          wr_en_i   => loram_wr_en_s,
          wr_data_i => cpu_wr_data_s,
@@ -161,7 +166,7 @@ begin
 
    i_via1 : entity work.via
       port map (
-         clk_i     => not clk_i,
+         clk_i     => clkn_s,
          rst_i     => rst_i,
          addr_i    => cpu_addr_s(3 downto 0),
          wr_en_i   => via1_wr_en_s,
@@ -179,7 +184,7 @@ begin
 
    i_via2 : entity work.via
       port map (
-         clk_i       => not clk_i,
+         clk_i      => clkn_s,
          rst_i       => rst_i,
          addr_i      => cpu_addr_s(3 downto 0),
          wr_en_i     => via2_wr_en_s,
@@ -202,7 +207,7 @@ begin
          G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
-         clk_i     => not clk_i,
+         clk_i     => clkn_s,
          addr_i    => hiram_addr_s,
          wr_en_i   => hiram_wr_en_s,
          wr_data_i => cpu_wr_data_s,
@@ -221,7 +226,7 @@ begin
          G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
-         clk_i     => not clk_i,
+         clk_i     => clkn_s,
          addr_i    => rom_addr_s,
          rd_en_i   => rom_rd_en_s,
          rd_data_o => rom_rd_data_s

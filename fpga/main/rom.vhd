@@ -18,6 +18,12 @@ end rom;
 
 architecture structural of rom is
 
+   constant C_SIMULATION : boolean :=
+   -- pragma synthesis_off
+   true or
+   -- pragma synthesis_on
+   false;
+
    -- This defines a type containing an array of bytes
    type mem_t is array (0 to 2**G_ADDR_BITS-1) of std_logic_vector(7 downto 0);
 
@@ -27,20 +33,22 @@ architecture structural of rom is
       variable RamFileLine : line;
       variable RAM : mem_t := (others => (others => '0'));
    begin
-      file_open(RamFile, RamFileName, read_mode);
-      for i in mem_t'range loop
-         readline (RamFile, RamFileLine);
-         hread (RamFileLine, RAM(i));
-         if endfile(RamFile) then
-            return RAM;
-         end if;
-      end loop;
+      if C_SIMULATION then
+         file_open(RamFile, RamFileName, read_mode);
+         for i in mem_t'range loop
+            readline (RamFile, RamFileLine);
+            hread (RamFileLine, RAM(i));
+            if endfile(RamFile) then
+               return RAM;
+            end if;
+         end loop;
+      end if;
       return RAM;
    end function;
 
    -- Initialize memory contents
---   signal mem_r : mem_t := InitRamFromFile(G_INIT_FILE);
-   signal mem_r : mem_t := (others => (others => '0'));
+   signal mem_r : mem_t := InitRamFromFile(G_INIT_FILE);
+--   signal mem_r : mem_t := (others => (others => '0'));
 
 begin
 

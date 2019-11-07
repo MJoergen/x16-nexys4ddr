@@ -187,3 +187,19 @@ RAM banking, and implement the remaining VERA modes.
 I've added RAM banking, but only for 128 kB so far. I've added VSYNC interrupt
 from the VERA, which the KERNAL uses as a 60 Hz timer.
 
+## 2019-11-7
+I've agreed with PeriFractic to make the repository private, because there is
+a copyright infringement. In the interest of remaining good friends, it seemed
+best to make the repository private.
+
+I found a work-around for the Vivado bug that mixed rising and falling edge
+clocks on the BRAMs. The solution is to use rising\_edge everywhere, but to
+invert the clock inputs to the specific blocks, i.e. RAM, ROM, VIA, and VERA.
+
+I found a solution for the very slow build times (more than two hours, when the
+ROM is 128 kB). The solution involves quite a bit of tcl magic, but it appears
+to work now. It remains to be seen, how stable this solution is.
+
+On the other hand, the current version of the project doesn't work, so I've
+introduced a bug somewhere.
+

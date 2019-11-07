@@ -18,18 +18,18 @@ fpga: x16-rom.bit
 	djtgcfg prog -d Nexys4DDR -i 0 --file $<
 
 x16-rom.bit: x16.bit x16.mmi rom.mem
-	updatemem -debug -meminfo x16.mmi -data rom.mem -proc dummy -bit x16.bit -out x16-rom.bit -force > updatemem.txt
+	bash -c "source $(XILINX_DIR)/settings64.sh ; updatemem -debug -meminfo x16.mmi -data rom.mem -proc dummy -bit x16.bit -out x16-rom.bit -force > updatemem.txt"
 
 rom.mem: main/rom.txt
 	echo "@0000" > $@
 	cat $< >> $@
 
 # Generate the bit-file used to configure the FPGA
-x16.bit: x16.tcl $(SOURCES) x16.xdc Makefile
+x16.bit: x16.tcl $(SOURCES) x16.xdc
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
 
 # Generate the build script used by Vivado
-x16.tcl: Makefile rom.tcl
+x16.tcl: rom.tcl
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
 	echo "read_xdc x16.xdc" >> $@

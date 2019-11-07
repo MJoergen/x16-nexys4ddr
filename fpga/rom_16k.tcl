@@ -1,7 +1,7 @@
 set fp [open x16.mmi w]
 
 puts $fp "<MemInfo Version=\"1\" Minor=\"1\">"
-puts $fp "   <Processor Endianness=\"Little\" InstPath=\"i_main/i_rom\">"
+puts $fp "   <Processor Endianness=\"Little\" InstPath=\"dummy\">"
 puts $fp "      <AddressSpace Name=\"ROM\" Begin=\"0\" End=\"16383\">"
 puts $fp "         <BusBlock>"
 

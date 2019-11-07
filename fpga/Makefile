@@ -18,7 +18,7 @@ fpga: x16-rom.bit
 	djtgcfg prog -d Nexys4DDR -i 0 --file $<
 
 x16-rom.bit: x16.bit x16.mmi rom.mem
-	updatemem -debug -meminfo x16.mmi -data rom.mem -proc i_main/i_rom -bit x16.bit -out x16-rom.bit -force > updatemem.txt
+	updatemem -debug -meminfo x16.mmi -data rom.mem -proc dummy -bit x16.bit -out x16-rom.bit -force > updatemem.txt
 
 rom.mem: main/rom.txt
 	echo "@0000" > $@

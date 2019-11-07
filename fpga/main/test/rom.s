@@ -6,13 +6,21 @@ main:
    SEI         ; Disable CPU interrupts
    LDA #$01
    STA $9F26   ; Enable VERA VSYNC IRQ
+   LDA #$FF
    STA $9F27   ; Clear pending VERA VSYNC IRQ
+
+   LDA $9F27   ; Should be zero.
+error1:
+   BNE error1
 
 wat:
    LDA $9F27   ; Wait until next interrupt
    BEQ wat
    STA $9F27   ; Clear pending
 
+   LDA $9F27   ; Should be zero.
+error2:
+   BNE error2
 
    LDA #$00    ; Select address port 0
    STA $9F25
@@ -52,9 +60,9 @@ wat:
    NOP
    NOP
 
-   LDA $9F27
+   LDA $9F27   ; Should be zero
 error:
-   BEQ error   ; There should be no pending now.
+   BNE error   ; There should be no pending now.
 
    LDA #$50    ; Set address to 0x02150 and increment to 1.
    STA $9F20

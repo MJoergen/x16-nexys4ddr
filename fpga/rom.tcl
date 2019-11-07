@@ -7,6 +7,9 @@
 #   updatemem -debug  -meminfo x16.mmi  -data rom.mem  -proc dummy  -bit x16.bit  -out x16-rom.bit
 #
 # This script assumes the total ROM size is 128 kB.
+#
+# This script is based on information in the document:
+# https://www.xilinx.com/support/documentation/sw_manuals/xilinx2018_1/ug898-vivado-embedded-design.pdf
 
 # Get a list of the BRAMs for the ROM. There are 32 in total.
 set memInsts [get_cells -hier -filter {PRIMITIVE_TYPE =~ BMEM.*.* && NAME =~ *i_rom*}]

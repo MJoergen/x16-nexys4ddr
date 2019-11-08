@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Mon Nov  4 09:44:42 2019
+[*] Fri Nov  8 05:41:58 2019
 [*]
-[dumpfile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
-[dumpfile_mtime] "Mon Nov  4 09:41:18 2019"
-[dumpfile_size] 10639634
-[savefile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
-[timestart] 239356900000
-[size] 1390 780
-[pos] -1 -1
-*-27.276321 239812800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/mike/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
+[dumpfile_mtime] "Fri Nov  8 04:54:55 2019"
+[dumpfile_size] 10161264
+[savefile] "/home/mike/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
+[timestart] 0
+[size] 1920 1135
+[pos] -256 -190
+*-26.568762 239812800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb.
 [treeopen] top.tb.i_main.
@@ -19,11 +19,13 @@
 [sst_width] 223
 [signals_width] 348
 [sst_expanded] 1
-[sst_vpaned_height] 215
+[sst_vpaned_height] 340
 @800200
 -cpu_65c02
 @28
 top.tb.i_main.i_cpu_65c02.clk_i
+@29
+top.tb.i_main.i_cpu_65c02.irq_i
 @22
 #{top.tb.i_main.i_cpu_65c02.addr_o[15:0]} top.tb.i_main.i_cpu_65c02.addr_o[15] top.tb.i_main.i_cpu_65c02.addr_o[14] top.tb.i_main.i_cpu_65c02.addr_o[13] top.tb.i_main.i_cpu_65c02.addr_o[12] top.tb.i_main.i_cpu_65c02.addr_o[11] top.tb.i_main.i_cpu_65c02.addr_o[10] top.tb.i_main.i_cpu_65c02.addr_o[9] top.tb.i_main.i_cpu_65c02.addr_o[8] top.tb.i_main.i_cpu_65c02.addr_o[7] top.tb.i_main.i_cpu_65c02.addr_o[6] top.tb.i_main.i_cpu_65c02.addr_o[5] top.tb.i_main.i_cpu_65c02.addr_o[4] top.tb.i_main.i_cpu_65c02.addr_o[3] top.tb.i_main.i_cpu_65c02.addr_o[2] top.tb.i_main.i_cpu_65c02.addr_o[1] top.tb.i_main.i_cpu_65c02.addr_o[0]
 @28
@@ -40,7 +42,6 @@ top.tb.i_main.i_cpu_65c02.rd_en_o
 #{top.tb.i_main.i_cpu_65c02.i_datapath.ar[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.ar[7] top.tb.i_main.i_cpu_65c02.i_datapath.ar[6] top.tb.i_main.i_cpu_65c02.i_datapath.ar[5] top.tb.i_main.i_cpu_65c02.i_datapath.ar[4] top.tb.i_main.i_cpu_65c02.i_datapath.ar[3] top.tb.i_main.i_cpu_65c02.i_datapath.ar[2] top.tb.i_main.i_cpu_65c02.i_datapath.ar[1] top.tb.i_main.i_cpu_65c02.i_datapath.ar[0]
 #{top.tb.i_main.i_cpu_65c02.i_datapath.yr[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.yr[7] top.tb.i_main.i_cpu_65c02.i_datapath.yr[6] top.tb.i_main.i_cpu_65c02.i_datapath.yr[5] top.tb.i_main.i_cpu_65c02.i_datapath.yr[4] top.tb.i_main.i_cpu_65c02.i_datapath.yr[3] top.tb.i_main.i_cpu_65c02.i_datapath.yr[2] top.tb.i_main.i_cpu_65c02.i_datapath.yr[1] top.tb.i_main.i_cpu_65c02.i_datapath.yr[0]
 #{top.tb.i_main.i_cpu_65c02.i_datapath.sp[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.sp[7] top.tb.i_main.i_cpu_65c02.i_datapath.sp[6] top.tb.i_main.i_cpu_65c02.i_datapath.sp[5] top.tb.i_main.i_cpu_65c02.i_datapath.sp[4] top.tb.i_main.i_cpu_65c02.i_datapath.sp[3] top.tb.i_main.i_cpu_65c02.i_datapath.sp[2] top.tb.i_main.i_cpu_65c02.i_datapath.sp[1] top.tb.i_main.i_cpu_65c02.i_datapath.sp[0]
-@23
 #{top.tb.i_main.i_cpu_65c02.i_datapath.sr[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.sr[7] top.tb.i_main.i_cpu_65c02.i_datapath.sr[6] top.tb.i_main.i_cpu_65c02.i_datapath.sr[5] top.tb.i_main.i_cpu_65c02.i_datapath.sr[4] top.tb.i_main.i_cpu_65c02.i_datapath.sr[3] top.tb.i_main.i_cpu_65c02.i_datapath.sr[2] top.tb.i_main.i_cpu_65c02.i_datapath.sr[1] top.tb.i_main.i_cpu_65c02.i_datapath.sr[0]
 @1000200
 -cpu_65c02

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Fri Nov  8 05:41:58 2019
+[*] Fri Nov  8 08:43:43 2019
 [*]
-[dumpfile] "/home/mike/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
-[dumpfile_mtime] "Fri Nov  8 04:54:55 2019"
-[dumpfile_size] 10161264
-[savefile] "/home/mike/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
+[dumpfile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
+[dumpfile_mtime] "Fri Nov  8 08:43:17 2019"
+[dumpfile_size] 12820552
+[savefile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
 [timestart] 0
-[size] 1920 1135
-[pos] -256 -190
-*-26.568762 239812800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1920 1172
+[pos] -1 -1
+*-28.414961 239812800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb.
 [treeopen] top.tb.i_main.

@@ -12,30 +12,34 @@ entity cpu_65c02 is
       irq_i     : in  std_logic;
       addr_o    : out std_logic_vector(15 downto 0);
       wr_en_o   : out std_logic;
-      wr_data_o : out std_logic_vector(7 downto 0);
+      wr_data_o : out std_logic_vector( 7 downto 0);
       rd_en_o   : out std_logic;
-      rd_data_i : in  std_logic_vector(7 downto 0);
-      debug_o   : out std_logic_vector(111 downto 0)
+      rd_data_i : in  std_logic_vector( 7 downto 0);
+      debug_o   : out std_logic_vector(15 downto 0)
    );
 end entity cpu_65c02;
 
 architecture structural of cpu_65c02 is
 
-   signal ar_sel   : std_logic;
-   signal hi_sel   : std_logic_vector(2 downto 0);
-   signal lo_sel   : std_logic_vector(2 downto 0);
-   signal pc_sel   : std_logic_vector(6 downto 0);
-   signal addr_sel : std_logic_vector(3 downto 0);
-   signal data_sel : std_logic_vector(2 downto 0);
-   signal alu_sel  : std_logic_vector(5 downto 0);
-   signal sr_sel   : std_logic_vector(3 downto 0);
-   signal sp_sel   : std_logic_vector(1 downto 0);
-   signal xr_sel   : std_logic;
-   signal yr_sel   : std_logic;
-   signal mr_sel   : std_logic_vector(1 downto 0);
-   signal reg_sel  : std_logic_vector(2 downto 0);
-   signal zp_sel   : std_logic_vector(1 downto 0);
-   signal sri      : std_logic;
+   signal ar_sel    : std_logic;
+   signal hi_sel    : std_logic_vector(2 downto 0);
+   signal lo_sel    : std_logic_vector(2 downto 0);
+   signal pc_sel    : std_logic_vector(6 downto 0);
+   signal addr_sel  : std_logic_vector(3 downto 0);
+   signal data_sel  : std_logic_vector(2 downto 0);
+   signal alu_sel   : std_logic_vector(5 downto 0);
+   signal sr_sel    : std_logic_vector(3 downto 0);
+   signal sp_sel    : std_logic_vector(1 downto 0);
+   signal xr_sel    : std_logic;
+   signal yr_sel    : std_logic;
+   signal mr_sel    : std_logic_vector(1 downto 0);
+   signal reg_sel   : std_logic_vector(2 downto 0);
+   signal zp_sel    : std_logic_vector(1 downto 0);
+   signal sri       : std_logic;
+
+   -- Debug
+   signal ctl_debug : std_logic_vector(63 downto 0);
+   signal last_pc   : std_logic_vector(15 downto 0);
 
 begin
 
@@ -67,7 +71,7 @@ begin
          mr_sel_i   => mr_sel,
          reg_sel_i  => reg_sel,
          zp_sel_i   => zp_sel,
-         debug_o    => debug_o
+         debug_o    => open
       ); -- i_datapath
 
 
@@ -99,8 +103,23 @@ begin
          reg_sel_o  => reg_sel,
          zp_sel_o   => zp_sel,
          invalid_o  => open,
-         debug_o    => open
+         debug_o    => ctl_debug
       ); -- i_ctl
+
+   p_debug : process (clk_i)
+   begin
+      if rising_edge(clk_i) then
+         if ctl_debug(2 downto 0) = 0 then
+            -- Start of new instruction.
+            assert last_pc /= addr_o
+               report "Infinite loop detected"
+                  severity error;
+            last_pc <= addr_o;
+         end if;
+      end if;
+   end process p_debug;
+
+   debug_o <= last_pc;
 
 end architecture structural;
 

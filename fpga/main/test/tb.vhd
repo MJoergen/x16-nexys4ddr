@@ -17,6 +17,13 @@ architecture simulation of tb is
    signal vera_rd_data_s : std_logic_vector(7 downto 0);
    signal vera_debug_s   : std_logic_vector(15 downto 0);
 
+   -- video RAM
+   signal cpu_vram_addr_s    : std_logic_vector(16 downto 0);
+   signal cpu_vram_wr_en_s   : std_logic;
+   signal cpu_vram_wr_data_s : std_logic_vector( 7 downto 0);
+   signal cpu_vram_rd_en_s   : std_logic;
+   signal cpu_vram_rd_data_s : std_logic_vector( 7 downto 0);
+
 begin
 
    --------------------
@@ -68,11 +75,11 @@ begin
          rd_en_i        => vera_rd_en_s,
          rd_data_o      => vera_rd_data_s,
          irq_o          => vera_irq_s,
-         vram_addr_o    => open,
-         vram_wr_en_o   => open,
-         vram_wr_data_o => open,
-         vram_rd_en_o   => open,
-         vram_rd_data_i => (others => '0'),
+         vram_addr_o    => cpu_vram_addr_s,
+         vram_wr_en_o   => cpu_vram_wr_en_s,
+         vram_wr_data_o => cpu_vram_wr_data_s,
+         vram_rd_en_o   => cpu_vram_rd_en_s,
+         vram_rd_data_i => cpu_vram_rd_data_s,
          pal_addr_o     => open,
          pal_wr_en_o    => open,
          pal_wr_data_o  => open,
@@ -82,6 +89,29 @@ begin
          tile_base_o    => open,
          vsync_irq_i    => '0'
       ); -- i_vera
+
+
+   --------------------------------
+   -- Instantiate 128 kB Video RAM
+   --------------------------------
+
+   i_vram : entity work.vram
+      port map (
+         -- CPU access
+         cpu_clk_i     => clk_s,
+         cpu_addr_i    => cpu_vram_addr_s,
+         cpu_wr_en_i   => cpu_vram_wr_en_s,
+         cpu_wr_data_i => cpu_vram_wr_data_s,
+         cpu_rd_en_i   => cpu_vram_rd_en_s,
+         cpu_rd_data_o => cpu_vram_rd_data_s,
+
+         -- VGA access
+         vga_clk_i     => '0',
+         vga_rd_addr_i => (others => '0'),
+         vga_rd_en_i   => '0',
+         vga_rd_data_o => open
+      ); -- i_vram
+
 
 end architecture simulation;
 

@@ -31,12 +31,12 @@ architecture structural of main is
 
    signal clkn_s          : std_logic;
 
-   signal cpu_addr_s      : std_logic_vector( 15 downto 0);
+   signal cpu_addr_s      : std_logic_vector(15 downto 0);
    signal cpu_wr_en_s     : std_logic;
-   signal cpu_wr_data_s   : std_logic_vector(  7 downto 0);
+   signal cpu_wr_data_s   : std_logic_vector( 7 downto 0);
    signal cpu_rd_en_s     : std_logic;
-   signal cpu_rd_data_s   : std_logic_vector(  7 downto 0);
-   signal cpu_debug_s     : std_logic_vector(111 downto 0);
+   signal cpu_rd_data_s   : std_logic_vector( 7 downto 0);
+   signal cpu_debug_s     : std_logic_vector(15 downto 0);
  
    -- Chip select
    signal loram_cs_s      : std_logic;   -- 0x0000 - 0x7FFF

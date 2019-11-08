@@ -8,7 +8,7 @@ SOURCES += cpu_65c02/cpu_65c02.vhd cpu_65c02/ctl.vhd cpu_65c02/datapath.vhd cpu_
 SOURCES += cpu_65c02/alu.vhd cpu_65c02/ar.vhd cpu_65c02/hi.vhd cpu_65c02/lo.vhd
 SOURCES += cpu_65c02/pc.vhd cpu_65c02/sp.vhd cpu_65c02/sr.vhd cpu_65c02/xr.vhd 
 SOURCES += cpu_65c02/yr.vhd cpu_65c02/zp.vhd cpu_65c02/mr.vhd
-SOURCES += ../vera/cpu/mmu.vhd ../vera/cpu/config.vhd ../vera/cpu/cpu.vhd
+SOURCES += ../vera/cpu/mmu.vhd ../vera/cpu/config.vhd ../vera/cpu/cpu.vhd ../vera/vram.vhd
 SOURCES += test/tb.vhd
 TB       = tb
 WAVE     = test/tb.ghw
@@ -22,7 +22,7 @@ SAVE     = test/tb.gtkw
 sim: $(SOURCES) rom.txt
 	ghdl -i --std=08 --work=work $(SOURCES)
 	ghdl -m --std=08 --ieee=synopsys -frelaxed-rules $(TB)
-	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=650ns
+	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=6650ns
 	gtkwave $(WAVE) $(SAVE)
 
 # Uncomment the line below to run the 6502 functional test suite.

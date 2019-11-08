@@ -1,21 +1,20 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Fri Nov  8 08:43:43 2019
+[*] Fri Nov  8 09:11:01 2019
 [*]
 [dumpfile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
-[dumpfile_mtime] "Fri Nov  8 08:43:17 2019"
-[dumpfile_size] 12820552
+[dumpfile_mtime] "Fri Nov  8 09:08:38 2019"
+[dumpfile_size] 12897542
 [savefile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
-[timestart] 0
+[timestart] 5438200000
 [size] 1920 1172
 [pos] -1 -1
-*-28.414961 239812800000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.721308 5796900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb.
-[treeopen] top.tb.i_main.
 [treeopen] top.tb.i_main.i_cpu_65c02.
 [treeopen] top.tb.i_main.i_cpu_65c02.i_datapath.
-[treeopen] top.tb.i_vera.i_mmu.
+[treeopen] top.tb.i_vera.
 [sst_width] 223
 [signals_width] 348
 [sst_expanded] 1
@@ -24,7 +23,6 @@
 -cpu_65c02
 @28
 top.tb.i_main.i_cpu_65c02.clk_i
-@29
 top.tb.i_main.i_cpu_65c02.irq_i
 @22
 #{top.tb.i_main.i_cpu_65c02.addr_o[15:0]} top.tb.i_main.i_cpu_65c02.addr_o[15] top.tb.i_main.i_cpu_65c02.addr_o[14] top.tb.i_main.i_cpu_65c02.addr_o[13] top.tb.i_main.i_cpu_65c02.addr_o[12] top.tb.i_main.i_cpu_65c02.addr_o[11] top.tb.i_main.i_cpu_65c02.addr_o[10] top.tb.i_main.i_cpu_65c02.addr_o[9] top.tb.i_main.i_cpu_65c02.addr_o[8] top.tb.i_main.i_cpu_65c02.addr_o[7] top.tb.i_main.i_cpu_65c02.addr_o[6] top.tb.i_main.i_cpu_65c02.addr_o[5] top.tb.i_main.i_cpu_65c02.addr_o[4] top.tb.i_main.i_cpu_65c02.addr_o[3] top.tb.i_main.i_cpu_65c02.addr_o[2] top.tb.i_main.i_cpu_65c02.addr_o[1] top.tb.i_main.i_cpu_65c02.addr_o[0]
@@ -47,6 +45,8 @@ top.tb.i_main.i_cpu_65c02.rd_en_o
 -cpu_65c02
 @800200
 -VERA
+@29
+top.tb.i_vera.vsync_irq_i
 @28
 #{top.tb.i_vera.i_mmu.cpu_addr_i[2:0]} top.tb.i_vera.i_mmu.cpu_addr_i[2] top.tb.i_vera.i_mmu.cpu_addr_i[1] top.tb.i_vera.i_mmu.cpu_addr_i[0]
 top.tb.i_vera.i_mmu.cpu_wr_en_i

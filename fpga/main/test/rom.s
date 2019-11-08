@@ -4,12 +4,29 @@
 
 main:
    SEI         ; Disable CPU interrupts
+   LDX #$FF
+   TXS         ; Reset stack pointer
+
+   LDA #$00    ; Select address port 0
+   STA $9F25
+
+   LDY #$51
+   LDX #$20
+   LDA #$44
+   JSR write_vram ; $2051 := $44
+
 
 ; Test reading from ROM
    LDA $C000
    CMP #$78
 error1:
    BNE error1
+
+   LDY #$61
+   LDX #$20
+   LDA #$44
+   JSR write_vram ; $2061 := $44
+
 
 ; Test read/write to low RAM
    LDA #$12
@@ -20,6 +37,12 @@ error1:
 error2:
    BNE error2
 
+   LDY #$71
+   LDX #$20
+   LDA #$44
+   JSR write_vram ; $2071 := $44
+
+
 ; Test read/write to high RAM
    LDA #$23
    STA $A000
@@ -28,6 +51,12 @@ error2:
    CMP #$24
 error3:
    BNE error3
+
+   LDY #$51
+   LDX #$22
+   LDA #$44
+   JSR write_vram ; $2251 := $44
+
 
 ; Test read/write to VIA1
    LDA #$00
@@ -45,6 +74,12 @@ error3:
 error4:
    BNE error4
 
+   LDY #$61
+   LDX #$22
+   LDA #$44
+   JSR write_vram ; $2261 := $44
+
+
 ; Test read/write to VIA2
    LDA #$00
    STA $9F70
@@ -61,6 +96,12 @@ error4:
 error5:
    BNE error5
 
+   LDY #$71
+   LDX #$22
+   LDA #$44
+   JSR write_vram ; $2271 := $44
+
+
 ; Test read/write to VERA config
    LDA #$67
    STA $9F20
@@ -69,6 +110,12 @@ error5:
    CMP #$68
 error6:
    BNE error6
+
+   LDY #$51
+   LDX #$24
+   LDA #$44
+   JSR write_vram ; $2451 := $44
+
 
 ; Test read/write to VERA video RAM
    LDA #$00
@@ -85,112 +132,67 @@ error6:
 error7:
    BNE error7
 
-end:
-   JMP end
+   LDY #$61
+   LDX #$24
+   LDA #$44
+   JSR write_vram ; $2461 := $44
 
 
-
-
-
-
+; Test clear of VERA VSYNC
    LDA #$01
    STA $9F26   ; Enable VERA VSYNC IRQ
    LDA #$FF
    STA $9F27   ; Clear pending VERA VSYNC IRQ
 
    LDA $9F27   ; Should be zero.
-err1:
-   BNE err1
+error8:
+   BNE error8
 
+   LDY #$71
+   LDX #$24
+   LDA #$44
+   JSR write_vram ; $2471 := $44
+
+
+; Test generation of VERA VSYNC
 wat:
    LDA $9F27   ; Wait until next interrupt
    BEQ wat
-   STA $9F27   ; Clear pending
+
+   LDY #$51
+   LDX #$26
+   LDA #$44
+   JSR write_vram ; $2651 := $44
+
+
+; Test clear again of VERA VSYNC
+   LDA #$FF
+   STA $9F27   ; Clear pending VERA VSYNC IRQ
 
    LDA $9F27   ; Should be zero.
-err2:
-   BNE err2
+error9:
+   BNE error9
 
-   LDA #$00    ; Select address port 0
-   STA $9F25
+   LDY #$61
+   LDX #$26
+   LDA #$44
+   JSR write_vram ; $2661 := $44
 
-   LDA #$50    ; Set address to 0x02050 and increment to 1.
-   STA $9F20
-   LDA #$20
-   STA $9F21
-   LDA #$10
-   STA $9F22
 
-   LDA #$00    ; Write to 0x02050
-   STA $9F23
-   LDA #$44    ; Write to 0x02051
-   STA $9F23
+end:
+   JMP end
 
-   LDA #$00    ; Write to 0x02052
-   STA $9F23
-   LDA #$66    ; Write to 0x02053
-   STA $9F23
 
-   LDA #$00    ; Write to 0x02054
-   STA $9F23
-   LDA #$66    ; Write to 0x02055
-   STA $9F23
 
-   LDA #$00    ; Write to 0x02056
+; X:Y contains 16-bit address point in VRAM
+; A contains value to write.
+write_vram:
+   STY $9F20
+   STX $9F21
+   STZ $9F22   ; No increment
    STA $9F23
-   LDA #$66    ; Write to 0x02057
-   STA $9F23
-
-   LDA #$00    ; Write to 0x02058
-   STA $9F23
-   LDA #$44    ; Write to 0x02059
-   STA $9F23
-
-   NOP
-   NOP
-
-   LDA $9F27   ; Should be zero
-err:
-   BNE err     ; There should be no pending now.
-
-   LDA #$50    ; Set address to 0x02150 and increment to 1.
-   STA $9F20
-   LDA #$21
-   STA $9F21
-   LDA #$10
-   STA $9F22
-
-   LDA #$00    ; Write to 0x02150
-   STA $9F23
-   LDA #$66    ; Write to 0x02151
-   STA $9F23
-
-   LDA #$00    ; Write to 0x02152
-   STA $9F23
-   LDA #$44    ; Write to 0x02153
-   STA $9F23
-
-   LDA #$00    ; Write to 0x02154
-   STA $9F23
-   LDA #$66    ; Write to 0x02155
-   STA $9F23
-
-   LDA #$00    ; Write to 0x02156
-   STA $9F23
-   LDA #$44    ; Write to 0x02157
-   STA $9F23
-
-   LDA #$00    ; Write to 0x02158
-   STA $9F23
-   LDA #$66    ; Write to 0x02159
-   STA $9F23
-
-   NOP
-   NOP
-
-loop:
-   JMP loop
-
+   RTS
+   
 
 .segment "VECTORS"
    .addr main

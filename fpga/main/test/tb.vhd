@@ -18,11 +18,13 @@ architecture simulation of tb is
    signal vera_debug_s   : std_logic_vector(15 downto 0);
 
    -- video RAM
-   signal cpu_vram_addr_s    : std_logic_vector(16 downto 0);
-   signal cpu_vram_wr_en_s   : std_logic;
-   signal cpu_vram_wr_data_s : std_logic_vector( 7 downto 0);
-   signal cpu_vram_rd_en_s   : std_logic;
-   signal cpu_vram_rd_data_s : std_logic_vector( 7 downto 0);
+   signal vram_addr_s    : std_logic_vector(16 downto 0);
+   signal vram_wr_en_s   : std_logic;
+   signal vram_wr_data_s : std_logic_vector( 7 downto 0);
+   signal vram_rd_en_s   : std_logic;
+   signal vram_rd_data_s : std_logic_vector( 7 downto 0);
+
+   signal vsync_irq_s    : std_logic;
 
 begin
 
@@ -75,11 +77,11 @@ begin
          rd_en_i        => vera_rd_en_s,
          rd_data_o      => vera_rd_data_s,
          irq_o          => vera_irq_s,
-         vram_addr_o    => cpu_vram_addr_s,
-         vram_wr_en_o   => cpu_vram_wr_en_s,
-         vram_wr_data_o => cpu_vram_wr_data_s,
-         vram_rd_en_o   => cpu_vram_rd_en_s,
-         vram_rd_data_i => cpu_vram_rd_data_s,
+         vram_addr_o    => vram_addr_s,
+         vram_wr_en_o   => vram_wr_en_s,
+         vram_wr_data_o => vram_wr_data_s,
+         vram_rd_en_o   => vram_rd_en_s,
+         vram_rd_data_i => vram_rd_data_s,
          pal_addr_o     => open,
          pal_wr_en_o    => open,
          pal_wr_data_o  => open,
@@ -87,8 +89,18 @@ begin
          pal_rd_data_i  => (others => '0'),
          map_base_o     => open,
          tile_base_o    => open,
-         vsync_irq_i    => '0'
+         vsync_irq_i    => vsync_irq_s
       ); -- i_vera
+
+   p_vsync_irq : process
+   begin
+      vsync_irq_s <= '0';
+      wait for 600*12 ns;
+      vsync_irq_s <= '1';
+      wait for 1*12 ns;
+      vsync_irq_s <= '0';
+      wait;
+   end process p_vsync_irq;
 
 
    --------------------------------
@@ -99,11 +111,11 @@ begin
       port map (
          -- CPU access
          cpu_clk_i     => clk_s,
-         cpu_addr_i    => cpu_vram_addr_s,
-         cpu_wr_en_i   => cpu_vram_wr_en_s,
-         cpu_wr_data_i => cpu_vram_wr_data_s,
-         cpu_rd_en_i   => cpu_vram_rd_en_s,
-         cpu_rd_data_o => cpu_vram_rd_data_s,
+         cpu_addr_i    => vram_addr_s,
+         cpu_wr_en_i   => vram_wr_en_s,
+         cpu_wr_data_i => vram_wr_data_s,
+         cpu_rd_en_i   => vram_rd_en_s,
+         cpu_rd_data_o => vram_rd_data_s,
 
          -- VGA access
          vga_clk_i     => '0',

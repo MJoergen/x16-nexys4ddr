@@ -175,7 +175,7 @@ begin
    cpu_rd_data_o  <= vera_rd_data_i when vera_rd_en_d = '1' else
                      mmu_rd_data_r;
                    
-   cpu_irq_o <= isr(0);
+   cpu_irq_o <= or(ien and isr);
 
 end architecture structural;
 

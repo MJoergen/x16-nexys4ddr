@@ -77,9 +77,11 @@ begin
    --------------------------
 
    p_read_write : process (clk_i)
+      variable isr_v : std_logic_vector(7 downto 0);
    begin
       if falling_edge(clk_i) then
          mmu_rd_data_r <= (others => '0');
+         isr_v := isr;
          if cpu_wr_en_i = '1' then
             case cpu_addr_i is
                when "000" => if addr_sel_r = '0' then                               -- VERA_ADDR_LO
@@ -110,7 +112,7 @@ begin
                
                when "110" => ien <= cpu_wr_data_i;                                  -- VERA_IEN
 
-               when "111" => isr <= isr and not cpu_wr_data_i;                      -- VERA_ISR
+               when "111" => isr_v := isr_v and not cpu_wr_data_i;                      -- VERA_ISR
 
                when others => null;
             end case;
@@ -152,7 +154,9 @@ begin
             end case;
          end if; -- if cpu_rd_en_i = '1' then
 
-         isr(0) <= isr(0) or vsync_irq_i;
+         isr_v(0) := isr_v(0) or vsync_irq_i;
+
+         isr <= isr_v;
 
          vera_rd_en_d <= vera_rd_en_o;
       end if;

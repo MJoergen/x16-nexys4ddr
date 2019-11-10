@@ -2,6 +2,7 @@
 
 .segment "CODE"
 .export end
+.export waitwhilehigh, waitwhilelow
 
 main:
    SEI         ; Disable CPU interrupts
@@ -82,17 +83,17 @@ error4:
 
 
 ; Test read/write to VIA2
-   LDA #$00
-   STA $9F70
-   STA $9F71
    LDA #$FF
-   STA $9F72
-   STA $9F73
+   STA $9F70   ; Mouse (output enabled)
+   STA $9F72   ; Mouse
+   LDA #$00
+   STA $9F71   ; Keyboard (input enabled)
+   STA $9F73   ; Keyboard
 
    LDA #$45
-   STA $9F71
-   INC $9F71
-   LDA $9F71
+   STA $9F70
+   INC $9F70
+   LDA $9F70
    CMP #$46
 error5:
    BNE error5
@@ -180,9 +181,27 @@ error9:
    JSR write_vram ; $2661 := $44
 
 
+; Test reading from keyboard
+   LDA #$FF
+   STA $9F72   ; Output enabled for VIA2 port A
+   LDA #$00
+   STA $9F73   ; Input enabled for VIA2 port B (keyboard)
+
+waitwhilehigh:   
+   LDA $9F71   ; Read port A
+   BIT #$02    ; PS/2 clock
+   BNE waitwhilehigh
+   ; Now clock is low
+   ROR         ; Shift PS/2 data (bit 1) out to carry
+   ROR $9F70   ; Shift PS/2 data in to val (VIA2 port A)
+waitwhilelow:
+   LDA $9F71
+   BIT #$02
+   BEQ waitwhilelow
+   JMP waitwhilehigh
+
 end:
    JMP end
-
 
 
 ; X:Y contains 16-bit address point in VRAM

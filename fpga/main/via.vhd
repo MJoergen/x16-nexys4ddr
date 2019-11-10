@@ -8,15 +8,19 @@ use ieee.numeric_std_unsigned.all;
 
 entity via is
    port (
-      clk_i     : in    std_logic;
-      rst_i     : in    std_logic;
-      addr_i    : in    std_logic_vector(3 downto 0);
-      wr_en_i   : in    std_logic;
-      wr_data_i : in    std_logic_vector(7 downto 0);
-      rd_en_i   : in    std_logic;
-      rd_data_o : out   std_logic_vector(7 downto 0);
-      porta_io  : inout std_logic_vector(7 downto 0);
-      portb_io  : inout std_logic_vector(7 downto 0)
+      clk_i     : in  std_logic;
+      rst_i     : in  std_logic;
+      addr_i    : in  std_logic_vector(3 downto 0);
+      wr_en_i   : in  std_logic;
+      wr_data_i : in  std_logic_vector(7 downto 0);
+      rd_en_i   : in  std_logic;
+      rd_data_o : out std_logic_vector(7 downto 0);
+      porta_i   : in  std_logic_vector(7 downto 0);
+      portb_i   : in  std_logic_vector(7 downto 0);
+      porta_o   : out std_logic_vector(7 downto 0);
+      portb_o   : out std_logic_vector(7 downto 0);
+      portaen_o : out std_logic_vector(7 downto 0);
+      portben_o : out std_logic_vector(7 downto 0)
    );
 end via;
 
@@ -69,8 +73,8 @@ begin
       if rising_edge(clk_i) then
          if rd_en_i = '1' then
             case addr_i is
-               when "0000" => rd_data_o <= portb_io;
-               when "0001" => rd_data_o <= porta_io;
+               when "0000" => rd_data_o <= portb_i;
+               when "0001" => rd_data_o <= porta_i;
                when "0010" => rd_data_o <= dirb_r;
                when "0011" => rd_data_o <= dira_r;
                when "0100" => rd_data_o <= timer1_r(7 downto 0);
@@ -81,15 +85,11 @@ begin
       end if;
    end process p_read;
 
+   porta_o   <= porta_r;
+   portb_o   <= portb_r;
+   portaen_o <= dira_r;
+   portben_o <= dirb_r;
 
-   --------------------------
-   -- Generate output driver
-   --------------------------
-
-   gen_out : for i in 7 downto 0 generate
-      porta_io(i) <= porta_r(i) when dira_r(i) = '1' else 'Z';
-      portb_io(i) <= portb_r(i) when dirb_r(i) = '1' else 'Z';
-   end generate gen_out;
 
 end architecture structural;
 

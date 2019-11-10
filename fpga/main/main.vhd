@@ -29,58 +29,73 @@ end main;
 
 architecture structural of main is
 
-   signal clkn_s          : std_logic;
+   signal clkn_s           : std_logic;
 
-   signal cpu_addr_s      : std_logic_vector(15 downto 0);
-   signal cpu_wr_en_s     : std_logic;
-   signal cpu_wr_data_s   : std_logic_vector( 7 downto 0);
-   signal cpu_rd_en_s     : std_logic;
-   signal cpu_rd_data_s   : std_logic_vector( 7 downto 0);
-   signal cpu_debug_s     : std_logic_vector(15 downto 0);
+   signal cpu_addr_s       : std_logic_vector(15 downto 0);
+   signal cpu_wr_en_s      : std_logic;
+   signal cpu_wr_data_s    : std_logic_vector( 7 downto 0);
+   signal cpu_rd_en_s      : std_logic;
+   signal cpu_rd_data_s    : std_logic_vector( 7 downto 0);
+   signal cpu_debug_s      : std_logic_vector(15 downto 0);
  
    -- Chip select
-   signal loram_cs_s      : std_logic;   -- 0x0000 - 0x7FFF
-   signal vera_cs_s       : std_logic;   -- 0x9F20 - 0x9F2F
-   signal via1_cs_s       : std_logic;   -- 0x9F60 - 0x9F6F
-   signal via2_cs_s       : std_logic;   -- 0x9F70 - 0x9F7F
-   signal hiram_cs_s      : std_logic;   -- 0xA000 - 0xBFFF
-   signal rom_cs_s        : std_logic;   -- 0xC000 - 0xFFFF
+   signal loram_cs_s       : std_logic;   -- 0x0000 - 0x7FFF
+   signal vera_cs_s        : std_logic;   -- 0x9F20 - 0x9F2F
+   signal via1_cs_s        : std_logic;   -- 0x9F60 - 0x9F6F
+   signal via2_cs_s        : std_logic;   -- 0x9F70 - 0x9F7F
+   signal hiram_cs_s       : std_logic;   -- 0xA000 - 0xBFFF
+   signal rom_cs_s         : std_logic;   -- 0xC000 - 0xFFFF
 
    -- ROM and RAM banking
-   signal hiram_addr_s    : std_logic_vector(16 downto 0);  -- 128 kB
-   signal rom_addr_s      : std_logic_vector(16 downto 0);  -- 128 kB
-   signal hiram_bank_s    : std_logic_vector( 3 downto 0);  -- 16 pages of  8 kB = 128 kB
-   signal rom_bank_s      : std_logic_vector( 2 downto 0);  --  8 pages of 16 kB = 128 kB
+   signal hiram_addr_s     : std_logic_vector(16 downto 0);  -- 128 kB
+   signal rom_addr_s       : std_logic_vector(16 downto 0);  -- 128 kB
+   signal hiram_bank_s     : std_logic_vector( 3 downto 0);  -- 16 pages of  8 kB = 128 kB
+   signal rom_bank_s       : std_logic_vector( 2 downto 0);  --  8 pages of 16 kB = 128 kB
 
    -- Write enable
-   signal loram_wr_en_s   : std_logic;
-   signal via1_wr_en_s    : std_logic;
-   signal via2_wr_en_s    : std_logic;
-   signal hiram_wr_en_s   : std_logic;
+   signal loram_wr_en_s    : std_logic;
+   signal via1_wr_en_s     : std_logic;
+   signal via2_wr_en_s     : std_logic;
+   signal hiram_wr_en_s    : std_logic;
 
    -- Read enable
-   signal loram_rd_en_s   : std_logic;
-   signal via1_rd_en_s    : std_logic;
-   signal via2_rd_en_s    : std_logic;
-   signal hiram_rd_en_s   : std_logic;
-   signal rom_rd_en_s     : std_logic;
+   signal loram_rd_en_s    : std_logic;
+   signal via1_rd_en_s     : std_logic;
+   signal via2_rd_en_s     : std_logic;
+   signal hiram_rd_en_s    : std_logic;
+   signal rom_rd_en_s      : std_logic;
 
    -- Read data
-   signal loram_rd_data_s : std_logic_vector(7 downto 0);
-   signal via1_rd_data_s  : std_logic_vector(7 downto 0);
-   signal via2_rd_data_s  : std_logic_vector(7 downto 0);
-   signal hiram_rd_data_s : std_logic_vector(7 downto 0);
-   signal rom_rd_data_s   : std_logic_vector(7 downto 0);
+   signal loram_rd_data_s  : std_logic_vector(7 downto 0);
+   signal via1_rd_data_s   : std_logic_vector(7 downto 0);
+   signal via2_rd_data_s   : std_logic_vector(7 downto 0);
+   signal hiram_rd_data_s  : std_logic_vector(7 downto 0);
+   signal rom_rd_data_s    : std_logic_vector(7 downto 0);
 
    -- VIA I/O chips
-   signal via1_porta_s    : std_logic_vector(7 downto 0);
-   signal via1_portb_s    : std_logic_vector(7 downto 0);
-   signal via2_porta_s    : std_logic_vector(7 downto 0);
-   signal via2_portb_s    : std_logic_vector(7 downto 0);
+   signal via1_porta_s     : std_logic_vector(7 downto 0);
+   signal via1_portb_s     : std_logic_vector(7 downto 0);
+
+   signal via2_porta_in_s  : std_logic_vector(7 downto 0);
+   signal via2_portb_in_s  : std_logic_vector(7 downto 0);
+   signal via2_porta_out_s : std_logic_vector(7 downto 0);
+   signal via2_portb_out_s : std_logic_vector(7 downto 0);
+   signal via2_porta_en_s  : std_logic_vector(7 downto 0);
+   signal via2_portb_en_s  : std_logic_vector(7 downto 0);
 
 begin
 
    clkn_s <= not clk_i;
+
+
+   -----------------------
+   -- Connect to keyboard
+   -----------------------
+
+   ps2_data_io <= via2_porta_out_s(0) when via2_porta_en_s(0) = '1' else 'Z';
+   ps2_clk_io  <= via2_porta_out_s(1) when via2_porta_en_s(1) = '1' else 'Z';
+   via2_porta_in_s(0) <= ps2_data_io;
+   via2_porta_in_s(1) <= ps2_clk_io;
 
 
    -----------------------
@@ -173,8 +188,12 @@ begin
          wr_data_i => cpu_wr_data_s,
          rd_en_i   => via1_rd_en_s,
          rd_data_o => via1_rd_data_s,
-         porta_io  => via1_porta_s,             -- RAM bank
-         portb_io  => via1_portb_s              -- ROM bank
+         porta_i   => via1_porta_s,             -- RAM bank
+         portb_i   => via1_portb_s,             -- ROM bank
+         porta_o   => via1_porta_s,             -- RAM bank
+         portb_o   => via1_portb_s,             -- ROM bank
+         portaen_o => open,
+         portben_o => open
       ); -- i_via1
 
 
@@ -185,16 +204,19 @@ begin
    i_via2 : entity work.via
       port map (
          clk_i      => clkn_s,
-         rst_i       => rst_i,
-         addr_i      => cpu_addr_s(3 downto 0),
-         wr_en_i     => via2_wr_en_s,
-         wr_data_i   => cpu_wr_data_s,
-         rd_en_i     => via2_rd_en_s,
-         rd_data_o   => via2_rd_data_s,
-         porta_io(7 downto 2)  => via2_porta_s(7 downto 2), -- Unconnected
-         porta_io(1) => ps2_clk_io,             -- Keyboard
-         porta_io(0) => ps2_data_io,
-         portb_io    => via2_portb_s            -- TBD: Mouse
+         rst_i      => rst_i,
+         addr_i     => cpu_addr_s(3 downto 0),
+         wr_en_i    => via2_wr_en_s,
+         wr_data_i  => cpu_wr_data_s,
+         rd_en_i    => via2_rd_en_s,
+         rd_data_o  => via2_rd_data_s,
+
+         porta_i   => via2_porta_in_s,          -- Keyboard
+         portb_i   => (others => '1'),          -- Mouse
+         porta_o   => via2_porta_out_s,         -- Keyboard
+         portb_o   => open,                     -- Mouse
+         portaen_o => via2_porta_en_s,          -- Keyboard
+         portben_o => open                      -- Mouse
       ); -- i_via2
 
 

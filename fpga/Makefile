@@ -37,12 +37,12 @@ x16.tcl: rom.tcl
 	echo "synth_design -top x16 -part xc7a100tcsg324-1 -flatten_hierarchy none" >> $@
 	echo "source debug.tcl" >> $@
 	echo "opt_design -directive NoBramPowerOpt" >> $@
+	echo "write_debug_probes -force x16.ltx" >> $@
 	echo "place_design" >> $@
 	echo "route_design" >> $@
 	echo "write_checkpoint -force x16.dcp" >> $@
 	echo "source rom.tcl" >> $@
 	echo "write_bitstream -force x16.bit" >> $@
-	echo "write_debug_probes -force x16.ltx" >> $@
 	echo "exit" >> $@
 
 main/rom.txt:

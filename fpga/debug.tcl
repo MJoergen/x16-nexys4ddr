@@ -26,5 +26,3 @@ set_property port_width 2 [get_debug_ports u_ila_0/probe0]
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
 connect_debug_port u_ila_0/probe0 [get_nets [list {i_main/i_via2/porta_i[0]} {i_main/i_via2/porta_i[1]} ]]
 
-create_debug_port u_ila_0 probe
-

@@ -77,11 +77,10 @@ architecture structural of main is
    signal via1_portb_s     : std_logic_vector(7 downto 0);
 
    signal via2_porta_in_s  : std_logic_vector(7 downto 0);
-   signal via2_portb_in_s  : std_logic_vector(7 downto 0);
    signal via2_porta_out_s : std_logic_vector(7 downto 0);
-   signal via2_portb_out_s : std_logic_vector(7 downto 0);
    signal via2_porta_en_s  : std_logic_vector(7 downto 0);
-   signal via2_portb_en_s  : std_logic_vector(7 downto 0);
+
+   signal via2_portb_s     : std_logic_vector(7 downto 0);
 
 begin
 
@@ -173,7 +172,7 @@ begin
    vera_addr_o    <= cpu_addr_s(2 downto 0);
    vera_wr_data_o <= cpu_wr_data_s;
    vera_debug_o   <= cpu_debug_s(15 downto 0);  -- Program Counter
-      
+
 
    --------------------------------------------------
    -- Instantiate VIA1
@@ -212,9 +211,9 @@ begin
          rd_data_o  => via2_rd_data_s,
 
          porta_i   => via2_porta_in_s,          -- Keyboard
-         portb_i   => (others => '1'),          -- Mouse
+         portb_i   => via2_portb_s,             -- Mouse
          porta_o   => via2_porta_out_s,         -- Keyboard
-         portb_o   => open,                     -- Mouse
+         portb_o   => via2_portb_s,             -- Mouse
          portaen_o => via2_porta_en_s,          -- Keyboard
          portben_o => open                      -- Mouse
       ); -- i_via2

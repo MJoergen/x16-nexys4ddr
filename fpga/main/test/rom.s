@@ -1,6 +1,7 @@
    .setcpu     "65C02"
 
 .segment "CODE"
+.export end
 
 main:
    SEI         ; Disable CPU interrupts

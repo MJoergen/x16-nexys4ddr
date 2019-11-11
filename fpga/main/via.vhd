@@ -56,8 +56,8 @@ begin
          if rst_i = '1' then
             porta_r  <= (others => '0');
             portb_r  <= (others => '0');
-            dira_r   <= (others => '1');  -- TBD !!
-            dirb_r   <= (others => '1');  -- TBD !!
+            dira_r   <= (others => '0');
+            dirb_r   <= (others => '0');
             timer1_r <= (others => '0');
          end if;
       end if;

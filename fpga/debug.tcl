@@ -1,7 +1,8 @@
 # This extra tcl-script enables ILA debugging.
 
 # First determine which nets are marked for debugging.
-set_property mark_debug true [get_nets [list {i_main/i_via2/porta_i[1]} {i_main/i_via2/porta_i[0]}]]
+set debugs [get_nets [list {i_main/i_via2/porta_i[1]} {i_main/i_via2/porta_i[0]} {i_main/i_via2/portaen_o[1]} {i_main/i_via2/portaen_o[0]} ]] 
+set_property mark_debug true $debugs
 
 create_debug_core u_ila_0 ila
 set_property C_DATA_DEPTH 16384 [get_debug_cores u_ila_0]
@@ -22,7 +23,7 @@ endgroup
 
 set_property port_width 1 [get_debug_ports u_ila_0/clk]
 connect_debug_port u_ila_0/clk [get_nets [list i_clk/cpu_clk ]]
-set_property port_width 2 [get_debug_ports u_ila_0/probe0]
+set_property port_width 4 [get_debug_ports u_ila_0/probe0]
 set_property PROBE_TYPE DATA_AND_TRIGGER [get_debug_ports u_ila_0/probe0]
-connect_debug_port u_ila_0/probe0 [get_nets [list {i_main/i_via2/porta_i[0]} {i_main/i_via2/porta_i[1]} ]]
+connect_debug_port u_ila_0/probe0 $debugs
 

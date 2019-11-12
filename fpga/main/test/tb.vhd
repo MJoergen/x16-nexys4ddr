@@ -26,6 +26,17 @@ architecture simulation of tb is
 
    signal vsync_irq_s    : std_logic;
 
+   signal kbd_data_s     : std_logic_vector(10 downto 0);
+   signal kbd_valid_s    : std_logic;
+   signal kbd_ready_s    : std_logic;
+
+   signal ps2_data_in_s  : std_logic;
+   signal ps2_data_out_s : std_logic;
+   signal ps2_dataen_s   : std_logic;
+   signal ps2_clk_in_s   : std_logic;
+   signal ps2_clk_out_s  : std_logic;
+   signal ps2_clken_s    : std_logic;
+
 begin
 
    --------------------
@@ -55,6 +66,12 @@ begin
          rst_i          => rst_s,
          nmi_i          => nmi_s,
          irq_i          => vera_irq_s,
+         ps2_data_in_i  => ps2_data_in_s,
+         ps2_data_out_o => ps2_data_out_s,
+         ps2_dataen_o   => ps2_dataen_s,
+         ps2_clk_in_i   => ps2_clk_in_s,
+         ps2_clk_out_o  => ps2_clk_out_s,
+         ps2_clken_o    => ps2_clken_s,
          vera_addr_o    => vera_addr_s,
          vera_wr_en_o   => vera_wr_en_s,
          vera_wr_data_o => vera_wr_data_s,
@@ -124,6 +141,48 @@ begin
          vga_rd_data_o => open
       ); -- i_vram
 
+
+   ---------------------------------
+   -- Instantiate keyboard emulator
+   ---------------------------------
+
+   i_ps2_writer : entity work.ps2_writer
+      port map (
+         clk_i        => clk_s,
+         rst_i        => rst_s,
+         data_i       => kbd_data_s,
+         valid_i      => kbd_valid_s,
+         ready_o      => kbd_ready_s,
+         ps2_clk_o    => ps2_clk_in_s,
+         ps2_clk_i    => ps2_clk_out_s,
+         ps2_clken_i  => ps2_clken_s,
+         ps2_data_o   => ps2_data_in_s,
+         ps2_data_i   => ps2_data_out_s,
+         ps2_dataen_i => ps2_dataen_s
+      ); -- i_ps2_writer
+
+
+   ------------------------------
+   -- Generate keyboard stimulus
+   ------------------------------
+
+   p_kbd : process
+   begin
+      kbd_valid_s <= '0';
+      wait for 100*12 ns;
+      wait until clk_s = '1';
+
+      kbd_data_s  <= "10110011010";
+      kbd_valid_s <= '1';
+      wait until clk_s = '1';
+      while kbd_ready_s = '0' loop
+         wait until clk_s = '1';
+      end loop;
+      kbd_valid_s <= '0';
+      wait for 120 us;
+      wait until clk_s = '1';
+      wait;
+   end process p_kbd;
 
 end architecture simulation;
 

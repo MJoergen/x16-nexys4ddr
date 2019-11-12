@@ -4,6 +4,7 @@
 # https://github.com/ghdl/ghdl
 
 SOURCES  = main.vhd rom.vhd ram.vhd via.vhd
+SOURCES += ps2/ps2_buffer.vhd ps2/ps2_reader.vhd ps2/ps2_writer.vhd
 SOURCES += cpu_65c02/cpu_65c02.vhd cpu_65c02/ctl.vhd cpu_65c02/datapath.vhd cpu_65c02/microcode.vhd
 SOURCES += cpu_65c02/alu.vhd cpu_65c02/ar.vhd cpu_65c02/hi.vhd cpu_65c02/lo.vhd
 SOURCES += cpu_65c02/pc.vhd cpu_65c02/sp.vhd cpu_65c02/sr.vhd cpu_65c02/xr.vhd 

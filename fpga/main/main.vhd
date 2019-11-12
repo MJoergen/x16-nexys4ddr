@@ -12,18 +12,22 @@ entity main is
       G_ROM_INIT_FILE : string
    );
    port (
-      clk_i          : in    std_logic;
-      rst_i          : in    std_logic;
-      nmi_i          : in    std_logic;
-      irq_i          : in    std_logic;
-      ps2_clk_io     : inout std_logic;
-      ps2_data_io    : inout std_logic;
-      vera_addr_o    : out   std_logic_vector(2 downto 0);
-      vera_wr_en_o   : out   std_logic;
-      vera_wr_data_o : out   std_logic_vector(7 downto 0);
-      vera_rd_en_o   : out   std_logic;
-      vera_rd_data_i : in    std_logic_vector(7 downto 0);
-      vera_debug_o   : out   std_logic_vector(15 downto 0)
+      clk_i          : in  std_logic;
+      rst_i          : in  std_logic;
+      nmi_i          : in  std_logic;
+      irq_i          : in  std_logic;
+      ps2_data_in_i  : in  std_logic;
+      ps2_data_out_o : out std_logic;
+      ps2_dataen_o   : out std_logic;
+      ps2_clk_in_i   : in  std_logic;
+      ps2_clk_out_o  : out std_logic;
+      ps2_clken_o    : out std_logic;
+      vera_addr_o    : out std_logic_vector(2 downto 0);
+      vera_wr_en_o   : out std_logic;
+      vera_wr_data_o : out std_logic_vector(7 downto 0);
+      vera_rd_en_o   : out std_logic;
+      vera_rd_data_i : in  std_logic_vector(7 downto 0);
+      vera_debug_o   : out std_logic_vector(15 downto 0)
    );
 end main;
 
@@ -76,25 +80,66 @@ architecture structural of main is
    signal via1_porta_s     : std_logic_vector(7 downto 0);
    signal via1_portb_s     : std_logic_vector(7 downto 0);
 
-   signal via2_porta_in_s  : std_logic_vector(7 downto 0);
+   signal via2_porta_in_s  : std_logic_vector(7 downto 0) := (others => '0');
    signal via2_porta_out_s : std_logic_vector(7 downto 0);
    signal via2_porta_en_s  : std_logic_vector(7 downto 0);
 
    signal via2_portb_s     : std_logic_vector(7 downto 0);
 
+   signal ps2_clk_in_s     : std_logic;
+   signal ps2_clk_out_s    : std_logic;
+   signal ps2_clken_s      : std_logic;
+   signal ps2_data_in_s    : std_logic;
+   signal ps2_data_out_s   : std_logic;
+   signal ps2_dataen_s     : std_logic;
+
+   -- Debug
+   constant DEBUG_MODE                      : boolean := true; -- TRUE OR FALSE
+
+   attribute mark_debug                     : boolean;
+   attribute mark_debug of ps2_clk_in_s     : signal is DEBUG_MODE;
+   attribute mark_debug of ps2_clk_out_s    : signal is DEBUG_MODE;
+   attribute mark_debug of ps2_clken_s      : signal is DEBUG_MODE;
+   attribute mark_debug of ps2_data_in_s    : signal is DEBUG_MODE;
+   attribute mark_debug of ps2_data_out_s   : signal is DEBUG_MODE;
+   attribute mark_debug of ps2_dataen_s     : signal is DEBUG_MODE;
+   attribute mark_debug of via2_porta_in_s  : signal is DEBUG_MODE;
+   attribute mark_debug of via2_porta_out_s : signal is DEBUG_MODE;
+   attribute mark_debug of via2_porta_en_s  : signal is DEBUG_MODE;
+
 begin
 
    clkn_s <= not clk_i;
 
+   -- Debug
+   ps2_clk_in_s   <= ps2_clk_in_i;
+   ps2_clk_out_o  <= ps2_clk_out_s;
+   ps2_clken_o    <= ps2_clken_s;
+   ps2_data_in_s  <= ps2_data_in_i;
+   ps2_data_out_o <= ps2_data_out_s;
+   ps2_dataen_o   <= ps2_dataen_s;
 
    -----------------------
    -- Connect to keyboard
    -----------------------
 
-   ps2_data_io <= via2_porta_out_s(0) when via2_porta_en_s(0) = '1' else 'Z';
-   ps2_clk_io  <= via2_porta_out_s(1) when via2_porta_en_s(1) = '1' else 'Z';
-   via2_porta_in_s(0) <= ps2_data_io;
-   via2_porta_in_s(1) <= ps2_clk_io;
+   i_ps2_buffer : entity work.ps2_buffer
+      port map (
+         clk_i         => clk_i,
+         rst_i         => rst_i,
+         kbd_clk_i     => ps2_clk_in_s,
+         kbd_clk_o     => ps2_clk_out_s,
+         kbd_clken_o   => ps2_clken_s,
+         kbd_data_i    => ps2_data_in_s,
+         kbd_data_o    => ps2_data_out_s,
+         kbd_dataen_o  => ps2_dataen_s,
+         main_clk_o    => via2_porta_in_s(1),
+         main_clk_i    => via2_porta_out_s(1),
+         main_clken_i  => via2_porta_en_s(1),
+         main_data_o   => via2_porta_in_s(0),
+         main_data_i   => via2_porta_out_s(0),
+         main_dataen_i => via2_porta_en_s(0)
+      ); -- i_ps2_buffer
 
 
    -----------------------
@@ -202,13 +247,13 @@ begin
 
    i_via2 : entity work.via
       port map (
-         clk_i      => clkn_s,
-         rst_i      => rst_i,
-         addr_i     => cpu_addr_s(3 downto 0),
-         wr_en_i    => via2_wr_en_s,
-         wr_data_i  => cpu_wr_data_s,
-         rd_en_i    => via2_rd_en_s,
-         rd_data_o  => via2_rd_data_s,
+         clk_i     => clkn_s,
+         rst_i     => rst_i,
+         addr_i    => cpu_addr_s(3 downto 0),
+         wr_en_i   => via2_wr_en_s,
+         wr_data_i => cpu_wr_data_s,
+         rd_en_i   => via2_rd_en_s,
+         rd_data_o => via2_rd_data_s,
 
          porta_i   => via2_porta_in_s,          -- Keyboard
          portb_i   => via2_portb_s,             -- Mouse
@@ -225,11 +270,11 @@ begin
 
    i_hiram : entity work.ram
       generic map (
-         G_ADDR_BITS => 17                   -- 2^17 = 128 kB
+         G_ADDR_BITS => 14                   -- 2^14 = 16 kB
       )
       port map (
          clk_i     => clkn_s,
-         addr_i    => hiram_addr_s,
+         addr_i    => hiram_addr_s(13 downto 0),
          wr_en_i   => hiram_wr_en_s,
          wr_data_i => cpu_wr_data_s,
          rd_en_i   => hiram_rd_en_s,

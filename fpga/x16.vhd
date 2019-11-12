@@ -46,7 +46,24 @@ architecture structural of x16 is
 
    signal main_rst_s        : std_logic_vector( 3 downto 0) := (others => '1');
 
+   signal ps2_data_in_s     : std_logic;
+   signal ps2_data_out_s    : std_logic;
+   signal ps2_dataen_s      : std_logic;
+   signal ps2_clk_in_s      : std_logic;
+   signal ps2_clk_out_s     : std_logic;
+   signal ps2_clken_s       : std_logic;
+
 begin
+
+   -----------------------------------
+   -- Generate PS/2 tristate buffers.
+   -----------------------------------
+
+   ps2_data_in_s <= ps2_data_io;
+   ps2_clk_in_s  <= ps2_clk_io;
+   ps2_data_io   <= ps2_data_out_s when ps2_dataen_s = '1' and ps2_data_out_s = '0' else 'Z';
+   ps2_clk_io    <= ps2_clk_out_s  when ps2_clken_s  = '1' else 'Z';
+
 
    p_main_rst : process (main_clk_s)
    begin
@@ -107,8 +124,12 @@ begin
          rst_i          => main_rst_s(3),
          nmi_i          => '0',
          irq_i          => main_vera_irq_s,
-         ps2_clk_io     => ps2_clk_io,
-         ps2_data_io    => ps2_data_io,
+         ps2_data_in_i  => ps2_data_in_s,
+         ps2_data_out_o => ps2_data_out_s,
+         ps2_dataen_o   => ps2_dataen_s,
+         ps2_clk_in_i   => ps2_clk_in_s,
+         ps2_clk_out_o  => ps2_clk_out_s,
+         ps2_clken_o    => ps2_clken_s,
          vera_addr_o    => main_addr_s(2 downto 0),
          vera_wr_en_o   => main_wr_en_s,
          vera_wr_data_o => main_wr_data_s,

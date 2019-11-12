@@ -203,3 +203,15 @@ to work now. It remains to be seen, how stable this solution is.
 On the other hand, the current version of the project doesn't work, so I've
 introduced a bug somewhere.
 
+## 2019-11-10
+After several bugfixes, the ROM now starts up, and the cursor blinks. One of
+the bugs was that the VIA2 port B input was held low, and the ROM interpreted
+this as a mouse event in progress.
+
+The keyboard still doesn't work, and the root cause is not found. When running
+my own test in rom.s it does work, but the timing is different from the
+standard, so maybe that is causing problems.
+
+So more debugging is still in progress, now using the Internal Logic Analyzer,
+and I'm writing a PS/2 buffer module as a work-around for the timing problems.
+

@@ -59,8 +59,8 @@ begin
    valid_o <= '1' when counter = 11 else '0';
 
    -- Block incoming, until we have delivered our result
-   ps2_clk_o   <= '0' when counter = 11 else '1';
-   ps2_clken_o <= '1' when counter = 11 else '0';
+   ps2_clk_o   <= '0' when valid_o = '1' and ready_i = '0' else '1';
+   ps2_clken_o <= '1' when valid_o = '1' and ready_i = '0' else '0';
 
    ps2_data_o   <= '1';
    ps2_dataen_o <= '0';

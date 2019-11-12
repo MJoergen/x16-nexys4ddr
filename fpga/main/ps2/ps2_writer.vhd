@@ -45,7 +45,7 @@ architecture structural of ps2_writer is
 begin
 
    -- Ready to receive new data, when not transmitting.
-   ready_o   <= '1' when counter = 0 else '0';
+   ready_o   <= '1' when state = IDLE_ST else '0';
 
 
    ps2_clk  <= ps2_clk_o when ps2_clken_i = '0' else
@@ -76,21 +76,24 @@ begin
                   state     <= T3_ST;
                end if;
 
-           when T3_ST =>
+            when T3_ST =>
                if usecs = usec_next then
                   ps2_clk_o <= '1';
                   usec_next <= usecs + 20;
                   state     <= T2_ST;
                end if;
 
-           when T2_ST =>
+            when T2_ST =>
                if usecs = usec_next then
-                  if counter > 0 then
+                  if counter > 0 and ps2_clk = '1' then
                      ps2_data_o <= data(0);                 -- Send next bit
                      data       <= '1' & data(10 downto 1);
                      usec_next  <= usecs + 20;
                      state      <= T1_ST;
                      counter    <= counter - 1;
+                  end if;
+                  if counter = 0 and ps2_clk = '1' then
+                     state      <= IDLE_ST;
                   end if;
                end if;
          end case;

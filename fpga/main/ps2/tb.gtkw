@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Nov 12 05:56:25 2019
+[*] Tue Nov 12 07:24:20 2019
 [*]
-[dumpfile] "/home/mike/git/x16-nexys4ddr/fpga/main/ps2/tb.ghw"
-[dumpfile_mtime] "Tue Nov 12 05:55:26 2019"
-[dumpfile_size] 451796
-[savefile] "/home/mike/git/x16-nexys4ddr/fpga/main/ps2/tb.gtkw"
+[dumpfile] "/home/mfj/git/x16-nexys4ddr/fpga/main/ps2/tb.ghw"
+[dumpfile_mtime] "Tue Nov 12 07:23:29 2019"
+[dumpfile_size] 451809
+[savefile] "/home/mfj/git/x16-nexys4ddr/fpga/main/ps2/tb.gtkw"
 [timestart] 0
-[size] 1918 1020
+[size] 1920 1172
 [pos] -1 -1
-*-34.411346 412700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-35.411346 412700000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb.
 [treeopen] top.tb.i_ps2_reader.
@@ -20,11 +20,15 @@
 [sst_vpaned_height] 465
 @800200
 -ps2_writer
-@23
+@22
 #{top.tb.i_ps2_writer.data_i[10:0]} top.tb.i_ps2_writer.data_i[10] top.tb.i_ps2_writer.data_i[9] top.tb.i_ps2_writer.data_i[8] top.tb.i_ps2_writer.data_i[7] top.tb.i_ps2_writer.data_i[6] top.tb.i_ps2_writer.data_i[5] top.tb.i_ps2_writer.data_i[4] top.tb.i_ps2_writer.data_i[3] top.tb.i_ps2_writer.data_i[2] top.tb.i_ps2_writer.data_i[1] top.tb.i_ps2_writer.data_i[0]
 @28
+[color] 2
 top.tb.i_ps2_writer.valid_i
+@29
+[color] 5
 top.tb.i_ps2_writer.ready_o
+@28
 #{top.tb.i_ps2_writer.usec_up[2:0]} top.tb.i_ps2_writer.usec_up[2] top.tb.i_ps2_writer.usec_up[1] top.tb.i_ps2_writer.usec_up[0]
 @22
 #{top.tb.i_ps2_writer.usecs[7:0]} top.tb.i_ps2_writer.usecs[7] top.tb.i_ps2_writer.usecs[6] top.tb.i_ps2_writer.usecs[5] top.tb.i_ps2_writer.usecs[4] top.tb.i_ps2_writer.usecs[3] top.tb.i_ps2_writer.usecs[2] top.tb.i_ps2_writer.usecs[1] top.tb.i_ps2_writer.usecs[0]
@@ -48,7 +52,10 @@ top.tb.i_ps2_reader.ps2_data_i
 @22
 #{top.tb.i_ps2_reader.data_o[10:0]} top.tb.i_ps2_reader.data_o[10] top.tb.i_ps2_reader.data_o[9] top.tb.i_ps2_reader.data_o[8] top.tb.i_ps2_reader.data_o[7] top.tb.i_ps2_reader.data_o[6] top.tb.i_ps2_reader.data_o[5] top.tb.i_ps2_reader.data_o[4] top.tb.i_ps2_reader.data_o[3] top.tb.i_ps2_reader.data_o[2] top.tb.i_ps2_reader.data_o[1] top.tb.i_ps2_reader.data_o[0]
 @28
+[color] 2
 top.tb.i_ps2_reader.valid_o
+@29
+[color] 5
 top.tb.i_ps2_reader.ready_i
 @1000200
 -ps2_reader

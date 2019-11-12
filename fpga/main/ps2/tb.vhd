@@ -39,17 +39,40 @@ begin
 
    rst <= '1', '0' after 30*4 ns;
 
-   wr_data <= "01100110011";
-   wr_valid <= '0', '1' after 100*12 ns;
-
-   process
+   p_wr : process
    begin
       wr_valid <= '0';
       wait for 100*12 ns;
-      wr_data <= "01100110011";
-      wr_valid <= '1';
-   end process;
+      wait until clk = '1';
 
+      wr_data  <= "10110011010";
+      wr_valid <= '1';
+      wait until clk = '1';
+      while wr_ready = '0' loop
+         wait until clk = '1';
+      end loop;
+      wr_valid <= '0';
+      wait for 120 us;
+      wait until clk = '1';
+
+      wr_data  <= "11100110010";
+      wr_valid <= '1';
+      wait until clk = '1';
+      while wr_ready = '0' loop
+         wait until clk = '1';
+      end loop;
+      wr_valid <= '0';
+      wait;
+   end process p_wr;
+
+   p_rd : process
+   begin
+      rd_ready <= '0';
+      wait for 140 us;
+      wait until clk = '1';
+      rd_ready <= '1';
+      wait;
+   end process p_rd;
 
 
    i_ps2_writer : entity work.ps2_writer

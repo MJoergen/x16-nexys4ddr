@@ -215,3 +215,23 @@ standard, so maybe that is causing problems.
 So more debugging is still in progress, now using the Internal Logic Analyzer,
 and I'm writing a PS/2 buffer module as a work-around for the timing problems.
 
+## 2019-11-12
+Now keyboard works! I'm using a PS/2 buffer, but not sure if it is still
+needed.  The reason is that I didn't fully understand how to implement
+bi-directional signals, and I didn't fully appreciate that the PS/2 signals are
+open-collector.  This means that the FPGA should either drive the pin low, or
+should leave the pin tristated. However, the FPGA should never drive the pin
+high. This is now fixed, so I need to test, whether the buffer is still needed.
+
+The ROM defaults to US layout, but supposedly that can be changed by
+pressing the F9 key. Otherwise, I can modify line 123 in kernal/editor.1.s
+#nemu  lda #0          ;US layout"
+to something different.
+
+I did run into the problem mentioned by Joshua Scholar about sticky shift keys,
+so I'm currently running on his fork on github:
+https://github.com/differentprogramming/x16-rom/commit/657bae1b70fe9688a33e5204ea10849bac061580
+
+Next step (other than trying the F9 key and trying without the PS/2 buffer) is
+to work on the SD card.
+

@@ -3,6 +3,8 @@ use ieee.std_logic_1164.all;
 
 -- This is the top level module of the X16. The ports on this entity are mapped
 -- directly to pins on the FPGA.
+--
+-- Signal names are prefixed by the corresponding clock domain.
 
 entity x16 is
    port (
@@ -43,7 +45,6 @@ architecture structural of x16 is
    signal main_debug_s      : std_logic_vector(15 downto 0);
    signal main_vera_debug_s : std_logic_vector(16 downto 0);
    signal main_vera_irq_s   : std_logic;
-
    signal main_rst_s        : std_logic_vector( 3 downto 0) := (others => '1');
 
    signal ps2_data_in_s     : std_logic;
@@ -55,14 +56,15 @@ architecture structural of x16 is
 
 begin
 
-   -----------------------------------
-   -- Generate PS/2 tristate buffers.
-   -----------------------------------
+   ----------------------------------------------------------------
+   -- Generate PS/2 tristate buffers, simulating open-collector:
+   -- Either drive low or tristate; never drive high.
+   ----------------------------------------------------------------
 
    ps2_data_in_s <= ps2_data_io;
    ps2_clk_in_s  <= ps2_clk_io;
    ps2_data_io   <= ps2_data_out_s when ps2_dataen_s = '1' and ps2_data_out_s = '0' else 'Z';
-   ps2_clk_io    <= ps2_clk_out_s  when ps2_clken_s  = '1' else 'Z';
+   ps2_clk_io    <= ps2_clk_out_s  when ps2_clken_s  = '1' and ps2_clk_out_s  = '0' else 'Z';
 
 
    --------------------------------------------------
@@ -128,18 +130,19 @@ begin
          rst_i          => main_rst_s(3),
          nmi_i          => '0',
          irq_i          => main_vera_irq_s,
-         ps2_data_in_i  => ps2_data_in_s,
-         ps2_data_out_o => ps2_data_out_s,
-         ps2_dataen_o   => ps2_dataen_s,
-         ps2_clk_in_i   => ps2_clk_in_s,
-         ps2_clk_out_o  => ps2_clk_out_s,
-         ps2_clken_o    => ps2_clken_s,
          vera_addr_o    => main_addr_s(2 downto 0),
          vera_wr_en_o   => main_wr_en_s,
          vera_wr_data_o => main_wr_data_s,
          vera_rd_en_o   => main_rd_en_s,
          vera_rd_data_i => main_rd_data_s,
-         vera_debug_o   => main_debug_s
+         vera_debug_o   => main_debug_s,
+         --
+         ps2_data_in_i  => ps2_data_in_s,
+         ps2_data_out_o => ps2_data_out_s,
+         ps2_dataen_o   => ps2_dataen_s,
+         ps2_clk_in_i   => ps2_clk_in_s,
+         ps2_clk_out_o  => ps2_clk_out_s,
+         ps2_clken_o    => ps2_clken_s
       ); -- i_main
       
 

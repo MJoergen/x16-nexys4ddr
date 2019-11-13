@@ -36,6 +36,9 @@ architecture structural of vera is
    -- These signals are in the CPU clock domain
    ---------------------------------------------
 
+   -- Inverted clock to simulate combinatorial reads
+   signal cpu_clkn_s         : std_logic;
+
    -- video RAM
    signal cpu_vram_addr_s    : std_logic_vector(16 downto 0);
    signal cpu_vram_wr_en_s   : std_logic;
@@ -74,6 +77,8 @@ architecture structural of vera is
    signal vga_vsync_irq_s    : std_logic;
 
 begin
+
+   cpu_clkn_s <= not cpu_clk_i;
 
    ------------------------
    -- Interface to the CPU
@@ -171,7 +176,7 @@ begin
          G_SIZE => 36
       )
       port map (
-         src_clk_i               => not cpu_clk_i,
+         src_clk_i               => cpu_clkn_s,
          src_dat_i(17 downto  0) => cpu_map_base_s,
          src_dat_i(35 downto 18) => cpu_tile_base_s,
          dst_clk_i               => vga_clk_i,
@@ -210,7 +215,7 @@ begin
       port map (
          src_clk_i   => vga_clk_i,
          src_pulse_i => vga_vsync_irq_s,
-         dst_clk_i   => not cpu_clk_i,
+         dst_clk_i   => cpu_clkn_s,
          dst_pulse_o => cpu_vsync_irq_s
       ); -- i_pulse_conv
 

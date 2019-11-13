@@ -2,16 +2,22 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std_unsigned.all;
 
+-- This module receives data from a keyboard.
+
+-- I'm following the diagram on page 18 of this document: http://www.mcamafia.de/pdf/ibm_hitrc07.pdf
+
 entity ps2_reader is
    port (
       clk_i        : in  std_logic;
       rst_i        : in  std_logic;
+      -- Connected to keyboard
       ps2_clk_i    : in  std_logic;
       ps2_clk_o    : out std_logic;
       ps2_clken_o  : out std_logic;
       ps2_data_i   : in  std_logic;
       ps2_data_o   : out std_logic;
       ps2_dataen_o : out std_logic;
+      -- Connecter internally
       data_o       : out std_logic_vector(10 downto 0);
       valid_o      : out std_logic;
       ready_i      : in  std_logic
@@ -27,6 +33,7 @@ architecture structural of ps2_reader is
 
 begin
 
+   -- Synchronize signals to the main clock.
    p_reg : process (clk_i)
    begin
       if rising_edge(clk_i) then

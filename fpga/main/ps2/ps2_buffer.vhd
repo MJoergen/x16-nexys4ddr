@@ -2,6 +2,10 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std_unsigned.all;
 
+-- This module acts as a FIFO between the keyboard and the BASIC ROM.
+-- The reason is that the keyboard interface on the Nexys4DDR board
+-- does not quite follow the timing standard.
+
 entity ps2_buffer is
    port (
       clk_i         : in  std_logic;
@@ -30,7 +34,7 @@ architecture structural of ps2_buffer is
    signal ready : std_logic;
 
    -- Debug
-   constant DEBUG_MODE           : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE           : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug          : boolean;
    attribute mark_debug of valid : signal is DEBUG_MODE;
@@ -38,6 +42,7 @@ architecture structural of ps2_buffer is
 
 begin
 
+   -- Read from keyboad
    i_ps2_reader : entity work.ps2_reader
       port map (
          clk_i        => clk_i,
@@ -53,6 +58,7 @@ begin
          ready_i      => ready
       ); -- i_ps2_reader
 
+   -- Write to BASIC ROM
    i_ps2_writer : entity work.ps2_writer
       port map (
          clk_i        => clk_i,

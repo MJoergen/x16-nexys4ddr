@@ -94,7 +94,7 @@ architecture structural of main is
    signal ps2_dataen_s     : std_logic;
 
    -- Debug
-   constant DEBUG_MODE                      : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                      : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug                     : boolean;
    attribute mark_debug of ps2_clk_in_s     : signal is DEBUG_MODE;
@@ -270,11 +270,11 @@ begin
 
    i_hiram : entity work.ram
       generic map (
-         G_ADDR_BITS => 14                   -- 2^14 = 16 kB
+         G_ADDR_BITS => 17                   -- 2^17 = 128 kB
       )
       port map (
          clk_i     => clkn_s,
-         addr_i    => hiram_addr_s(13 downto 0),
+         addr_i    => hiram_addr_s,
          wr_en_i   => hiram_wr_en_s,
          wr_data_i => cpu_wr_data_s,
          rd_en_i   => hiram_rd_en_s,

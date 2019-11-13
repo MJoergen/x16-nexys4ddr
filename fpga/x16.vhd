@@ -65,17 +65,6 @@ begin
    ps2_clk_io    <= ps2_clk_out_s  when ps2_clken_s  = '1' else 'Z';
 
 
-   p_main_rst : process (main_clk_s)
-   begin
-      if rising_edge(main_clk_s) then
-         main_rst_s <= main_rst_s(2 downto 0) & "0";  -- Shift left one bit
-         if rstn_i = '0' then
-            main_rst_s <= (others => '1');
-         end if;
-      end if;
-   end process p_main_rst;
-
-
    --------------------------------------------------
    -- Instantiate Clock generation
    --------------------------------------------------
@@ -86,6 +75,21 @@ begin
          vga_clk => vga_clk_s,  --  25.2 MHz
          cpu_clk => main_clk_s  --   8.33 MHz
       ); -- i_clk
+
+
+   -----------------------------------
+   -- Generate reset signal.
+   -----------------------------------
+
+   p_main_rst : process (main_clk_s)
+   begin
+      if rising_edge(main_clk_s) then
+         main_rst_s <= main_rst_s(2 downto 0) & "0";  -- Shift left one bit
+         if rstn_i = '0' then
+            main_rst_s <= (others => '1');
+         end if;
+      end if;
+   end process p_main_rst;
 
 
    --------------------------------------------------
@@ -108,12 +112,12 @@ begin
          vga_col_o     => vga_col_o
       ); -- i_vera
 
-   sd_reset_o <= '0';   
+   sd_reset_o <= '0';   -- TBD.
 
 
-   --------------------------------------------------
-   -- Instantiate main computer (CPU,RAM,ROM,etc.)
-   --------------------------------------------------
+   --------------------------------------------------------
+   -- Instantiate main computer (CPU, RAM, ROM, VIA, etc.)
+   --------------------------------------------------------
 
    i_main : entity work.main
       generic map (

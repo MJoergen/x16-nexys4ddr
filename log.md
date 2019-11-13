@@ -225,7 +225,7 @@ high. This is now fixed, so I need to test, whether the buffer is still needed.
 
 The ROM defaults to US layout, but supposedly that can be changed by
 pressing the F9 key. Otherwise, I can modify line 123 in kernal/editor.1.s
-#nemu  lda #0          ;US layout"
+"nemu  lda #0          ;US layout"
 to something different.
 
 I did run into the problem mentioned by Joshua Scholar about sticky shift keys,
@@ -234,4 +234,10 @@ https://github.com/differentprogramming/x16-rom/commit/657bae1b70fe9688a33e5204e
 
 Next step (other than trying the F9 key and trying without the PS/2 buffer) is
 to work on the SD card.
+
+Another thing to try is whether line 101 of main/cpu\_65c02/ctl.vhd
+"ADDR\_PC + PC\_INC when cnt = 0 else"
+is necessary. Or whether line 92
+"microcode\_addr\_s <= ir & cnt;"
+can perhaps be tweaked instead.
 

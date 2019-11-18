@@ -34,11 +34,23 @@ architecture structural of ps2_buffer is
    signal ready : std_logic;
 
    -- Debug
-   constant DEBUG_MODE           : boolean := false; -- TRUE OR FALSE
+   constant DEBUG_MODE                   : boolean := false; -- TRUE OR FALSE
 
-   attribute mark_debug          : boolean;
-   attribute mark_debug of valid : signal is DEBUG_MODE;
-   attribute mark_debug of ready : signal is DEBUG_MODE;
+   attribute mark_debug                  : boolean;
+   attribute mark_debug of valid         : signal is DEBUG_MODE;
+   attribute mark_debug of ready         : signal is DEBUG_MODE;
+   attribute mark_debug of kbd_clk_i     : signal is DEBUG_MODE;
+   attribute mark_debug of kbd_clk_o     : signal is DEBUG_MODE;
+   attribute mark_debug of kbd_clken_o   : signal is DEBUG_MODE;
+   attribute mark_debug of kbd_data_i    : signal is DEBUG_MODE;
+   attribute mark_debug of kbd_data_o    : signal is DEBUG_MODE;
+   attribute mark_debug of kbd_dataen_o  : signal is DEBUG_MODE;
+   attribute mark_debug of main_clk_o    : signal is DEBUG_MODE;
+   attribute mark_debug of main_clk_i    : signal is DEBUG_MODE;
+   attribute mark_debug of main_clken_i  : signal is DEBUG_MODE;
+   attribute mark_debug of main_data_o   : signal is DEBUG_MODE;
+   attribute mark_debug of main_data_i   : signal is DEBUG_MODE;
+   attribute mark_debug of main_dataen_i : signal is DEBUG_MODE;
 
 begin
 

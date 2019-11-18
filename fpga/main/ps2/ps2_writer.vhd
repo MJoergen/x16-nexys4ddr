@@ -26,7 +26,7 @@ end ps2_writer;
 
 architecture structural of ps2_writer is
    
-   constant CLK_PERIOD_US : integer := 100;
+   constant CLK_PERIOD_US : integer := 60;
 
    signal ps2_clk   : std_logic;
    signal ps2_data  : std_logic;

@@ -241,3 +241,17 @@ is necessary. Or whether line 92
 "microcode\_addr\_s <= ir & cnt;"
 can perhaps be tweaked instead.
 
+## 2019-11-14
+Ok, so apparently, the PS/2 buffer is needed. Without it, the ROM gets no data
+from the keyboard.
+
+Keyboard layouts work fine, but there is no Danish layout enabled by default in
+the ROM.
+
+A first attemp at rewriting the code in ctl.vhd lead to a combinatorial loop.
+So I've given up for now ...
+
+## 2019-11-18
+I double-checked that the keyboard waits over 5000 clock cycles before sending data
+when it is allowed. So clearly, the software should not have to wait for that long
+in every timer tick. 

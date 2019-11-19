@@ -9,6 +9,7 @@ use ieee.std_logic_1164.all;
 entity cpu is
    port (
       clk_i          : in  std_logic;
+      rst_i          : in  std_logic;
       -- External CPU interface
       addr_i         : in  std_logic_vector( 2 downto 0);
       wr_en_i        : in  std_logic;
@@ -16,6 +17,11 @@ entity cpu is
       rd_en_i        : in  std_logic;
       rd_data_o      : out std_logic_vector( 7 downto 0);
       irq_o          : out std_logic;
+      -- SPI
+      spi_sclk_o     : out std_logic;
+      spi_mosi_o     : out std_logic;
+      spi_miso_i     : in  std_logic;
+      spi_cs_o       : out std_logic;
 
       -- Video RAM
       vram_addr_o    : out std_logic_vector(16 downto 0);
@@ -45,6 +51,12 @@ architecture structural of cpu is
    signal internal_wr_data_s : std_logic_vector( 7 downto 0);
    signal internal_rd_en_s   : std_logic;
    signal internal_rd_data_s : std_logic_vector( 7 downto 0);
+
+   signal spi_addr_s         : std_logic_vector( 0 downto 0);
+   signal spi_wr_en_s        : std_logic;
+   signal spi_wr_data_s      : std_logic_vector( 7 downto 0);
+   signal spi_rd_en_s        : std_logic;
+   signal spi_rd_data_s      : std_logic_vector( 7 downto 0);
 
    -- Read data
    signal config_rd_data_s   : std_logic_vector( 7 downto 0);
@@ -76,6 +88,26 @@ begin
       ); -- i_cpu_interface
 
 
+   -------------------
+   -- Instantiate SPI
+   -------------------
+
+   i_spi : entity work.spi
+      port map (
+         clk_i      => clk_i,
+         rst_i      => rst_i,
+         addr_i     => spi_addr_s,
+         wr_en_i    => spi_wr_en_s,
+         wr_data_i  => spi_wr_data_s,
+         rd_en_i    => spi_rd_en_s,
+         rd_data_o  => spi_rd_data_s,
+         spi_sclk_o => spi_sclk_o,
+         spi_mosi_o => spi_mosi_o,
+         spi_miso_i => spi_miso_i,
+         spi_cs_o   => spi_cs_o
+      ); -- i_spi
+
+
    --------------------------
    -- Configuration settings
    --------------------------
@@ -105,9 +137,17 @@ begin
    pal_wr_data_o <= internal_wr_data_s;
    pal_rd_en_o   <= '1' when internal_rd_en_s = '1' and internal_addr_s(19 downto 12) = X"F1" else '0';
 
+   -- Access SPI
+   spi_addr_s    <= internal_addr_s(0 downto 0);
+   spi_wr_en_s   <= '1' when internal_wr_en_s = '1' and internal_addr_s(19 downto 12) = X"F7" else '0';
+   spi_wr_data_s <= internal_wr_data_s;
+   spi_rd_en_s   <= '1' when internal_rd_en_s = '1' and internal_addr_s(19 downto 12) = X"F7" else '0';
+   
+
    -- Multiplex CPU read
    internal_rd_data_s <= vram_rd_data_i when vram_rd_en_o = '1' else
                          pal_rd_data_i  when pal_rd_en_o  = '1' else
+                         spi_rd_data_s  when spi_rd_en_s  = '1' else
                          config_rd_data_s;
 
 end architecture structural;

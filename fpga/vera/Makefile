@@ -7,6 +7,7 @@ SOURCES  = vera.vhd vram.vhd palette.vhd cdc.vhd pulse_conv.vhd   # Mixed clock 
 SOURCES += cpu/mmu.vhd cpu/config.vhd cpu/cpu.vhd                 # All CPU clock domain
 SOURCES += vga/pix.vhd vga/sync.vhd vga/vga.vhd vga/layer.vhd     # All VGA clock domain
 SOURCES += test/tb.vhd test/cpu_dummy.vhd
+SOURCES += cpu/spi_master.vhd cpu/spi_slave.vhd cpu/spi.vhd
 TB       = tb
 WAVE     = test/tb.ghw
 SAVE     = test/tb.gtkw

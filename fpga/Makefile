@@ -6,6 +6,7 @@ SOURCES  = x16.vhd
 SOURCES += clk.vhd
 SOURCES += vera/vera.vhd vera/vram.vhd vera/palette.vhd vera/cdc.vhd vera/pulse_conv.vhd
 SOURCES += vera/cpu/mmu.vhd vera/cpu/cpu.vhd vera/cpu/config.vhd
+SOURCES += vera/cpu/spi.vhd vera/cpu/spi_master.vhd
 SOURCES += vera/vga/pix.vhd vera/vga/sync.vhd vera/vga/vga.vhd vera/vga/layer.vhd
 SOURCES += main/main.vhd main/ram.vhd main/rom.vhd main/via.vhd
 SOURCES += main/ps2/ps2_buffer.vhd main/ps2/ps2_reader.vhd main/ps2/ps2_writer.vhd
@@ -36,9 +37,9 @@ x16.tcl: rom.tcl
 	echo "read_xdc x16.xdc" >> $@
 	echo "set_param synth.elaboration.rodinMoreOptions \"rt::set_parameter max_loop_limit 200000\"" >> $@
 	echo "synth_design -top x16 -part xc7a100tcsg324-1 -flatten_hierarchy none" >> $@
-	#echo "source debug.tcl" >> $@
+	echo "source debug.tcl" >> $@
 	echo "opt_design -directive NoBramPowerOpt" >> $@
-	#echo "write_debug_probes -force x16.ltx" >> $@
+	echo "write_debug_probes -force x16.ltx" >> $@
 	echo "place_design" >> $@
 	echo "route_design" >> $@
 	echo "write_checkpoint -force x16.dcp" >> $@

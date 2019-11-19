@@ -54,7 +54,38 @@ architecture structural of x16 is
    signal ps2_clk_out_s     : std_logic;
    signal ps2_clken_s       : std_logic;
 
+   signal spi_sclk_s        : std_logic;
+   signal spi_mosi_s        : std_logic;
+   signal spi_miso_s        : std_logic;
+   signal spi_cs_s          : std_logic;
+
+   -- Debug
+   constant DEBUG_MODE                : boolean := true; -- TRUE OR FALSE
+
+   attribute mark_debug               : boolean;
+   attribute mark_debug of spi_sclk_s : signal is DEBUG_MODE;
+   attribute mark_debug of spi_mosi_s : signal is DEBUG_MODE;
+   attribute mark_debug of spi_miso_s : signal is DEBUG_MODE;
+   attribute mark_debug of spi_cs_s   : signal is DEBUG_MODE;
+   attribute mark_debug of sd_cd_i    : signal is DEBUG_MODE;
+
 begin
+
+   ----------------------------------------------------------------
+   -- Generate SPI tristate buffers.
+   ----------------------------------------------------------------
+
+   -- The SD_RESET signal needs to be actively driven low by the FPGA to power
+   -- the microSD card slot.
+   sd_reset_o   <= '0';
+   sd_dat_io(3) <= spi_cs_s;
+   sd_dat_io(2) <= 'Z';
+   sd_dat_io(1) <= 'Z';
+   sd_dat_io(0) <= 'Z';
+   spi_miso_s   <= sd_dat_io(0);
+   sd_cmd_io    <= spi_mosi_s;
+   sd_sck_io    <= spi_sclk_s;
+
 
    ----------------------------------------------------------------
    -- Generate PS/2 tristate buffers, simulating open-collector:
@@ -101,6 +132,7 @@ begin
    i_vera : entity work.vera
       port map (
          cpu_clk_i     => main_clk_s,
+         cpu_rst_i     => main_rst_s(3),
          cpu_addr_i    => main_addr_s(2 downto 0),
          cpu_wr_en_i   => main_wr_en_s,
          cpu_wr_data_i => main_wr_data_s,
@@ -108,13 +140,17 @@ begin
          cpu_rd_data_o => main_rd_data_s,
          cpu_debug_o   => main_vera_debug_s,
          cpu_irq_o     => main_vera_irq_s,
+         --
+         spi_sclk_o    => spi_sclk_s,
+         spi_mosi_o    => spi_mosi_s,
+         spi_miso_i    => spi_miso_s,
+         spi_cs_o      => spi_cs_s,
+         --
          vga_clk_i     => vga_clk_s,
          vga_hs_o      => vga_hs_o,
          vga_vs_o      => vga_vs_o,
          vga_col_o     => vga_col_o
       ); -- i_vera
-
-   sd_reset_o <= '0';   -- TBD.
 
 
    --------------------------------------------------------

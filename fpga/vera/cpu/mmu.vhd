@@ -70,6 +70,20 @@ architecture structural of mmu is
       return res;
    end function get_increment;
 
+   -- Debug
+   constant DEBUG_MODE                    : boolean := true; -- TRUE OR FALSE
+
+   attribute mark_debug                   : boolean;
+   attribute mark_debug of cpu_addr_i     : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_en_i    : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_i  : signal is DEBUG_MODE;
+   attribute mark_debug of vera_addr_o    : signal is DEBUG_MODE;
+   attribute mark_debug of vera_wr_en_o   : signal is DEBUG_MODE;
+   attribute mark_debug of vera_wr_data_o : signal is DEBUG_MODE;
+   attribute mark_debug of address0_r     : signal is DEBUG_MODE;
+   attribute mark_debug of address1_r     : signal is DEBUG_MODE;
+   attribute mark_debug of addr_sel_r     : signal is DEBUG_MODE;
+
 begin
 
    --------------------------

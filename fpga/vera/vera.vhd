@@ -15,6 +15,7 @@ use ieee.std_logic_1164.all;
 entity vera is
    port (
       cpu_clk_i     : in  std_logic;                        -- 8.33 MHz
+      cpu_rst_i     : in  std_logic;
       cpu_addr_i    : in  std_logic_vector( 2 downto 0);
       cpu_wr_en_i   : in  std_logic;
       cpu_wr_data_i : in  std_logic_vector( 7 downto 0);
@@ -22,6 +23,11 @@ entity vera is
       cpu_rd_data_o : out std_logic_vector( 7 downto 0);
       cpu_debug_o   : out std_logic_vector(16 downto 0);
       cpu_irq_o     : out std_logic;
+
+      spi_sclk_o    : out std_logic;       -- sd_sck_io
+      spi_mosi_o    : out std_logic;       -- sd_cmd_io
+      spi_miso_i    : in  std_logic;       -- sd_dat_io(0)
+      spi_cs_o      : out std_logic;       -- sd_dat_io(3)
 
       vga_clk_i     : in  std_logic;                        -- 25.2 MHz
       vga_hs_o      : out std_logic;
@@ -87,6 +93,7 @@ begin
    i_cpu : entity work.cpu
       port map (
          clk_i          => cpu_clk_i,
+         rst_i          => cpu_rst_i,
          addr_i         => cpu_addr_i,
          wr_en_i        => cpu_wr_en_i,
          wr_data_i      => cpu_wr_data_i,
@@ -105,7 +112,12 @@ begin
          pal_rd_data_i  => cpu_pal_rd_data_s,
          map_base_o     => cpu_map_base_s,
          tile_base_o    => cpu_tile_base_s,
-         vsync_irq_i    => cpu_vsync_irq_s
+         vsync_irq_i    => cpu_vsync_irq_s,
+         -- SPI
+         spi_sclk_o     => spi_sclk_o,
+         spi_mosi_o     => spi_mosi_o,
+         spi_miso_i     => spi_miso_i,
+         spi_cs_o       => spi_cs_o
       ); -- i_cpu
 
 

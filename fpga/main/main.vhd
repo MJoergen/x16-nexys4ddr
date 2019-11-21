@@ -44,6 +44,7 @@ architecture structural of main is
  
    -- Chip select
    signal loram_cs_s       : std_logic;   -- 0x0000 - 0x7FFF
+   signal medram_cs_s      : std_logic;   -- 0x8000 - 0x9FFF
    signal vera_cs_s        : std_logic;   -- 0x9F20 - 0x9F2F
    signal via1_cs_s        : std_logic;   -- 0x9F60 - 0x9F6F
    signal via2_cs_s        : std_logic;   -- 0x9F70 - 0x9F7F
@@ -58,12 +59,14 @@ architecture structural of main is
 
    -- Write enable
    signal loram_wr_en_s    : std_logic;
+   signal medram_wr_en_s   : std_logic;
    signal via1_wr_en_s     : std_logic;
    signal via2_wr_en_s     : std_logic;
    signal hiram_wr_en_s    : std_logic;
 
    -- Read enable
    signal loram_rd_en_s    : std_logic;
+   signal medram_rd_en_s   : std_logic;
    signal via1_rd_en_s     : std_logic;
    signal via2_rd_en_s     : std_logic;
    signal hiram_rd_en_s    : std_logic;
@@ -71,6 +74,7 @@ architecture structural of main is
 
    -- Read data
    signal loram_rd_data_s  : std_logic_vector(7 downto 0);
+   signal medram_rd_data_s : std_logic_vector(7 downto 0);
    signal via1_rd_data_s   : std_logic_vector(7 downto 0);
    signal via2_rd_data_s   : std_logic_vector(7 downto 0);
    signal hiram_rd_data_s  : std_logic_vector(7 downto 0);
@@ -94,18 +98,17 @@ architecture structural of main is
    signal ps2_dataen_s     : std_logic;
 
    -- Debug
-   constant DEBUG_MODE                      : boolean := false; -- TRUE OR FALSE
+   constant DEBUG_MODE                   : boolean := false; -- TRUE OR FALSE
 
-   attribute mark_debug                     : boolean;
-   attribute mark_debug of ps2_clk_in_s     : signal is DEBUG_MODE;
-   attribute mark_debug of ps2_clk_out_s    : signal is DEBUG_MODE;
-   attribute mark_debug of ps2_clken_s      : signal is DEBUG_MODE;
-   attribute mark_debug of ps2_data_in_s    : signal is DEBUG_MODE;
-   attribute mark_debug of ps2_data_out_s   : signal is DEBUG_MODE;
-   attribute mark_debug of ps2_dataen_s     : signal is DEBUG_MODE;
-   attribute mark_debug of via2_porta_in_s  : signal is DEBUG_MODE;
-   attribute mark_debug of via2_porta_out_s : signal is DEBUG_MODE;
-   attribute mark_debug of via2_porta_en_s  : signal is DEBUG_MODE;
+   attribute mark_debug                  : boolean;
+   attribute mark_debug of via1_porta_s  : signal is DEBUG_MODE;
+   attribute mark_debug of via1_portb_s  : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_debug_s   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_addr_s    : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_en_s   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_s : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_en_s   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_data_s : signal is DEBUG_MODE;
 
 begin
 
@@ -163,22 +166,24 @@ begin
    --------------------
 
    loram_cs_s  <= '1' when cpu_addr_s(15 downto 15) = "0"    else '0';  -- 0x0000 - 0x7FFF
-   -- TBD: What about 0x8000 - 0x9EFF ??
+   medram_cs_s <= '1' when cpu_addr_s(15 downto 13) = "100"  else '0';  -- 0x8000 - 0x9FFF
    vera_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F2" else '0';  -- 0x9F20 - 0x9F2F
    via1_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F6" else '0';  -- 0x9F60 - 0x9F6F
    via2_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F7" else '0';  -- 0x9F70 - 0x9F7F
    hiram_cs_s  <= '1' when cpu_addr_s(15 downto 13) = "101"  else '0';  -- 0xA000 - 0xBFFF
    rom_cs_s    <= '1' when cpu_addr_s(15 downto 14) = "11"   else '0';  -- 0xC000 - 0xFFFF
 
-   cpu_rd_data_s <= loram_rd_data_s when loram_cs_s = '1' else
-                    vera_rd_data_i  when vera_cs_s  = '1' else
-                    via1_rd_data_s  when via1_cs_s  = '1' else
-                    via2_rd_data_s  when via2_cs_s  = '1' else
-                    hiram_rd_data_s when hiram_cs_s = '1' else
-                    rom_rd_data_s   when rom_cs_s   = '1' else
+   cpu_rd_data_s <= loram_rd_data_s  when loram_cs_s  = '1' else
+                    vera_rd_data_i   when vera_cs_s   = '1' else
+                    via1_rd_data_s   when via1_cs_s   = '1' else
+                    via2_rd_data_s   when via2_cs_s   = '1' else
+                    medram_rd_data_s when medram_cs_s = '1' else  -- Lower priority than VERA and VIA.
+                    hiram_rd_data_s  when hiram_cs_s  = '1' else
+                    rom_rd_data_s    when rom_cs_s    = '1' else
                     (others => '0');
 
    loram_rd_en_s  <= cpu_rd_en_s and loram_cs_s;
+   medram_rd_en_s <= cpu_rd_en_s and medram_cs_s;
    vera_rd_en_o   <= cpu_rd_en_s and vera_cs_s;
    via1_rd_en_s   <= cpu_rd_en_s and via1_cs_s;
    via2_rd_en_s   <= cpu_rd_en_s and via2_cs_s;
@@ -186,6 +191,7 @@ begin
    rom_rd_en_s    <= cpu_rd_en_s and rom_cs_s;
 
    loram_wr_en_s  <= cpu_wr_en_s and loram_cs_s;
+   medram_wr_en_s <= cpu_wr_en_s and medram_cs_s;
    vera_wr_en_o   <= cpu_wr_en_s and vera_cs_s;
    via1_wr_en_s   <= cpu_wr_en_s and via1_cs_s;
    via2_wr_en_s   <= cpu_wr_en_s and via2_cs_s;
@@ -208,6 +214,24 @@ begin
          rd_en_i   => loram_rd_en_s,
          rd_data_o => loram_rd_data_s
       ); -- i_loram
+
+
+   -----------------------
+   -- Instantiate med RAM
+   -----------------------
+
+   i_medram : entity work.ram
+      generic map (
+         G_ADDR_BITS => 13                   -- 2^13 = 8 kB
+      )
+      port map (
+         clk_i     => clkn_s,
+         addr_i    => cpu_addr_s(12 downto 0),
+         wr_en_i   => medram_wr_en_s,
+         wr_data_i => cpu_wr_data_s,
+         rd_en_i   => medram_rd_en_s,
+         rd_data_o => medram_rd_data_s
+      ); -- i_medram
 
 
    ----------------

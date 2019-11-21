@@ -37,6 +37,11 @@ architecture simulation of tb is
    signal ps2_clk_out_s  : std_logic;
    signal ps2_clken_s    : std_logic;
 
+   signal spi_sclk_s     : std_logic;
+   signal spi_mosi_s     : std_logic;
+   signal spi_miso_s     : std_logic;
+   signal spi_cs_s       : std_logic;
+
 begin
 
    --------------------
@@ -88,6 +93,7 @@ begin
    i_vera : entity work.cpu
       port map (
          clk_i          => clk_s,
+         rst_i          => rst_s,
          addr_i         => vera_addr_s,
          wr_en_i        => vera_wr_en_s,
          wr_data_i      => vera_wr_data_s,
@@ -99,6 +105,10 @@ begin
          vram_wr_data_o => vram_wr_data_s,
          vram_rd_en_o   => vram_rd_en_s,
          vram_rd_data_i => vram_rd_data_s,
+         spi_sclk_o     => spi_sclk_s,
+         spi_mosi_o     => spi_mosi_s,
+         spi_miso_i     => spi_miso_s,
+         spi_cs_o       => spi_cs_s,
          pal_addr_o     => open,
          pal_wr_en_o    => open,
          pal_wr_data_o  => open,

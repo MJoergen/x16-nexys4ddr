@@ -80,6 +80,8 @@ architecture structural of mmu is
    attribute mark_debug of vera_addr_o    : signal is DEBUG_MODE;
    attribute mark_debug of vera_wr_en_o   : signal is DEBUG_MODE;
    attribute mark_debug of vera_wr_data_o : signal is DEBUG_MODE;
+   attribute mark_debug of vera_rd_en_o   : signal is DEBUG_MODE;
+   attribute mark_debug of vera_rd_data_i : signal is DEBUG_MODE;
    attribute mark_debug of address0_r     : signal is DEBUG_MODE;
    attribute mark_debug of address1_r     : signal is DEBUG_MODE;
    attribute mark_debug of addr_sel_r     : signal is DEBUG_MODE;

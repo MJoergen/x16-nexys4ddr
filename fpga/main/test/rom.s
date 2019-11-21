@@ -181,6 +181,21 @@ error9:
    JSR write_vram ; $2661 := $44
 
 
+; Test read/write to med RAM
+   LDA #$23
+   STA $9EFF
+   INC $9EFF
+   LDA $9EFF
+   CMP #$24
+error10:
+   BNE error10
+
+   LDY #$71
+   LDX #$26
+   LDA #$44
+   JSR write_vram ; $2671 := $44
+
+
 ; Test reading from keyboard
    LDA #$FF
    STA $9F72   ; Output enabled for VIA2 port A

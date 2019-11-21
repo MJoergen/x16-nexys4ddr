@@ -116,6 +116,17 @@ architecture structural of datapath is
    signal wren : std_logic;
    signal mem  : std_logic;
 
+   -- Debug
+   constant DEBUG_MODE        : boolean := false; -- TRUE OR FALSE
+
+   attribute mark_debug       : boolean;
+   attribute mark_debug of pc : signal is DEBUG_MODE;
+   attribute mark_debug of ar : signal is DEBUG_MODE;
+   attribute mark_debug of xr : signal is DEBUG_MODE;
+   attribute mark_debug of yr : signal is DEBUG_MODE;
+   attribute mark_debug of sp : signal is DEBUG_MODE;
+   attribute mark_debug of sr : signal is DEBUG_MODE;
+
 begin
 
    alu_reg <= ar when reg_sel_i = REG_AR else

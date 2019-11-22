@@ -213,7 +213,70 @@ waitwhilelow:
    LDA $9F71
    BIT #$02
    BEQ waitwhilelow
-   JMP waitwhilehigh
+
+   LDY #$51
+   LDX #$28
+   LDA #$44
+   JSR write_vram ; $2851 := $44
+
+spi:
+; Test reading from SPI
+   LDA #$01
+   STA $9F25   ; Address port 1
+   LDA #$01
+   STA $9F20
+   LDA #$70
+   STA $9F21
+   LDA #$0F
+   STA $9F22   ; Address 0xF7001, no increment. Use $9F24
+
+   LDA #$00
+   STA $9F25   ; Address port 0
+   LDA #$00
+   STA $9F20
+   LDA #$70
+   STA $9F21
+   LDA #$0F
+   STA $9F22   ; Address 0xF7000, no increment. Use $9F23
+
+;-- Memory map:
+;-- 0 WRITE : Tx byte to send
+;-- 0 READ  : Rx byte received
+;-- 1 WRITE : bit 0 is card select
+;-- 1 READ  : bit 0 is card select
+;--           bit 7 is busy
+
+   LDA $9F24   ; Verify SPI is disabled and not busy
+   CMP #$00
+   BNE *       ; Error
+
+   LDA #$01    ; Enable SPI
+   STA $9F24
+
+   LDA $9F24   ; Verify SPI is enabled, but not busy
+   CMP #$01
+   BNE *       ; Error
+
+   LDA #$46    ; Send single byte
+   STA $9F23
+
+   LDA $9F24   ; Verify SPI is enabled, and busy
+   CMP #$81
+   BNE *       ; Error
+
+spiwaitready:
+   LDA $9F24
+   CMP #$01
+   BNE spiwaitready
+
+   LDA $9F23
+   CMP #$5A
+   BNE *       ; Error
+
+   LDY #$61
+   LDX #$28
+   LDA #$44
+   JSR write_vram ; $2861 := $44
 
 end:
    JMP end
@@ -233,3 +296,4 @@ write_vram:
    .addr main
    .addr main
    .addr main
+

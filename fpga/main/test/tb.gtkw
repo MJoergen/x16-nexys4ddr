@@ -1,24 +1,27 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Nov 12 14:05:49 2019
+[*] Fri Nov 22 09:16:35 2019
 [*]
 [dumpfile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
-[dumpfile_mtime] "Tue Nov 12 13:26:56 2019"
-[dumpfile_size] 12992466
+[dumpfile_mtime] "Fri Nov 22 08:57:50 2019"
+[dumpfile_size] 13162581
 [savefile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
-[timestart] 8243300000
-[size] 1920 1172
+[timestart] 2400100000
+[size] 1853 1145
 [pos] -1 -1
-*-25.506107 8396500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.506107 2646000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb.
 [treeopen] top.tb.i_main.
 [treeopen] top.tb.i_main.i_cpu_65c02.i_datapath.
+[treeopen] top.tb.i_vera.
+[treeopen] top.tb.i_vera.i_spi.
+[treeopen] top.tb.i_vera.i_spi.i_spi_master.
 [sst_width] 223
 [signals_width] 348
 [sst_expanded] 1
 [sst_vpaned_height] 340
-@800200
+@c00200
 -cpu_65c02
 @28
 top.tb.i_main.i_cpu_65c02.clk_i
@@ -40,9 +43,9 @@ top.tb.i_main.i_cpu_65c02.rd_en_o
 #{top.tb.i_main.i_cpu_65c02.i_datapath.yr[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.yr[7] top.tb.i_main.i_cpu_65c02.i_datapath.yr[6] top.tb.i_main.i_cpu_65c02.i_datapath.yr[5] top.tb.i_main.i_cpu_65c02.i_datapath.yr[4] top.tb.i_main.i_cpu_65c02.i_datapath.yr[3] top.tb.i_main.i_cpu_65c02.i_datapath.yr[2] top.tb.i_main.i_cpu_65c02.i_datapath.yr[1] top.tb.i_main.i_cpu_65c02.i_datapath.yr[0]
 #{top.tb.i_main.i_cpu_65c02.i_datapath.sp[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.sp[7] top.tb.i_main.i_cpu_65c02.i_datapath.sp[6] top.tb.i_main.i_cpu_65c02.i_datapath.sp[5] top.tb.i_main.i_cpu_65c02.i_datapath.sp[4] top.tb.i_main.i_cpu_65c02.i_datapath.sp[3] top.tb.i_main.i_cpu_65c02.i_datapath.sp[2] top.tb.i_main.i_cpu_65c02.i_datapath.sp[1] top.tb.i_main.i_cpu_65c02.i_datapath.sp[0]
 #{top.tb.i_main.i_cpu_65c02.i_datapath.sr[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.sr[7] top.tb.i_main.i_cpu_65c02.i_datapath.sr[6] top.tb.i_main.i_cpu_65c02.i_datapath.sr[5] top.tb.i_main.i_cpu_65c02.i_datapath.sr[4] top.tb.i_main.i_cpu_65c02.i_datapath.sr[3] top.tb.i_main.i_cpu_65c02.i_datapath.sr[2] top.tb.i_main.i_cpu_65c02.i_datapath.sr[1] top.tb.i_main.i_cpu_65c02.i_datapath.sr[0]
-@1000200
+@1401200
 -cpu_65c02
-@c00200
+@800200
 -VERA
 @28
 top.tb.i_vera.vsync_irq_i
@@ -63,7 +66,7 @@ top.tb.i_vera.i_mmu.vera_wr_en_o
 top.tb.i_vera.i_mmu.vera_rd_en_o
 @22
 #{top.tb.i_vera.i_mmu.vera_rd_data_i[7:0]} top.tb.i_vera.i_mmu.vera_rd_data_i[7] top.tb.i_vera.i_mmu.vera_rd_data_i[6] top.tb.i_vera.i_mmu.vera_rd_data_i[5] top.tb.i_vera.i_mmu.vera_rd_data_i[4] top.tb.i_vera.i_mmu.vera_rd_data_i[3] top.tb.i_vera.i_mmu.vera_rd_data_i[2] top.tb.i_vera.i_mmu.vera_rd_data_i[1] top.tb.i_vera.i_mmu.vera_rd_data_i[0]
-@1401200
+@1000200
 -VERA
 @c00200
 -main
@@ -76,7 +79,7 @@ top.tb.i_main.ps2_data_out_s
 top.tb.i_main.ps2_dataen_s
 @1401200
 -main
-@800200
+@c00200
 -ps2_buffer
 @28
 top.tb.i_main.i_ps2_buffer.kbd_clk_i
@@ -91,9 +94,9 @@ top.tb.i_main.i_ps2_buffer.main_clken_i
 top.tb.i_main.i_ps2_buffer.main_data_o
 top.tb.i_main.i_ps2_buffer.main_data_i
 top.tb.i_main.i_ps2_buffer.main_dataen_i
-@1000200
+@1401200
 -ps2_buffer
-@c00023
+@c00022
 #{top.tb.i_main.via2_porta_in_s[7:0]} top.tb.i_main.via2_porta_in_s[7] top.tb.i_main.via2_porta_in_s[6] top.tb.i_main.via2_porta_in_s[5] top.tb.i_main.via2_porta_in_s[4] top.tb.i_main.via2_porta_in_s[3] top.tb.i_main.via2_porta_in_s[2] top.tb.i_main.via2_porta_in_s[1] top.tb.i_main.via2_porta_in_s[0]
 @28
 top.tb.i_main.via2_porta_in_s[7]
@@ -104,7 +107,24 @@ top.tb.i_main.via2_porta_in_s[3]
 top.tb.i_main.via2_porta_in_s[2]
 top.tb.i_main.via2_porta_in_s[1]
 top.tb.i_main.via2_porta_in_s[0]
-@1401201
+@1401200
 -group_end
+@800200
+-spi_master
+@28
+top.tb.i_vera.i_spi.i_spi_master.valid_i
+top.tb.i_vera.i_spi.i_spi_master.ready_o
+top.tb.i_vera.i_spi.i_spi_master.spi_sclk_o
+top.tb.i_vera.i_spi.i_spi_master.spi_mosi_o
+top.tb.i_vera.i_spi.i_spi_master.spi_miso_i
+@420
+top.tb.i_vera.i_spi.i_spi_master.counter
+top.tb.i_vera.i_spi.i_spi_master.state
+@22
+#{top.tb.i_vera.i_spi.i_spi_master.timer[6:0]} top.tb.i_vera.i_spi.i_spi_master.timer[6] top.tb.i_vera.i_spi.i_spi_master.timer[5] top.tb.i_vera.i_spi.i_spi_master.timer[4] top.tb.i_vera.i_spi.i_spi_master.timer[3] top.tb.i_vera.i_spi.i_spi_master.timer[2] top.tb.i_vera.i_spi.i_spi_master.timer[1] top.tb.i_vera.i_spi.i_spi_master.timer[0]
+#{top.tb.i_vera.i_spi.i_spi_master.timer_next[6:0]} top.tb.i_vera.i_spi.i_spi_master.timer_next[6] top.tb.i_vera.i_spi.i_spi_master.timer_next[5] top.tb.i_vera.i_spi.i_spi_master.timer_next[4] top.tb.i_vera.i_spi.i_spi_master.timer_next[3] top.tb.i_vera.i_spi.i_spi_master.timer_next[2] top.tb.i_vera.i_spi.i_spi_master.timer_next[1] top.tb.i_vera.i_spi.i_spi_master.timer_next[0]
+#{top.tb.i_vera.i_spi.i_spi_master.data_o[7:0]} top.tb.i_vera.i_spi.i_spi_master.data_o[7] top.tb.i_vera.i_spi.i_spi_master.data_o[6] top.tb.i_vera.i_spi.i_spi_master.data_o[5] top.tb.i_vera.i_spi.i_spi_master.data_o[4] top.tb.i_vera.i_spi.i_spi_master.data_o[3] top.tb.i_vera.i_spi.i_spi_master.data_o[2] top.tb.i_vera.i_spi.i_spi_master.data_o[1] top.tb.i_vera.i_spi.i_spi_master.data_o[0]
+@1000200
+-spi_master
 [pattern_trace] 1
 [pattern_trace] 0

@@ -61,7 +61,7 @@ architecture structural of x16 is
    signal spi_cs_s          : std_logic;
 
    -- Debug
-   constant DEBUG_MODE                : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug               : boolean;
    attribute mark_debug of spi_sclk_s : signal is DEBUG_MODE;

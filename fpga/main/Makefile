@@ -4,14 +4,14 @@
 # https://github.com/ghdl/ghdl
 
 SOURCES  = main.vhd rom.vhd ram.vhd via.vhd
-SOURCES += ps2/ps2_buffer.vhd ps2/ps2_reader.vhd ps2/ps2_writer.vhd
+SOURCES += ps2/ps2_buffer.vhd ps2/ps2_reader.vhd
 SOURCES += cpu_65c02/cpu_65c02.vhd cpu_65c02/ctl.vhd cpu_65c02/datapath.vhd cpu_65c02/microcode.vhd
 SOURCES += cpu_65c02/alu.vhd cpu_65c02/ar.vhd cpu_65c02/hi.vhd cpu_65c02/lo.vhd
 SOURCES += cpu_65c02/pc.vhd cpu_65c02/sp.vhd cpu_65c02/sr.vhd cpu_65c02/xr.vhd 
 SOURCES += cpu_65c02/yr.vhd cpu_65c02/zp.vhd cpu_65c02/mr.vhd
 SOURCES += ../vera/cpu/mmu.vhd ../vera/cpu/config.vhd ../vera/cpu/cpu.vhd ../vera/vram.vhd
 SOURCES += ../vera/cpu/spi.vhd ../vera/cpu/spi_master.vhd
-SOURCES += test/tb.vhd
+SOURCES += ps2/ps2_writer.vhd ../vera/cpu/spi_slave.vhd test/tb.vhd 
 TB       = tb
 WAVE     = test/tb.ghw
 SAVE     = test/tb.gtkw
@@ -24,7 +24,7 @@ SAVE     = test/tb.gtkw
 sim: $(SOURCES) rom.txt
 	ghdl -i --std=08 --work=work $(SOURCES)
 	ghdl -m --std=08 --ieee=synopsys -frelaxed-rules $(TB)
-	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=10000ns
+	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=14000ns
 	gtkwave $(WAVE) $(SAVE)
 
 # Uncomment the line below to run the 6502 functional test suite.

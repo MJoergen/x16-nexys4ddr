@@ -60,7 +60,7 @@ architecture structural of spi is
    signal data_out_s : std_logic_vector(7 downto 0);
 
    -- Debug
-   constant DEBUG_MODE                : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug               : boolean;
    attribute mark_debug of addr_i     : signal is DEBUG_MODE;
@@ -97,6 +97,10 @@ begin
                   null;
             end case;
          end if;
+
+         if rst_i = '1' then
+            spi_cs_o <= '0';
+         end if;
       end if;
    end process p_write;
 
@@ -113,11 +117,11 @@ begin
          if rd_en_i = '1' then
             case addr_i is
                when "0" =>
-                  rd_data_o(0) <= spi_cs_o;
-                  rd_data_o(7) <= not ready_s; -- busy
+                  rd_data_o <= data_out_s;
 
                when "1" =>
-                  rd_data_o <= data_out_s;
+                  rd_data_o(0) <= spi_cs_o;
+                  rd_data_o(7) <= not ready_s; -- busy
 
                when others =>
                   null;

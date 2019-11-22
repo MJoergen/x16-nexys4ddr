@@ -42,7 +42,7 @@ end spi_master;
 
 architecture structural of spi_master is
 
-   constant CLK_PERIOD_CYCLES : integer := 83;            -- 100 kHz
+   constant CLK_PERIOD_CYCLES : integer := 8;            -- 100 kHz
 
    signal timer      : std_logic_vector(6 downto 0);   -- Free running timer up to 128.
    signal timer_next : std_logic_vector(6 downto 0);   -- Time for next event
@@ -59,7 +59,7 @@ architecture structural of spi_master is
    signal spi_miso_s : std_logic;
 
    -- Debug
-   constant DEBUG_MODE                : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug               : boolean;
    attribute mark_debug of state      : signal is DEBUG_MODE;
@@ -81,6 +81,7 @@ begin
 
    ready_o <= '1' when state = IDLE_ST else '0';
 
+   data_o <= data_r;
 
    --------------------------
    -- State manchine
@@ -93,7 +94,7 @@ begin
             when IDLE_ST =>
                if valid_i = '1' and ready_o = '1' then
                   data_r     <= data_i;
-                  counter    <= 8;
+                  counter    <= 7;
                   spi_mosi_o <= data_i(7);
                   timer_next <= timer + CLK_PERIOD_CYCLES/2;
                   state      <= LOW_ST;
@@ -140,6 +141,10 @@ begin
    begin
       if rising_edge(clk_i) then
          timer <= timer + 1;
+
+         if rst_i = '1' then
+            timer <= (others => '0');
+         end if;
       end if;
    end process p_timer;
 

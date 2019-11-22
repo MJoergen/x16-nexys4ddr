@@ -6,42 +6,47 @@ end entity tb;
 
 architecture simulation of tb is
 
-   signal clk_s          : std_logic;
-   signal clkn_s         : std_logic;
-   signal rst_s          : std_logic;
-   signal nmi_s          : std_logic;
-   signal vera_irq_s     : std_logic;
-   signal vera_addr_s    : std_logic_vector(2 downto 0);
-   signal vera_wr_en_s   : std_logic;
-   signal vera_wr_data_s : std_logic_vector(7 downto 0);
-   signal vera_rd_en_s   : std_logic;
-   signal vera_rd_data_s : std_logic_vector(7 downto 0);
-   signal vera_debug_s   : std_logic_vector(15 downto 0);
+   signal clk_s           : std_logic;
+   signal clkn_s          : std_logic;
+   signal rst_s           : std_logic;
+   signal nmi_s           : std_logic;
+   signal vera_irq_s      : std_logic;
+   signal vera_addr_s     : std_logic_vector(2 downto 0);
+   signal vera_wr_en_s    : std_logic;
+   signal vera_wr_data_s  : std_logic_vector(7 downto 0);
+   signal vera_rd_en_s    : std_logic;
+   signal vera_rd_data_s  : std_logic_vector(7 downto 0);
+   signal vera_debug_s    : std_logic_vector(15 downto 0);
 
    -- video RAM
-   signal vram_addr_s    : std_logic_vector(16 downto 0);
-   signal vram_wr_en_s   : std_logic;
-   signal vram_wr_data_s : std_logic_vector( 7 downto 0);
-   signal vram_rd_en_s   : std_logic;
-   signal vram_rd_data_s : std_logic_vector( 7 downto 0);
+   signal vram_addr_s     : std_logic_vector(16 downto 0);
+   signal vram_wr_en_s    : std_logic;
+   signal vram_wr_data_s  : std_logic_vector( 7 downto 0);
+   signal vram_rd_en_s    : std_logic;
+   signal vram_rd_data_s  : std_logic_vector( 7 downto 0);
 
-   signal vsync_irq_s    : std_logic;
+   signal vsync_irq_s     : std_logic;
 
-   signal kbd_data_s     : std_logic_vector(10 downto 0);
-   signal kbd_valid_s    : std_logic;
-   signal kbd_ready_s    : std_logic;
+   signal kbd_data_s      : std_logic_vector(10 downto 0);
+   signal kbd_valid_s     : std_logic;
+   signal kbd_ready_s     : std_logic;
 
-   signal ps2_data_in_s  : std_logic;
-   signal ps2_data_out_s : std_logic;
-   signal ps2_dataen_s   : std_logic;
-   signal ps2_clk_in_s   : std_logic;
-   signal ps2_clk_out_s  : std_logic;
-   signal ps2_clken_s    : std_logic;
+   signal ps2_data_in_s   : std_logic;
+   signal ps2_data_out_s  : std_logic;
+   signal ps2_dataen_s    : std_logic;
+   signal ps2_clk_in_s    : std_logic;
+   signal ps2_clk_out_s   : std_logic;
+   signal ps2_clken_s     : std_logic;
 
-   signal spi_sclk_s     : std_logic;
-   signal spi_mosi_s     : std_logic;
-   signal spi_miso_s     : std_logic;
-   signal spi_cs_s       : std_logic;
+   signal spi_sclk_s      : std_logic;
+   signal spi_mosi_s      : std_logic;
+   signal spi_miso_s      : std_logic;
+   signal spi_cs_s        : std_logic;
+
+   signal spi_valid_out_s : std_logic;
+   signal spi_valid_in_s  : std_logic;
+   signal spi_data_out_s  : std_logic_vector(7 downto 0);
+   signal spi_data_in_s   : std_logic_vector(7 downto 0);
 
 begin
 
@@ -174,11 +179,6 @@ begin
          ps2_dataen_i => ps2_dataen_s
       ); -- i_ps2_writer
 
-
-   ------------------------------
-   -- Generate keyboard stimulus
-   ------------------------------
-
    p_kbd : process
    begin
       kbd_valid_s <= '0';
@@ -196,6 +196,42 @@ begin
       wait until clk_s = '1';
       wait;
    end process p_kbd;
+
+
+   ---------------------------------
+   -- Instantiate SPI emulator
+   ---------------------------------
+
+   i_spi_slave : entity work.spi_slave
+      port map (
+         clk_i      => clk_s,
+         rst_i      => rst_s,
+         valid_o    => spi_valid_out_s,
+         valid_i    => spi_valid_in_s,
+         data_o     => spi_data_out_s,
+         data_i     => spi_data_in_s,
+         spi_sclk_i => spi_sclk_s,
+         spi_mosi_i => spi_mosi_s,
+         spi_miso_o => spi_miso_s
+      ); -- i_spi_slave
+
+   p_spi : process
+   begin
+      spi_valid_in_s <= '0';
+      wait for 100*12 ns;
+      wait until clk_s = '1';
+
+      spi_data_in_s <= X"5A";
+      spi_valid_in_s <= '1';
+      wait until clk_s = '1';
+      spi_valid_in_s <= '0';
+      wait until clk_s = '1';
+
+      wait until spi_valid_out_s = '1';
+      wait until clk_s = '1';
+      assert spi_data_out_s = X"46";
+      wait;
+   end process p_spi;
 
 end architecture simulation;
 

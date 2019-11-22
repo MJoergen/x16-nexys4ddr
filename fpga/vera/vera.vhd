@@ -81,8 +81,6 @@ architecture structural of vera is
 
 begin
 
-   cpu_clkn_s <= not cpu_clk_i;
-
    ------------------------
    -- Interface to the CPU
    ------------------------

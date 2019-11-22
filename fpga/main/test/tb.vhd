@@ -7,6 +7,7 @@ end entity tb;
 architecture simulation of tb is
 
    signal clk_s          : std_logic;
+   signal clkn_s         : std_logic;
    signal rst_s          : std_logic;
    signal nmi_s          : std_logic;
    signal vera_irq_s     : std_logic;
@@ -57,6 +58,8 @@ begin
    rst_s <= '1', '0' after 30*4 ns;
    nmi_s <= '0';
 
+   clkn_s <= not clk_s;
+
 
    --------------------------
    -- Instantiate MAIN block
@@ -92,7 +95,7 @@ begin
 
    i_vera : entity work.cpu
       port map (
-         clk_i          => clk_s,
+         clk_i          => clkn_s,
          rst_i          => rst_s,
          addr_i         => vera_addr_s,
          wr_en_i        => vera_wr_en_s,
@@ -137,7 +140,7 @@ begin
    i_vram : entity work.vram
       port map (
          -- CPU access
-         cpu_clk_i     => clk_s,
+         cpu_clk_i     => clkn_s,
          cpu_addr_i    => vram_addr_s,
          cpu_wr_en_i   => vram_wr_en_s,
          cpu_wr_data_i => vram_wr_data_s,

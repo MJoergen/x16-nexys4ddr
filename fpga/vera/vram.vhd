@@ -40,7 +40,7 @@ begin
 
    p_cpu_write : process (cpu_clk_i)
    begin
-      if falling_edge(cpu_clk_i) then
+      if rising_edge(cpu_clk_i) then
          if cpu_wr_en_i = '1' then
             mem_r(to_integer(cpu_addr_i(15 downto 0))) <= cpu_wr_data_i;  -- TBD: Currently only supports 64 kB.
          end if;
@@ -49,7 +49,7 @@ begin
 
    p_cpu_read : process (cpu_clk_i)
    begin
-      if falling_edge(cpu_clk_i) then
+      if rising_edge(cpu_clk_i) then
          if cpu_rd_en_i = '1' then
             cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i(15 downto 0)));  -- TBD: Currently only supports 64 kB.
          end if;

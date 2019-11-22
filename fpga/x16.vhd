@@ -32,11 +32,12 @@ end x16;
 
 architecture structural of x16 is
 
-   constant C_ROM_INIT_FILE : string := "main/rom.txt";       -- ROM contents.
+   constant C_ROM_INIT_FILE : string := "main/rom.txt";     -- ROM contents.
 
-   signal vga_clk_s         : std_logic;   -- 25.2 MHz
+   signal vga_clk_s         : std_logic;                    -- 25.2 MHz
 
-   signal main_clk_s        : std_logic;   --  8.33 MHz
+   signal main_clk_s        : std_logic;                    -- 8.33 MHz
+   signal main_clkn_s       : std_logic;                    -- Inverted clock
    signal main_addr_s       : std_logic_vector(15 downto 0);
    signal main_wr_en_s      : std_logic;
    signal main_wr_data_s    : std_logic_vector( 7 downto 0);
@@ -124,6 +125,8 @@ begin
       end if;
    end process p_main_rst;
 
+   main_clkn_s <= not main_clk_s;
+
 
    --------------------------------------------------
    -- Instantiate VERA module
@@ -131,7 +134,7 @@ begin
 
    i_vera : entity work.vera
       port map (
-         cpu_clk_i     => main_clk_s,
+         cpu_clk_i     => main_clkn_s,
          cpu_rst_i     => main_rst_s(3),
          cpu_addr_i    => main_addr_s(2 downto 0),
          cpu_wr_en_i   => main_wr_en_s,

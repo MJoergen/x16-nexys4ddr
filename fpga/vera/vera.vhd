@@ -42,9 +42,6 @@ architecture structural of vera is
    -- These signals are in the CPU clock domain
    ---------------------------------------------
 
-   -- Inverted clock to simulate combinatorial reads
-   signal cpu_clkn_s         : std_logic;
-
    -- video RAM
    signal cpu_vram_addr_s    : std_logic_vector(16 downto 0);
    signal cpu_vram_wr_en_s   : std_logic;
@@ -92,7 +89,7 @@ begin
 
    i_cpu : entity work.cpu
       port map (
-         clk_i          => cpu_clkn_s,
+         clk_i          => cpu_clk_i,
          rst_i          => cpu_rst_i,
          addr_i         => cpu_addr_i,
          wr_en_i        => cpu_wr_en_i,
@@ -127,7 +124,7 @@ begin
 
    p_debug : process (cpu_clk_i)
    begin
-      if falling_edge(cpu_clk_i) then
+      if rising_edge(cpu_clk_i) then
          if cpu_vram_wr_en_s = '1' then
             cpu_debug_o <= cpu_vram_addr_s;
          end if;
@@ -188,7 +185,7 @@ begin
          G_SIZE => 36
       )
       port map (
-         src_clk_i               => cpu_clkn_s,
+         src_clk_i               => cpu_clk_i,
          src_dat_i(17 downto  0) => cpu_map_base_s,
          src_dat_i(35 downto 18) => cpu_tile_base_s,
          dst_clk_i               => vga_clk_i,
@@ -227,7 +224,7 @@ begin
       port map (
          src_clk_i   => vga_clk_i,
          src_pulse_i => vga_vsync_irq_s,
-         dst_clk_i   => cpu_clkn_s,
+         dst_clk_i   => cpu_clk_i,
          dst_pulse_o => cpu_vsync_irq_s
       ); -- i_pulse_conv
 

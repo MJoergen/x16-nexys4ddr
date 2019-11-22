@@ -92,7 +92,7 @@ begin
 
    i_cpu : entity work.cpu
       port map (
-         clk_i          => cpu_clk_i,
+         clk_i          => cpu_clkn_s,
          rst_i          => cpu_rst_i,
          addr_i         => cpu_addr_i,
          wr_en_i        => cpu_wr_en_i,

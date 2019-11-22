@@ -89,10 +89,6 @@ begin
    p_fsm : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         -- Set default values
-         spi_sclk_o <= '0';
-         spi_mosi_o <= '1';
-
          case state is
             when IDLE_ST =>
                if valid_i = '1' and ready_o = '1' then
@@ -128,7 +124,9 @@ begin
          end case;
 
          if rst_i = '1' then
-            state <= IDLE_ST;
+            spi_sclk_o <= '0';
+            spi_mosi_o <= '1';
+            state      <= IDLE_ST;
          end if;
       end if;
    end process p_fsm;

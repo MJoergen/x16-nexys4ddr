@@ -71,20 +71,14 @@ architecture structural of mmu is
    end function get_increment;
 
    -- Debug
-   constant DEBUG_MODE                    : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                    : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug                   : boolean;
-   attribute mark_debug of cpu_addr_i     : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_wr_en_i    : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_wr_data_i  : signal is DEBUG_MODE;
    attribute mark_debug of vera_addr_o    : signal is DEBUG_MODE;
-   attribute mark_debug of vera_wr_en_o   : signal is DEBUG_MODE;
-   attribute mark_debug of vera_wr_data_o : signal is DEBUG_MODE;
-   attribute mark_debug of vera_rd_en_o   : signal is DEBUG_MODE;
    attribute mark_debug of vera_rd_data_i : signal is DEBUG_MODE;
-   attribute mark_debug of address0_r     : signal is DEBUG_MODE;
-   attribute mark_debug of address1_r     : signal is DEBUG_MODE;
-   attribute mark_debug of addr_sel_r     : signal is DEBUG_MODE;
+   attribute mark_debug of vera_rd_en_o   : signal is DEBUG_MODE;
+   attribute mark_debug of vera_wr_data_o : signal is DEBUG_MODE;
+   attribute mark_debug of vera_wr_en_o   : signal is DEBUG_MODE;
 
 begin
 
@@ -95,7 +89,7 @@ begin
    p_read_write : process (clk_i)
       variable isr_v : std_logic_vector(7 downto 0);
    begin
-      if falling_edge(clk_i) then
+      if rising_edge(clk_i) then
          mmu_rd_data_r <= (others => '0');
          isr_v := isr;
          if cpu_wr_en_i = '1' then

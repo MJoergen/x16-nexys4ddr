@@ -21,7 +21,7 @@ entity x16 is
       sd_reset_o  : out   std_logic;                       -- SD card
       sd_dat_io   : inout std_logic_vector(3 downto 0);    -- miso, cs
       sd_cmd_io   : inout std_logic;                       -- mosi
-      sd_sck_io   : inout std_logic;
+      sd_sck_o    : out   std_logic;
       sd_cd_i     : in    std_logic;
 
       vga_hs_o    : out   std_logic;                       -- VGA
@@ -79,13 +79,29 @@ begin
    -- The SD_RESET signal needs to be actively driven low by the FPGA to power
    -- the microSD card slot.
    sd_reset_o   <= '0';
-   sd_dat_io(3) <= spi_cs_s;
-   sd_dat_io(2) <= 'Z';
-   sd_dat_io(1) <= 'Z';
-   sd_dat_io(0) <= 'Z';
+   sd_dat_io(3) <= not spi_cs_s;    -- The CS signal is active low.
+   sd_dat_io(2) <= 'Z';             -- Set to input
+   sd_dat_io(1) <= 'Z';             -- Set to input
+   sd_dat_io(0) <= 'Z';             -- Set to input
    spi_miso_s   <= sd_dat_io(0);
    sd_cmd_io    <= spi_mosi_s;
-   sd_sck_io    <= spi_sclk_s;
+   sd_sck_o     <= spi_sclk_s;
+
+   -- The SD Card is powered up in the SD mode. It will enter SPI mode if the
+   -- CS signal is asserted (negative) during the reception of the reset
+   -- command (CMD0). If the card recognizes that the SD mode is required it
+   -- will not respond to the command and remain in the SD mode. If SPI mode is
+   -- required, the card will switch to SPI and respond with the SPI mode R1
+   -- response.
+
+   -- Note on the DAT3/CD port: At power up this line has a 50KOhm pull up
+   -- enabled in the card. This resistor serves two functions Card detection
+   -- and Mode Selection. For Mode Selection, the host can drive the line high
+   -- or let it be pulled high to select SD mode. If the host wants to select
+   -- SPI mode it should drive the line low. For Card detection, the host
+   -- detects that the line is pulled high. This pull-up should be disconnected
+   -- by the user, during regular data transfer, with SET_CLR_CARD_DETECT
+   -- (ACMD42) command
 
 
    ----------------------------------------------------------------

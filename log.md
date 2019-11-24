@@ -248,10 +248,20 @@ from the keyboard.
 Keyboard layouts work fine, but there is no Danish layout enabled by default in
 the ROM.
 
-A first attemp at rewriting the code in ctl.vhd lead to a combinatorial loop.
+A first attempt at rewriting the code in ctl.vhd lead to a combinatorial loop.
 So I've given up for now ...
 
 ## 2019-11-18
-I double-checked that the keyboard waits over 5000 clock cycles before sending data
-when it is allowed. So clearly, the software should not have to wait for that long
-in every timer tick. 
+I double-checked that the keyboard waits over 5000 clock cycles before sending
+data when it is allowed. So clearly, the software should not have to wait for
+that long in every timer tick. 
+
+## 2019-11-24
+I've been battling with the SD-card SPI interface, and finally got it working.
+The last problem was that the CS pin was inverted. It apparently is active low.
+I found that out after reading a few hundred pages of documentation ...
+
+The ROM has been updated to avoid the sticky keys. The latest ROM doesn't work
+with the SD-card in the emulator, nor on by board. So I assume my board is
+working, and that the problem is in the ROM.
+

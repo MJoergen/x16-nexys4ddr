@@ -94,15 +94,6 @@ begin
    -- required, the card will switch to SPI and respond with the SPI mode R1
    -- response.
 
-   -- Note on the DAT3/CD port: At power up this line has a 50KOhm pull up
-   -- enabled in the card. This resistor serves two functions Card detection
-   -- and Mode Selection. For Mode Selection, the host can drive the line high
-   -- or let it be pulled high to select SD mode. If the host wants to select
-   -- SPI mode it should drive the line low. For Card detection, the host
-   -- detects that the line is pulled high. This pull-up should be disconnected
-   -- by the user, during regular data transfer, with SET_CLR_CARD_DETECT
-   -- (ACMD42) command
-
 
    ----------------------------------------------------------------
    -- Generate PS/2 tristate buffers, simulating open-collector:

@@ -265,3 +265,15 @@ The ROM has been updated to avoid the sticky keys. The latest ROM doesn't work
 with the SD-card in the emulator, nor on by board. So I assume my board is
 working, and that the problem is in the ROM.
 
+## 2019-11-25
+The pull request #73 for the ROM describes a solution to get the SD-card to
+work.  It still needs testing on the board, and also it's unclear whether the
+SAVE command works.
+
+I'm thinking about implementing network support, at least for LOAD and SAVE.
+My first thought was to encapsulate the SD card requests (read\_block etc) into
+proprietary UDP packets, but I prefer a solution using existing protocols.  So
+another idea is to implement a TFTP client in the ROM, see e.g. [RFC 1350 - The
+TFTP protocol](https://tools.ietf.org/pdf/rfc1350.pdf) . The server could e,g.
+be tftpd-hpa.
+

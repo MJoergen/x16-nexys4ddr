@@ -277,3 +277,47 @@ another idea is to implement a TFTP client in the ROM, see e.g. [RFC 1350 - The
 TFTP protocol](https://tools.ietf.org/pdf/rfc1350.pdf) . The server could e,g.
 be tftpd-hpa.
 
+## 2019-11-26
+Thinking more about the Ethernet port, I imagine having a narrow interface just
+like the VERA, i.e. something like:
+
+|Address|Description                                                |
+|-------|-----------------------------------------------------------|
+|9FE0   | Port A low byte                                           |
+|9FE1   | Port A high byte (bits 3-0), port A increment (bits 7-4)  |
+|9FE2   | Port A data                                               |
+|9FE3   | Rx control/status (bit 0)                                 |
+|9FE4   | Port B low byte                                           |
+|9FE5   | Port B high byte (bits 3-0), port B increment (bits 7-4)  |
+|9FE6   | Port B data                                               |
+|9FE7   | Tx control/status (bit 0)                                 |
+
+The ethernet module will have an internal memory map of 4 kB, enough to store
+one Ethernet frame for receive and one for transmit.
+
+The Rx/Tx control/status register is a single bit showing ownership of the
+buffer. A value of 0 indicates ownership by CPU, and a value of 1 indicates
+ownership by Ethernet module. Ownership can only be given (cooperatively),
+never taken.
+
+To enable Ethernet Rx, the CPU write the value 1 to the register 9FE3. The CPU
+may poll this register, and when a frame has been received, the value in
+register 9FE3 will be read as zero. The frame now resides within the Ethernet
+module at address 0x0000, and is now owned by the CPU. The first two bytes are
+the length of the frame (big endian) in number of bytes (excluding CRC), and
+the remaining bytes are the frame, starting with the MAC header.  The CPU may
+inspect the packet, and possibly copy the packet to CPU RAM. When the CPU is
+finished with the buffer, the CPU may transfer ownership back to the Ethernet
+module, ready for receiving the next frame.
+
+To send an Ethernet frame, the CPU writes the ethernet frame into virtual
+address 0x0400, where the first two bytes indicate the length of the frame (big
+endian).  Then the CPU writes a 1 to the register 9FE7, thus transferring
+ownership to the Ethernet module.  When the frame has been transmitted, the
+Ethernet module will reset the value in the register 9FE7, thus granting
+ownership back to the CPU.
+
+When the CPU has released ownership all write accesses are disabled. The CPU
+may still read whatever contents are in the virtual memory, but any writes are
+ignored.
+

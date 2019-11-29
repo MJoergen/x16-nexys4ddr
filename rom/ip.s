@@ -5,12 +5,71 @@
 
 ; External API
 .export ip_receive
+.export ip_insert_header
 
 .import eth_rx_check_len
-.import udp_receive
+.import eth_tx_len
 .import my_ip
+.import server_ip
+.import udp_receive
 
 .include "ethernet.inc"
+
+ip_insert_header
+      lda #ip_start
+      sta eth_tx_lo
+      stz eth_tx_lo
+
+      ; IP version
+      lda #$45
+      sta eth_tx_dat
+      stz eth_tx_dat
+
+      ; IP length
+      lda eth_tx_len
+      sec
+      sbc #ip_start
+      tax
+      lda eth_tx_len+1
+      sbc #0
+      sta eth_tx_dat
+      stx eth_tx_dat
+
+      stz eth_tx_dat
+      stz eth_tx_dat
+      stz eth_tx_dat
+      stz eth_tx_dat
+      stz eth_tx_dat
+
+      ; IP protocol
+      lda #$11
+      sta eth_tx_dat
+
+      ; IP header checksum
+      stz eth_tx_dat
+      stz eth_tx_dat
+
+      ; Source IP address
+      lda my_ip
+      sta eth_tx_dat
+      lda my_ip+1
+      sta eth_tx_dat
+      lda my_ip+2
+      sta eth_tx_dat
+      lda my_ip+3
+      sta eth_tx_dat
+
+      ; Destination IP address
+      lda server_ip
+      sta eth_tx_dat
+      lda server_ip+1
+      sta eth_tx_dat
+      lda server_ip+2
+      sta eth_tx_dat
+      lda server_ip+3
+      sta eth_tx_dat
+
+      rts
 
 
 ip_receive

@@ -12,8 +12,10 @@
 .export server_mac
 .export server_ip
 
-.import eth_tx
+.import ethernet_insert_header
+.import eth_ptr
 .import eth_rx_check_len
+.import eth_tx
 
 .include "ethernet.inc"
 
@@ -26,7 +28,6 @@
       server_udp: .res 2   ; Chosen by TFTP protocol
 
 .segment "CODE"
-
 
 
 ; Process a receiver ARP packet.
@@ -91,47 +92,10 @@ arp_receive_reply
 
 
 arp_send_reply
-      ; Build the packet at virtual address $0800
-      stz eth_tx_lo
+      lda #arp_start
+      sta eth_tx_lo
       lda #8
       sta eth_tx_hi
-
-      ; Set length of packet
-      lda #60           ; Minimum length is 60 bytes exluding CRC.
-      sta eth_tx_dat
-      stz eth_tx_dat
-
-      ; MAC header
-      lda #arp_src_hw
-      sta eth_rx_lo
-      lda eth_rx_dat
-      sta eth_tx_dat
-      lda eth_rx_dat
-      sta eth_tx_dat
-      lda eth_rx_dat
-      sta eth_tx_dat
-      lda eth_rx_dat
-      sta eth_tx_dat
-      lda eth_rx_dat
-      sta eth_tx_dat
-      lda eth_rx_dat
-      sta eth_tx_dat
-      lda my_mac
-      sta eth_tx_dat
-      lda my_mac+1
-      sta eth_tx_dat
-      lda my_mac+2
-      sta eth_tx_dat
-      lda my_mac+3
-      sta eth_tx_dat
-      lda my_mac+4
-      sta eth_tx_dat
-      lda my_mac+5
-      sta eth_tx_dat
-      lda #8
-      sta eth_tx_dat
-      lda #6
-      sta eth_tx_dat
 
       ; ARP
       lda #0            ; Hardware address = Ethernet
@@ -202,10 +166,14 @@ arp_send_reply
       cmp #62
       bcc @pad
 
-      jmp eth_tx
+      lda #>server_mac
+      ldx #<server_mac
+      sta eth_ptr+1
+      stx eth_ptr
+      lda #8
+      ldx #6
+      jsr ethernet_insert_header
 
-
-arp_send_request
       ; Build the packet at virtual address $0800
       stz eth_tx_lo
       lda #8
@@ -216,30 +184,22 @@ arp_send_request
       sta eth_tx_dat
       stz eth_tx_dat
 
-      ; MAC header
+      jmp eth_tx
+
+
+arp_send_request
       lda #$ff
-      sta eth_tx_dat
-      sta eth_tx_dat
-      sta eth_tx_dat
-      sta eth_tx_dat
-      sta eth_tx_dat
-      sta eth_tx_dat
-      lda my_mac
-      sta eth_tx_dat
-      lda my_mac+1
-      sta eth_tx_dat
-      lda my_mac+2
-      sta eth_tx_dat
-      lda my_mac+3
-      sta eth_tx_dat
-      lda my_mac+4
-      sta eth_tx_dat
-      lda my_mac+5
-      sta eth_tx_dat
+      sta server_mac
+      sta server_mac+1
+      sta server_mac+2
+      sta server_mac+3
+      sta server_mac+4
+      sta server_mac+5
+
+      lda #arp_start
+      sta eth_tx_lo
       lda #8
-      sta eth_tx_dat
-      lda #6
-      sta eth_tx_dat
+      sta eth_tx_hi
 
       ; ARP
       lda #0            ; Hardware address = Ethernet
@@ -302,6 +262,20 @@ arp_send_request
       lda eth_tx_lo
       cmp #62
       bcc @pad
+
+      lda #8
+      ldx #6
+      jsr ethernet_insert_header
+
+      ; Build the packet at virtual address $0800
+      stz eth_tx_lo
+      lda #8
+      sta eth_tx_hi
+
+      ; Set length of packet
+      lda #60           ; Minimum length is 60 bytes exluding CRC.
+      sta eth_tx_dat
+      stz eth_tx_dat
 
       jmp eth_tx
 

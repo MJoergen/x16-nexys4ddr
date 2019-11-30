@@ -4,18 +4,18 @@
 ; IP protocol
 
 ; External API
-.export ip_receive
-.export ip_insert_header
+.export eth_ip_receive
+.export eth_ip_insert_header
 
 .import eth_rx_check_len
 .import eth_tx_len
-.import my_ip
-.import server_ip
-.import udp_receive
+.import eth_my_ip
+.import eth_server_ip
+.import eth_udp_receive
 
 .include "ethernet.inc"
 
-ip_insert_header
+eth_ip_insert_header
       lda #ip_start
       sta eth_tx_lo
       stz eth_tx_lo
@@ -50,54 +50,54 @@ ip_insert_header
       stz eth_tx_dat
 
       ; Source IP address
-      lda my_ip
+      lda eth_my_ip
       sta eth_tx_dat
-      lda my_ip+1
+      lda eth_my_ip+1
       sta eth_tx_dat
-      lda my_ip+2
+      lda eth_my_ip+2
       sta eth_tx_dat
-      lda my_ip+3
+      lda eth_my_ip+3
       sta eth_tx_dat
 
       ; Destination IP address
-      lda server_ip
+      lda eth_server_ip
       sta eth_tx_dat
-      lda server_ip+1
+      lda eth_server_ip+1
       sta eth_tx_dat
-      lda server_ip+2
+      lda eth_server_ip+2
       sta eth_tx_dat
-      lda server_ip+3
+      lda eth_server_ip+3
       sta eth_tx_dat
 
       rts
 
 
-ip_receive
+eth_ip_receive
       ; Make sure IP header is available
       lda #0
       ldx #(ip_end - mac_start)
       jsr eth_rx_check_len
-      bcc ip_return
+      bcc @eth_ip_return
 
       lda eth_rx_dat    ; IP header
       cmp #$45
-      bne ip_return
+      bne @eth_ip_return
 
       ; Check whether destination IP address matches our own
       lda #ip_dst
       sta eth_rx_lo
       lda eth_rx_dat
-      cmp my_ip
-      bne ip_return
+      cmp eth_my_ip
+      bne @eth_ip_return
       lda eth_rx_dat
-      cmp my_ip+1
-      bne ip_return
+      cmp eth_my_ip+1
+      bne @eth_ip_return
       lda eth_rx_dat
-      cmp my_ip+2
-      bne ip_return
+      cmp eth_my_ip+2
+      bne @eth_ip_return
       lda eth_rx_dat
-      cmp my_ip+3
-      bne ip_return
+      cmp eth_my_ip+3
+      bne @eth_ip_return
       
       ; Multiplex on IP protocol
       ; Currenly, only UDP is supported.
@@ -105,9 +105,9 @@ ip_receive
       sta eth_rx_lo
       lda eth_rx_dat
       cmp #$11
-      bne ip_return
-      jsr udp_receive      ; in udp.s
-ip_return
+      bne @eth_ip_return
+      jsr eth_udp_receive      ; in udp.s
+@eth_ip_return
       rts
 
 

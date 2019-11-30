@@ -4,41 +4,41 @@
 ; UDP protocol
 
 ; External API
-.export udp_receive
+.export eth_udp_receive
 
 .import eth_rx_check_len
-.import tftp_receive
-.import my_udp
+.import eth_tftp_receive
+.import eth_my_udp
 
 .include "ethernet.inc"
 
 
-udp_receive
+eth_udp_receive
       ; Make sure UDP header is available
       lda #0
       ldx #(udp_end - mac_start)
       jsr eth_rx_check_len
-      bcc @udp_return
+      bcc @eth_udp_return
 
       ; Check if source port matches TFTP port.
       lda #udp_dst
       sta eth_rx_lo
       lda eth_rx_dat
       ldx eth_rx_dat
-      cmp my_udp
+      cmp eth_my_udp
       bne @check_default_port
-      cpx my_udp+1
+      cpx eth_my_udp+1
       bne @check_default_port
-      jmp tftp_receive
+      jmp eth_tftp_receive
 
 @check_default_port
       cmp #0
-      bne @udp_return
+      bne @eth_udp_return
       cpx #69
-      bne @udp_return
-      jmp tftp_receive
+      bne @eth_udp_return
+      jmp eth_tftp_receive
 
-@udp_return
+@eth_udp_return
       rts
 
 

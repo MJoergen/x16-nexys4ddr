@@ -4,18 +4,18 @@
 ; TFTP protocol
 
 ; External API
-.export tftp_send_ack
-.export tftp_send_read_request
-.export tftp_receive
+.export eth_tftp_send_ack
+.export eth_tftp_send_read_request
+.export eth_tftp_receive
 
 .import ethernet_insert_header
 .import eth_rx_check_len
 .import eth_tx
 .import eth_tx_len
-.import ip_insert_header
-.import my_udp
-.import server_udp
-.import server_mac
+.import eth_ip_insert_header
+.import eth_my_udp
+.import eth_server_udp
+.import eth_server_mac
 .importzp eth_ptr
 
 .include "ethernet.inc"
@@ -26,42 +26,42 @@
 
 .segment "CODE"
 
-tftp_receive
+eth_tftp_receive
       ; Multiplex on TFTP opcode
       lda #tftp_start
       sta eth_rx_lo
       lda eth_rx_dat
       ldx eth_rx_dat
       cmp #0
-      bne tftp_return
+      bne eth_tftp_return
       cpx #1
-      beq tftp_rrq
+      beq eth_tftp_rrq
       cpx #2
-      beq tftp_wrq
+      beq eth_tftp_wrq
       cpx #3
-      beq tftp_data
+      beq eth_tftp_data
       cpx #4
-      beq tftp_ack
+      beq eth_tftp_ack
       cpx #5
-      beq tftp_error
+      beq eth_tftp_error
 
-tftp_return
+eth_tftp_return
       rts
 
-tftp_rrq
-tftp_wrq
+eth_tftp_rrq
+eth_tftp_wrq
 
-tftp_ack
-tftp_error
+eth_tftp_ack
+eth_tftp_error
 
-tftp_data
+eth_tftp_data
       ; Verify block number
       lda eth_rx_dat
       cmp exp_block_number+1
-      bne tftp_return
+      bne eth_tftp_return
       ldx eth_rx_dat
       cmp exp_block_number
-      bne tftp_return
+      bne eth_tftp_return
 
       
 
@@ -69,7 +69,7 @@ tftp_data
 
 octet .byt "octet",0
 
-tftp_send_ack
+eth_tftp_send_ack
       ; Prepare Tx pointer
       lda #tftp_start
       sta eth_tx_lo
@@ -89,20 +89,20 @@ tftp_send_ack
       bne @1
       inc exp_block_number+1
 @1
-      jmp tftp_pad
+      jmp eth_tftp_pad
 
 
 ; Send a RRQ.
 ; The filename is in A:X
-tftp_send_read_request
+eth_tftp_send_read_request
       stx eth_ptr
       sta eth_ptr+1
 
       ; Increment source UDP port (big endian)
       ; This serves as a unique TID.
-      inc my_udp+1
+      inc eth_my_udp+1
       bne @1
-      inc my_udp
+      inc eth_my_udp
 @1
 
       lda #1
@@ -111,8 +111,8 @@ tftp_send_read_request
 
       ; Initialize UDP header
       lda #udp_start
-      sta server_udp+1
-      stz server_udp
+      sta eth_server_udp+1
+      stz eth_server_udp
 
       ; Prepare Tx pointer
       lda #tftp_start
@@ -140,11 +140,11 @@ tftp_send_read_request
       sta eth_tx_dat
       bne @mode
 
-tftp_pad
+eth_tftp_pad
       stz eth_tx_dat    ; Padding
       lda eth_tx_lo
       cmp #62
-      bcc tftp_pad
+      bcc eth_tftp_pad
 
       ; Save pointer to end of packet
       lda eth_tx_lo
@@ -158,15 +158,15 @@ tftp_pad
       stz eth_tx_hi
 
       ; UDP source port
-      lda my_udp
+      lda eth_my_udp
       sta eth_tx_dat
-      lda my_udp+1
+      lda eth_my_udp+1
       sta eth_tx_dat
 
       ; UDP destination port
-      lda server_udp
+      lda eth_server_udp
       sta eth_tx_dat
-      lda server_udp+1
+      lda eth_server_udp+1
       sta eth_tx_dat
 
       ; UDP length
@@ -184,13 +184,9 @@ tftp_pad
       stz eth_tx_dat
 
       ; Insert IP header
-      jsr ip_insert_header
+      jsr eth_ip_insert_header
 
       ; Insert MAC header
-      lda #<server_mac
-      sta eth_ptr
-      lda #>server_mac
-      sta eth_ptr+1
       lda #8
       ldx #0
       jsr ethernet_insert_header
@@ -208,6 +204,4 @@ tftp_pad
       stx eth_tx_dat
 
       jmp eth_tx
-
-
 

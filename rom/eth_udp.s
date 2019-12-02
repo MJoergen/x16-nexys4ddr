@@ -1,19 +1,33 @@
-.feature labels_without_colons
 .setcpu "65c02"
 
 ; UDP protocol
 
 ; External API
 .export eth_udp_receive
+.export eth_udp_register_callback
+.export eth_udp_set_my_port
 
 .import eth_rx_check_len
-.import eth_tftp_receive
 .import eth_my_udp
+.import eth_udp_callback
 
 .include "ethernet.inc"
 
+; A:X contains the port number to listen on
+eth_udp_set_my_port:
+      sta eth_my_udp
+      stx eth_my_udp+1
+      rts
 
-eth_udp_receive
+
+; A:X contains the callback to be used, when receiving UDP packets
+eth_udp_register_callback:
+      sta eth_udp_callback
+      stx eth_udp_callback+1
+      rts
+      
+
+eth_udp_receive:
       ; Make sure UDP header is available
       lda #0
       ldx #(udp_end - mac_start)
@@ -26,19 +40,12 @@ eth_udp_receive
       lda eth_rx_dat
       ldx eth_rx_dat
       cmp eth_my_udp
-      bne @check_default_port
+      bne @eth_udp_return
       cpx eth_my_udp+1
-      bne @check_default_port
-      jmp eth_tftp_receive
-
-@check_default_port
-      cmp #0
       bne @eth_udp_return
-      cpx #69
-      bne @eth_udp_return
-      jmp eth_tftp_receive
+      jmp (eth_udp_callback)
 
-@eth_udp_return
+@eth_udp_return:
       rts
 
 

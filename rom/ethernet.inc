@@ -38,5 +38,3 @@ eth_tx_own = $9FE7   ; 0 : owned by CPU, 1 : owned by FPGA
       udp_chksum   = udp_start + 6   ; 2 bytes
       udp_end      = udp_start + 8
 
-      tftp_start   = udp_end
-

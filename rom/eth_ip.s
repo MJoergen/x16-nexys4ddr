@@ -1,4 +1,3 @@
-.feature labels_without_colons
 .setcpu "65c02"
 
 ; IP protocol
@@ -15,7 +14,7 @@
 
 .include "ethernet.inc"
 
-eth_ip_insert_header
+eth_ip_insert_header:
       lda #ip_start
       sta eth_tx_lo
       stz eth_tx_lo
@@ -72,7 +71,7 @@ eth_ip_insert_header
       rts
 
 
-eth_ip_receive
+eth_ip_receive:
       ; Make sure IP header is available
       lda #0
       ldx #(ip_end - mac_start)
@@ -107,7 +106,7 @@ eth_ip_receive
       cmp #$11
       bne @eth_ip_return
       jsr eth_udp_receive      ; in udp.s
-@eth_ip_return
+@eth_ip_return:
       rts
 
 

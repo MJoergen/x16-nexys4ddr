@@ -8,6 +8,12 @@
 
 .export eth_arp_init
 .export eth_arp_get_server_mac
+.export eth_my_mac
+.export eth_my_ip
+.export eth_my_udp
+.export eth_server_mac
+.export eth_server_ip
+.export eth_server_udp
 
 .import ethernet_insert_header
 .import eth_rx_check_len

@@ -18,10 +18,10 @@
 .import eth_udp_set_my_port
 .import eth_udp_register_rx_callback
 .import eth_udp_register_tx_callback
-.import eth_tx_dat
 .import eth_udp_tx
-.import eth_rx_dat
 .import eth_rx_poll
+
+.include "ethernet.inc"
 
 .bss
 sd_net_expect_ack: .res 1

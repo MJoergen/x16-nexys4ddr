@@ -7,6 +7,8 @@
 .export eth_rx_poll
 .export eth_rx_check_len
 .export eth_tx
+.export eth_tx_pad
+.export eth_tx_get_len
 
 .import eth_arp_receive        ; arp.s
 .import eth_ip_receive         ; ip.s
@@ -21,10 +23,11 @@
 
 .segment "BSS"
       eth_rx_len: .res 2   ; Length of last received frame
-      eth_tx_len: .res 2   ; Length of current transmitted frame
+      eth_tx_end: .res 2   ; End of current transmitted frame
 
 .segment "CODE"
 
+; -------------------------------------------------------------------
 ; Get ready to receive packets
 ; inputs: none
 ; outputs: none
@@ -34,6 +37,7 @@ eth_rx_start:
       rts
 
 
+; -------------------------------------------------------------------
 ; Is a packet ready?
 ; inputs: none
 ; outputs:
@@ -45,6 +49,7 @@ eth_rx_pending:
       rts
 
 
+; -------------------------------------------------------------------
 ; Checks whether the frame contains at least A:X number of bytes.
 ; Return carry clear if yes, and carry set if no.
 eth_rx_check_len:
@@ -55,6 +60,7 @@ eth_rx_check_len:
       rts
       
 
+; -------------------------------------------------------------------
 ; Check for received Ethernet packet, and process it.
 ; Should be called in a polling fashion, i.e. in a busy loop.
 ; Return carry set, if no packet was received
@@ -105,6 +111,7 @@ eth_rx:
 @arp: jmp eth_arp_receive
 
 
+; -------------------------------------------------------------------
 ; Send a packet
 ; inputs: Packet stored in virtual address 0x0800. Must be padded to minimum 60 bytes.
 ; outputs: Returns when packet is sent.
@@ -117,6 +124,7 @@ eth_tx:
       rts
 
 
+; -------------------------------------------------------------------
 ; Insert ethernet header
 ; A:X contains Ethernet type/len
 ethernet_insert_header:
@@ -157,5 +165,38 @@ ethernet_insert_header:
       pla
       sta eth_tx_dat
       stx eth_tx_dat
+      rts
+
+
+; -------------------------------------------------------------------
+; Input:
+; * A:X contains the start address
+; * eth_tx_end contains the end address
+; Output:
+; * A:X contains number of bytes
+eth_tx_get_len:
+      pha
+      txa
+      eor #$ff
+      sec
+      adc eth_tx_end
+      tax
+      pla
+      eor #$ff
+      adc eth_tx_end+1
+      rts
+
+
+; -------------------------------------------------------------------
+; Update eth_tx_end, so the total MAC frame is at least 60 bytes excluding CRC
+eth_tx_pad:
+      lda eth_tx_end+1
+      bne @return
+      lda eth_tx_end
+      cmp #(60 + mac_start)
+      bcs @return
+      lda #(60 + mac_start)
+      sta eth_tx_end
+@return:
       rts
 

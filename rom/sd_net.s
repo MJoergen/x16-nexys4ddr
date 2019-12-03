@@ -1,5 +1,18 @@
-.importzp write_blkptr, read_blkptr
+; This module emulates a virtual SD card on top of UDP
+; It acts as a drop-in replacement for the file cbdos/sdcard.asm
+;
+; The virtual SD card uses port $5344 (ascii for "SD").
+; The format of the UDP payload is as follows:
+; opcode : 1 byte
+; lba    ; 4 bytes
+; data   : 512 bytes (optional)
+; There are four opcodes:
+; 1 : read request
+; 2 : read acknowledge
+; 3 : write request
+; 4 : write acknowledge
 
+; External API
 .export sdcard_init, sdcard_detect
 .export sd_read_block, sd_read_multiblock, sd_write_block
 
@@ -14,12 +27,15 @@
 .import lba_addr, blocks
 .import timer
 
-.import eth_arp_get_server_mac
+.import eth_arp_send_request
+.import eth_server_mac
 .import eth_udp_set_my_port
 .import eth_udp_register_rx_callback
 .import eth_udp_register_tx_callback
 .import eth_udp_tx
 .import eth_rx_poll
+
+.importzp write_blkptr, read_blkptr
 
 .include "ethernet.inc"
 
@@ -29,19 +45,6 @@ sd_net_timeout:    .res 1
 sd_net_retries:    .res 1
 
 .code
-
-; This module emulates a virtual SD card on top of UDP
-; It uses port 5344 (ascii for SD).
-; The format is as follows:
-; opcode : 1 byte
-; lba    ; 4 bytes
-; data   : 512 bytes (optional)
-;
-; There are four opcodes:
-; 1 : read request
-; 2 : read acknowledge
-; 3 : write request
-; 4 : write acknowledge
 
 
 ;---------------------------------------------------------------------
@@ -63,17 +66,51 @@ sdcard_detect:
 sdcard_init:
       lda #$53                      ; 'S'
       ldx #$44                      ; 'D'
-      jsr eth_udp_set_my_port
+      jsr eth_udp_set_my_port             ; UDP port number to listen on
       lda #>eth_udp_rx_callback
       ldx #<eth_udp_rx_callback
-      jsr eth_udp_register_rx_callback
+      jsr eth_udp_register_rx_callback    ; Callback for received UDP packets
       lda #>eth_udp_tx_callback
       ldx #<eth_udp_tx_callback
-      jsr eth_udp_register_tx_callback
+      jsr eth_udp_register_tx_callback    ; Callback when sending UDP packets
 
-      ; Send ARP request and wait for ARP reply
-      jsr eth_arp_get_server_mac
-      lda #0
+      ; Reset MAC address to broadcast
+      lda #$ff
+      sta eth_server_mac
+      sta eth_server_mac+1
+      sta eth_server_mac+2
+      sta eth_server_mac+3
+      sta eth_server_mac+4
+      sta eth_server_mac+5
+
+@resend:
+      ; Send ARP request
+      jsr eth_arp_send_request
+
+      lda timer+2
+      adc #60                 ; Don't bother clearing carry
+      sta sd_net_timeout      ; Timeout after 1 second.
+      lda #4
+      sta sd_net_retries      ; Try 4 times before giving up.
+
+@wait:
+      jsr eth_rx_poll
+
+      ; Have we received the MAC address?
+      lda eth_server_mac
+      cmp #$ff
+      bne @return_ok
+
+      lda timer+2
+      cmp sd_net_timeout
+      bne @wait
+      dec sd_net_retries
+      bne @resend
+      lda #$ff                ; Timeout
+      rts
+
+@return_ok:
+      lda #$00
       rts
 
 
@@ -99,14 +136,14 @@ sd_read_block:
       jsr eth_udp_tx          ; This calls the eth_udp_tx_callback
                               ; and sends the packet
 
-@loop:
+@wait:
       ; Read UDP response and copy 512 bytes to (read_blkptr)
       jsr eth_rx_poll         ; This calls the eth_udp_rx_callback
       lda sd_net_expect_ack
       beq @return
       lda timer+2
       cmp sd_net_timeout
-      bne @loop
+      bne @wait
       dec sd_net_retries
       bne @resend
       lda #$ff                ; Timeout

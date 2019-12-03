@@ -14,7 +14,18 @@
 
 .include "ethernet.inc"
 
+.bss
+      eth_ip_ident:  .res 2
+
+.code      
+
+; -------------------------------------------------------------------
+; Input:
+; * A:X payload length
 eth_ip_insert_header:
+      pha   ; Store payload length
+      phx
+
       lda #ip_start
       sta eth_tx_lo
       stz eth_tx_lo
@@ -22,23 +33,34 @@ eth_ip_insert_header:
       ; IP version
       lda #$45
       sta eth_tx_dat
-      stz eth_tx_dat
+      stz eth_tx_dat       ; DSCP
 
       ; IP length
-      lda eth_tx_len
-      sec
-      sbc #ip_start
-      tax
-      lda eth_tx_len+1
-      sbc #0
+      pla
+      clc
+      adc #20
+      tay                  ; Temporarily store MSB
+      pla
+      adc #0
       sta eth_tx_dat
-      stx eth_tx_dat
+      sty eth_tx_dat
 
+      ; IP identifier
+      inc eth_ip_ident+1
+      bne @1
+      inc eth_ip_ident
+@1:
+      lda eth_ip_ident
+      stz eth_tx_dat
+      lda eth_ip_ident+1
+      stz eth_tx_dat
+
+      ; Flags and fragment
       stz eth_tx_dat
       stz eth_tx_dat
-      stz eth_tx_dat
-      stz eth_tx_dat
-      stz eth_tx_dat
+
+      lda #$ff
+      sta eth_tx_dat       ; TTL
 
       ; IP protocol
       lda #$11
@@ -48,29 +70,43 @@ eth_ip_insert_header:
       stz eth_tx_dat
       stz eth_tx_dat
 
-      ; Source IP address
-      lda eth_my_ip
-      sta eth_tx_dat
-      lda eth_my_ip+1
-      sta eth_tx_dat
-      lda eth_my_ip+2
-      sta eth_tx_dat
-      lda eth_my_ip+3
-      sta eth_tx_dat
+      write_my_ip_to_tx
 
-      ; Destination IP address
-      lda eth_server_ip
+      write_server_ip_to_tx
+
+      ; Update IP checksum
+      lda #ip_start
+      sta eth_tx_lo
+      ldx #0
+      ldy #0
+
+@loop:
+      txa
+      clc
+      adc eth_tx_dat
+      tax
+      tya
+      adc eth_tx_dat
+      tay
+      bcc @2
+      inx
+@2:   lda eth_tx_lo
+      cmp #ip_end
+      bne @loop
+
+      lda #ip_chksum
+      sta eth_tx_lo
+      txa
+      eor #$ff
       sta eth_tx_dat
-      lda eth_server_ip+1
-      sta eth_tx_dat
-      lda eth_server_ip+2
-      sta eth_tx_dat
-      lda eth_server_ip+3
+      tya
+      eor #$ff
       sta eth_tx_dat
 
       rts
 
 
+; -------------------------------------------------------------------
 eth_ip_receive:
       ; Make sure IP header is available
       lda #0

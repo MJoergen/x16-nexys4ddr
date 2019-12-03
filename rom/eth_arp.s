@@ -6,145 +6,39 @@
 ; External API
 .export eth_arp_receive
 
-.export eth_arp_init
-.export eth_arp_get_server_mac
 .export eth_my_mac
 .export eth_my_ip
-.export eth_my_udp
 .export eth_server_mac
 .export eth_server_ip
-.export eth_server_udp
 
 .import ethernet_insert_header
 .import eth_rx_check_len
 .import eth_tx
-.import eth_rx_poll
 
 .include "ethernet.inc"
 
 
-.macro read_server_mac_from_tx
-      lda eth_rx_dat
-      sta eth_server_mac
-      lda eth_rx_dat
-      sta eth_server_mac+1
-      lda eth_rx_dat
-      sta eth_server_mac+2
-      lda eth_rx_dat
-      sta eth_server_mac+3
-      lda eth_rx_dat
-      sta eth_server_mac+4
-      lda eth_rx_dat
-      sta eth_server_mac+5
-.endmacro
+.data
+      ; Default value is broadcast. Will be overwritten when an ARP reply is received.
+      eth_server_mac: .byt $ff, $ff, $ff, $ff, $ff, $ff
 
-.macro write_my_mac_to_tx
-      lda eth_my_mac
-      sta eth_tx_dat
-      lda eth_my_mac+1
-      sta eth_tx_dat
-      lda eth_my_mac+2
-      sta eth_tx_dat
-      lda eth_my_mac+3
-      sta eth_tx_dat
-      lda eth_my_mac+4
-      sta eth_tx_dat
-      lda eth_my_mac+5
-      sta eth_tx_dat
-.endmacro
+      ; Configured by user. Default is 192.168.1.3
+      eth_server_ip:  .byt $c0, $a8, $01, $03
 
-.macro write_my_ip_to_tx
-      lda eth_my_ip
-      sta eth_tx_dat
-      lda eth_my_ip+1
-      sta eth_tx_dat
-      lda eth_my_ip+2
-      sta eth_tx_dat
-      lda eth_my_ip+3
-      sta eth_tx_dat
-.endmacro
+.code
+      ; The vendor ID is Digilent
+      ; The serial number is ascii for "X16".
+      eth_my_mac:     .byt $00, $18, $3e, $58, $31, $36   ; Hardcoded from factory
 
-.macro write_server_ip_to_tx
-      lda eth_server_ip
-      sta eth_tx_dat
-      lda eth_server_ip+1
-      sta eth_tx_dat
-      lda eth_server_ip+2
-      sta eth_tx_dat
-      lda eth_server_ip+3
-      sta eth_tx_dat
-.endmacro
+      ; TBD: Get IP address using DHCP
+      eth_my_ip:      .byt $c0, $a8, $01, $16             ; 192.168.1.22
 
 
-.segment "BSS"
-      eth_my_mac:     .res 6   ; Hardcoded from factory
-      eth_my_ip:      .res 4   ; Obtained from DHCP during boot
-      eth_my_udp:     .res 2   ; Chosen by TFTP protocol
-      eth_server_mac: .res 6   ; Obtained from ARP
-      eth_server_ip:  .res 4   ; Configured by user. Default is 255.255.255.255
-      eth_server_udp: .res 2   ; Chosen by TFTP protocol
-      eth_timer:      .res 3   ; Used when waiting for ARP reply
-
-.segment "CODE"
-
-; Call once at reset
-eth_arp_init:
-      lda #$ff
-      sta eth_server_mac
-      sta eth_server_mac+1
-      sta eth_server_mac+2
-      sta eth_server_mac+3
-      sta eth_server_mac+4
-      sta eth_server_mac+5
-      rts
-
-; Returns Z=1 if MAC address is resolved
-; Returns Z=0 if MAC address could not be resolved
-eth_arp_get_server_mac:
-      ; Check if MAC address already resolved
-      lda eth_server_mac
-      cmp #$ff
-      bne @return_ok
-
-@resend:
-      ; Send ARP request
-      jsr eth_arp_send_request
-
-      ; Prepare timer
-      lda #7
-      stz eth_timer
-      sta eth_timer+1
-      sta eth_timer+2
-
-@wait:
-      jsr eth_rx_poll
-
-      ; Have we received the MAC address?
-      lda eth_server_mac
-      cmp #$ff
-      bne @return_ok
-
-      dec eth_timer
-      bne @wait
-      dec eth_timer+1
-      bne @wait
-      dec eth_timer+2
-      bne @resend
-
-      ; Indicate timeout
-      lda #$ff
-      rts
-
-@return_ok:
-      lda #$00
-      rts
-
-
-; Process a received ARP packet.
-; If we receive an ARP request for our IP address
-; we send a reply.
-; If we receive an ARP reply for the server IP address
-; we store the MAC address.
+;-----------------------------------------------------------------------------------
+; Process a received ARP packet:
+; * If we receive an ARP request for our IP address we send a reply.
+; * If we receive an ARP reply for the server IP address we store the MAC address.
+;-----------------------------------------------------------------------------------
 eth_arp_receive:
       ; Make sure ARP header is available
       lda #0
@@ -152,7 +46,7 @@ eth_arp_receive:
       jsr eth_rx_check_len
       bcc eth_arp_return
 
-      ; Multiple on ARP code
+      ; Multiplex on ARP code
       lda #arp_start+7
       sta eth_rx_lo
       lda eth_rx_dat
@@ -163,11 +57,14 @@ eth_arp_receive:
 eth_arp_return:
       rts
 
+;-----------------------------------------------------------------------------------
 eth_arp_receive_request:
       ; For now we just send an ARP reply with our address always.
       ; TODO: Add check for whether the request is for our IP address.
       jmp eth_arp_send_reply
 
+
+;-----------------------------------------------------------------------------------
 eth_arp_receive_reply:
       lda #arp_src_prot       ; Is reply coming from the server?
       sta eth_rx_lo
@@ -186,10 +83,11 @@ eth_arp_receive_reply:
       
       lda #arp_src_hw         ; Copy servers MAC address
       sta eth_rx_lo
-      read_server_mac_from_tx
+      read_server_mac_from_rx
       rts
 
 
+;-----------------------------------------------------------------------------------
 eth_arp_send_request:
       lda #$ff
       sta eth_server_mac
@@ -201,8 +99,7 @@ eth_arp_send_request:
 
       lda #arp_start
       sta eth_tx_lo
-      lda #8
-      sta eth_tx_hi
+      stz eth_tx_hi
 
       ; ARP header
       lda #0                  ; Hardware address = Ethernet
@@ -236,6 +133,8 @@ eth_arp_send_request:
 
       write_server_ip_to_tx   ; Target protocol address
 
+eth_arp_pad_and_send:
+
 @pad: stz eth_tx_dat          ; Padding
       lda eth_tx_lo
       cmp #62
@@ -245,10 +144,9 @@ eth_arp_send_request:
       ldx #6
       jsr ethernet_insert_header
 
-      ; Build the packet at virtual address $0800
+      ; Build the packet at virtual address $0000
       stz eth_tx_lo
-      lda #8
-      sta eth_tx_hi
+      stz eth_tx_hi
 
       ; Set length of packet
       lda #60                 ; Minimum length is 60 bytes exluding CRC.
@@ -257,11 +155,12 @@ eth_arp_send_request:
 
       jmp eth_tx
 
+
+;-----------------------------------------------------------------------------------
 eth_arp_send_reply:
       lda #arp_start
       sta eth_tx_lo
-      lda #8
-      sta eth_tx_hi
+      stz eth_tx_hi
 
       ; ARP header
       lda #0                  ; Hardware address = Ethernet
@@ -309,25 +208,5 @@ eth_arp_send_reply:
       lda eth_rx_dat
       sta eth_tx_dat
 
-@pad: stz eth_tx_dat          ; Padding
-      lda eth_tx_lo
-      cmp #62
-      bcc @pad
-
-      lda #8
-      ldx #6
-      jsr ethernet_insert_header
-
-      ; Build the packet at virtual address $0800
-      stz eth_tx_lo
-      lda #8
-      sta eth_tx_hi
-
-      ; Set length of packet
-      lda #60                 ; Minimum length is 60 bytes exluding CRC.
-      sta eth_tx_dat
-      stz eth_tx_dat
-
-      jmp eth_tx
-
+      jmp eth_arp_pad_and_send
 

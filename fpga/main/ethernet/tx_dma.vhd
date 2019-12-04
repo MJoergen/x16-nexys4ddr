@@ -15,142 +15,181 @@ entity tx_dma is
       G_ADDR_BITS : integer := 11
    );
    port (
-      clk_i        : in  std_logic;
-      rst_i        : in  std_logic;
-
       -- Connected to CPU
-      addr_i       : in  std_logic_vector(2 downto 0);
-      wr_en_i      : in  std_logic;
-      wr_data_i    : in  std_logic_vector(7 downto 0);
-      rd_en_i      : in  std_logic;
-      rd_data_o    : out std_logic_vector(7 downto 0);
+      cpu_clk_i     : in  std_logic;
+      cpu_rst_i     : in  std_logic;
+      cpu_addr_i    : in  std_logic_vector(2 downto 0);
+      cpu_wr_en_i   : in  std_logic;
+      cpu_wr_data_i : in  std_logic_vector(7 downto 0);
+      cpu_rd_en_i   : in  std_logic;
+      cpu_rd_data_o : out std_logic_vector(7 downto 0);
 
-      -- Connected to Tx FIFO
-      fifo_afull_i : in  std_logic;
-      fifo_valid_o : out std_logic;
-      fifo_data_o  : out std_logic_vector( 7 downto 0);
-      fifo_eof_o   : out std_logic
+      -- Connected to PHY
+      eth_clk_i     : in  std_logic;
+      eth_rst_i     : in  std_logic;
+      eth_rd_en_i   : in  std_logic;
+      eth_data_o    : out std_logic_vector(7 downto 0);
+      eth_sb_o      : out std_logic;
+      eth_empty_o   : out std_logic
    );
 end tx_dma;
 
 architecture structural of tx_dma is
 
-   signal cpu_addr_r  : std_logic_vector(15 downto 0);
-   signal fifo_addr_r : std_logic_vector(15 downto 0);
-   signal own_r       : std_logic;
-   signal own_clear_r : std_logic;
-   signal len_r       : std_logic_vector(15 downto 0);
-   signal mem_fifo_s  : std_logic_vector( 7 downto 0);
+   -- CPU clock domain
+   signal cpu_addr_r      : std_logic_vector(15 downto 0);
+   signal cpu_own_r       : std_logic;
+   signal cpu_own_clear_s : std_logic;
 
+   -- Dual Port RAM
    type mem_t is array (0 to 2**G_ADDR_BITS-1) of std_logic_vector(7 downto 0);
-
    signal mem_r : mem_t := (others => (others => '0'));
 
-   -- State machine to control the MAC framing
-   type t_fsm_state is (IDLE_ST, LEN_LO_ST, LEN_HI_ST, DATA_ST);
-   signal fsm_state : t_fsm_state := IDLE_ST;
+   -- ETH clock domain
+   type t_eth_state is (IDLE_ST, LEN_LO_ST, LEN_HI_ST, DATA_ST, WAIT_ST);
+   signal eth_state_r     : t_eth_state := IDLE_ST;
+   signal eth_fifo_s      : std_logic_vector( 7 downto 0);
+   signal eth_addr_r      : std_logic_vector(15 downto 0);
+   signal eth_len_r       : std_logic_vector(15 downto 0);
+   signal eth_own_s       : std_logic;
+   signal eth_own_clear_r : std_logic;
 
 begin
 
-   ------------------------
-   -- CPU access
-   ------------------------
+   ----------------------------------------------------------------------------------------------------
+   -- CPU clock domain
+   ----------------------------------------------------------------------------------------------------
 
-   p_cpu : process (clk_i)
+   p_cpu : process (cpu_clk_i)
    begin
-      if rising_edge(clk_i) then
-         rd_data_o <= (others => '0');
+      if rising_edge(cpu_clk_i) then
+         cpu_rd_data_o <= (others => '0');
 
-         if wr_en_i = '1' then
-            case addr_i is
-               when "000" => cpu_addr_r( 7 downto 0) <= wr_data_i;
-               when "001" => cpu_addr_r(15 downto 8) <= wr_data_i;
-               when "010" => mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0))) <= wr_data_i;
+         if cpu_wr_en_i = '1' then
+            case cpu_addr_i is
+               when "000" => cpu_addr_r( 7 downto 0) <= cpu_wr_data_i;
+               when "001" => cpu_addr_r(15 downto 8) <= cpu_wr_data_i;
+               when "010" => mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0))) <= cpu_wr_data_i;
                              cpu_addr_r <= cpu_addr_r + 1;
-               when "011" => own_r                   <= wr_data_i(0);
+               when "011" => cpu_own_r               <= cpu_wr_data_i(0);
                when others => null;
             end case;
          end if;
 
-         if rd_en_i = '1' then
-            case addr_i is
-               when "000" => rd_data_o <= cpu_addr_r( 7 downto 0);
-               when "001" => rd_data_o <= cpu_addr_r(15 downto 8);
-               when "010" => rd_data_o <= mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0)));
-                             cpu_addr_r <= cpu_addr_r + 1;
-               when "011" => rd_data_o(0) <= own_r;
+         if cpu_rd_en_i = '1' then
+            case cpu_addr_i is
+               when "000" => cpu_rd_data_o <= cpu_addr_r( 7 downto 0);
+               when "001" => cpu_rd_data_o <= cpu_addr_r(15 downto 8);
+               when "010" => cpu_rd_data_o <= mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0)));
+                             cpu_addr_r    <= cpu_addr_r + 1;
+               when "011" => cpu_rd_data_o(0) <= cpu_own_r;
                when others => null;
             end case;
          end if;
          
-         if own_clear_r = '1' then
-            own_r <= '0';
+         if cpu_own_clear_s = '1' then
+            cpu_own_r <= '0';
          end if;
          
-         if rst_i = '1' then
+         if cpu_rst_i = '1' then
             cpu_addr_r <= (others => '0');
-            own_r      <= '0';
+            cpu_own_r  <= '0';
          end if;
       end if;
    end process p_cpu;
 
-   mem_fifo_s <= mem_r(to_integer(fifo_addr_r(G_ADDR_BITS-1 downto 0)));
+
+   ----------------------------------------------------------------------------------------------------
+   -- Clock Domain Crossing
+   ----------------------------------------------------------------------------------------------------
+
+   i_cdc_own : entity work.cdc
+      generic map (
+         G_SIZE => 1
+      )
+      port map (
+         src_clk_i => cpu_clk_i,
+         src_dat_i(0) => cpu_own_r,
+         dst_clk_i => eth_clk_i,
+         dst_dat_o(0) => eth_own_s
+      ); -- i_cdc_own
+
+   i_cdc_own_clear : entity work.cdc
+      generic map (
+         G_SIZE => 1
+      )
+      port map (
+         src_clk_i => eth_clk_i,
+         src_dat_i(0) => eth_own_clear_r,
+         dst_clk_i => cpu_clk_i,
+         dst_dat_o(0) => cpu_own_clear_s
+      ); -- i_cdc_own_clear
 
 
-   p_fsm : process (clk_i)
+   ----------------------------------------------------------------------------------------------------
+   -- ETH clock domain
+   ----------------------------------------------------------------------------------------------------
+
+   eth_fifo_s <= mem_r(to_integer(eth_addr_r(G_ADDR_BITS-1 downto 0)));
+
+   p_eth : process (eth_clk_i)
    begin
-      if rising_edge(clk_i) then
+      if rising_edge(eth_clk_i) then
+         eth_empty_o <= '1';
 
-         -- Default values
-         own_clear_r  <= '0';
-
-         -- Connected to Tx FIFO
-         fifo_valid_o <= '0';
-         fifo_data_o  <= (others => '0');
-         fifo_eof_o   <= '0';
-
-         case fsm_state is
+         case eth_state_r is
             when IDLE_ST =>
-               if own_r = '1' then
-                  fifo_addr_r <= (others => '0');
-                  fsm_state <= LEN_LO_ST;
+               if eth_own_s = '1' then
+                  eth_addr_r  <= (others => '0');
+                  eth_state_r <= LEN_LO_ST;
                end if;
 
             when LEN_LO_ST =>
-               len_r(7 downto 0) <= mem_fifo_s;
-               fifo_addr_r       <= fifo_addr_r + 1;
-               fsm_state         <= LEN_HI_ST;
+               eth_len_r(7 downto 0) <= eth_fifo_s;
+               eth_addr_r  <= eth_addr_r + 1;
+               eth_state_r <= LEN_HI_ST;
 
             when LEN_HI_ST =>
-               len_r(15 downto 8) <= mem_fifo_s;
-               fifo_addr_r        <= fifo_addr_r + 1;
-               fsm_state          <= DATA_ST;
+               eth_len_r(15 downto 8) <= eth_fifo_s;
+               eth_addr_r  <= eth_addr_r + 1;
+               eth_state_r <= DATA_ST;
 
             when DATA_ST =>
-               if len_r /= 0 then
-                  fifo_data_o  <= mem_fifo_s;
-                  fifo_valid_o <= '1';
-                  fifo_addr_r  <= fifo_addr_r + 1;
-                  len_r        <= len_r - 1;
+               eth_sb_o    <= '0';
+               eth_data_o  <= eth_fifo_s;
+               eth_empty_o <= '0';
 
-                  if len_r = 1 then
-                     fifo_eof_o  <= '1';
-                     own_clear_r <= '1';
-                     fsm_state   <= IDLE_ST;
+               if eth_len_r = 1 then
+                  eth_sb_o <= '1';
+               end if;
+
+               if eth_rd_en_i = '1' then
+                  eth_addr_r  <= eth_addr_r + 1;
+                  eth_len_r   <= eth_len_r - 1;
+                  if eth_len_r = 1 then
+                     eth_own_clear_r <= '1';
+                     eth_state_r     <= WAIT_ST;
                   end if;
-               else
-                  fsm_state <= IDLE_ST;
+               end if;
+
+            when WAIT_ST =>
+               if eth_own_s = '0' then
+                  eth_own_clear_r <= '0';
+                  eth_state_r     <= IDLE_ST;
                end if;
          end case;
 
-         if rst_i = '1' then
-            own_clear_r  <= '0';
-            fifo_valid_o <= '0';
-            fsm_state    <= IDLE_ST;
+         if eth_rst_i= '1' then
+            eth_sb_o        <= '0';
+            eth_empty_o     <= '1';
+            eth_len_r       <= (others => '0');
+            eth_addr_r      <= (others => '0');
+            eth_own_clear_r <= '0';
+            eth_state_r     <= IDLE_ST;
          end if;
-      end if;
-   end process p_fsm;
 
+      end if;
+   end process p_eth;
 
 end structural;
 

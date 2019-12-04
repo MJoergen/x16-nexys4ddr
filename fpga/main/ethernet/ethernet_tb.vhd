@@ -11,14 +11,14 @@ end entity ethernet_tb;
 architecture structural of ethernet_tb is
 
    -- Connected to DUT
-   signal main_clk_s         : std_logic;  -- 8.33 MHz
-   signal main_clkn_s        : std_logic;  -- 8.33 MHz
-   signal main_rst_s         : std_logic;
-   signal main_addr_s        : std_logic_vector(3 downto 0);
-   signal main_wr_en_s       : std_logic := '0';
-   signal main_wr_data_s     : std_logic_vector(7 downto 0);
-   signal main_rd_en_s       : std_logic := '0';
-   signal main_rd_data_s     : std_logic_vector(7 downto 0);
+   signal cpu_clk_s          : std_logic;  -- 8.33 MHz
+   signal cpu_clkn_s         : std_logic;  -- 8.33 MHz
+   signal cpu_rst_s          : std_logic;
+   signal cpu_addr_s         : std_logic_vector(3 downto 0);
+   signal cpu_wr_en_s        : std_logic := '0';
+   signal cpu_wr_data_s      : std_logic_vector(7 downto 0);
+   signal cpu_rd_en_s        : std_logic := '0';
+   signal cpu_rd_data_s      : std_logic_vector(7 downto 0);
    --
    signal eth_clk_s          : std_logic;  -- 50 MHz
    signal eth_refclk_s       : std_logic;
@@ -27,11 +27,6 @@ architecture structural of ethernet_tb is
    signal eth_crsdv_s        : std_logic;
    signal eth_txd_s          : std_logic_vector(1 downto 0);
    signal eth_txen_s         : std_logic;
-
-   -- Used to clear the sim_ram between each test.
-   signal sim_ram_in         : std_logic_vector(16383 downto 0);
-   signal sim_ram_out        : std_logic_vector(16383 downto 0);
-   signal sim_ram_init       : std_logic;
 
    -- Control the execution of the test.
    signal sim_test_running_s : std_logic := '1';
@@ -43,22 +38,22 @@ begin
    -----------------------------
 
    -- Generate cpu clock @ 8.33 MHz
-   proc_main_clk : process
+   proc_cpu_clk : process
    begin
-      main_clk_s <= '1', '0' after 60 ns;
+      cpu_clk_s <= '1', '0' after 60 ns;
       wait for 120 ns;
 
       if sim_test_running_s = '0' then
          wait;
       end if;
-   end process proc_main_clk;
+   end process proc_cpu_clk;
 
    -- Generate cpu reset
-   proc_main_rst : process
+   proc_cpu_rst : process
    begin
-      main_rst_s <= '1', '0' after 200 ns;
+      cpu_rst_s <= '1', '0' after 200 ns;
       wait;
-   end process proc_main_rst;
+   end process proc_cpu_rst;
 
    -- Generate eth clock @ 50 MHz
    proc_eth_clk : process
@@ -79,7 +74,7 @@ begin
    eth_rxd_s   <= eth_txd_s;
    eth_crsdv_s <= eth_txen_s;
 
-   main_clkn_s <= not main_clk_s;
+   cpu_clkn_s <= not cpu_clk_s;
 
 
    -------------------
@@ -88,25 +83,25 @@ begin
 
    i_ethernet : entity work.ethernet
       port map (
-         clk_i        => main_clkn_s,
-         rst_i        => main_rst_s,
-         addr_i       => main_addr_s,
-         wr_en_i      => main_wr_en_s,
-         wr_data_i    => main_wr_data_s,
-         rd_en_i      => main_rd_en_s,
-         rd_data_o    => main_rd_data_s,
+         cpu_clk_i     => cpu_clkn_s,
+         cpu_rst_i     => cpu_rst_s,
+         cpu_addr_i    => cpu_addr_s,
+         cpu_wr_en_i   => cpu_wr_en_s,
+         cpu_wr_data_i => cpu_wr_data_s,
+         cpu_rd_en_i   => cpu_rd_en_s,
+         cpu_rd_data_o => cpu_rd_data_s,
          --
-         eth_clk_i    => eth_clk_s,
-         eth_txd_o    => eth_txd_s,
-         eth_txen_o   => eth_txen_s,
-         eth_rxd_i    => eth_rxd_s,
-         eth_rxerr_i  => '0',
-         eth_crsdv_i  => eth_crsdv_s,
-         eth_intn_i   => '0',
-         eth_mdio_io  => open,
-         eth_mdc_o    => open,
-         eth_rstn_o   => eth_rstn_s,
-         eth_refclk_o => eth_refclk_s
+         eth_clk_i     => eth_clk_s,
+         eth_txd_o     => eth_txd_s,
+         eth_txen_o    => eth_txen_s,
+         eth_rxd_i     => eth_rxd_s,
+         eth_rxerr_i   => '0',
+         eth_crsdv_i   => eth_crsdv_s,
+         eth_intn_i    => '0',
+         eth_mdio_io   => open,
+         eth_mdc_o     => open,
+         eth_rstn_o    => eth_rstn_s,
+         eth_refclk_o  => eth_refclk_s
       ); -- i_ethernet
    
 
@@ -118,22 +113,22 @@ begin
 
       procedure write(addr : std_logic_vector; value : std_logic_vector) is
       begin
-         main_addr_s    <= addr;
-         main_wr_data_s <= value;
-         main_wr_en_s   <= '1';
-         wait until main_clk_s = '1';
-         main_wr_en_s   <= '0';
-         wait until main_clk_s = '1';
+         cpu_addr_s    <= addr;
+         cpu_wr_data_s <= value;
+         cpu_wr_en_s   <= '1';
+         wait until cpu_clk_s = '1';
+         cpu_wr_en_s   <= '0';
+         wait until cpu_clk_s = '1';
       end procedure write;
 
       procedure read(addr : std_logic_vector; value : out std_logic_vector) is
       begin
-         main_addr_s  <= addr;
-         main_rd_en_s <= '1';
-         wait until main_clk_s = '1';
-         value := main_rd_data_s;
-         main_rd_en_s <= '0';
-         wait until main_clk_s = '1';
+         cpu_addr_s  <= addr;
+         cpu_rd_en_s <= '1';
+         wait until cpu_clk_s = '1';
+         value := cpu_rd_data_s;
+         cpu_rd_en_s <= '0';
+         wait until cpu_clk_s = '1';
       end procedure read;
       
       
@@ -164,23 +159,23 @@ begin
          write("0011", X"01");    -- Start Rx
 
          while (true) loop
-            read("1011", value);
+            read("0011", value);
             if value = 0 then
                exit;
             end if;
          end loop;
 
-         write("1000", X"00");
-         write("1001", X"00");
+         write("0000", X"00");
+         write("0001", X"00");
 
-         read("1011", value);
+         read("0010", value);
          assert value = length mod 256;
-         read("1011", value);
+         read("0010", value);
          assert value = length/256;
 
 
          for i in 0 to length-1 loop
-            read("1011", value);
+            read("0010", value);
             assert value = to_std_logic_vector((i+first) mod 256, 8);
          end loop;
 
@@ -190,7 +185,7 @@ begin
 
       -- Wait for reset
       wait until eth_rstn_s = '1';
-      wait until main_clk_s = '1';
+      wait until cpu_clk_s  = '1';
 
 
       -----------------------------------------------

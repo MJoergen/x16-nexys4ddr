@@ -43,6 +43,9 @@ architecture structural of rx_dma is
 
    signal mem_r : mem_t := (others => (others => '0'));
 
+   attribute ram_style : string;
+   attribute ram_style of mem_r : signal is "block";
+
    type state_t is (IDLE_ST, DATA_ST, WAIT_ST);
    signal state : state_t := IDLE_ST;
 

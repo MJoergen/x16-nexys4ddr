@@ -45,6 +45,9 @@ architecture structural of tx_dma is
    type mem_t is array (0 to 2**G_ADDR_BITS-1) of std_logic_vector(7 downto 0);
    signal mem_r : mem_t := (others => (others => '0'));
 
+   attribute ram_style : string;
+   attribute ram_style of mem_r : signal is "block";
+
    -- ETH clock domain
    type t_eth_state is (IDLE_ST, LEN_LO_ST, LEN_HI_ST, DATA_ST, WAIT_ST);
    signal eth_state_r     : t_eth_state := IDLE_ST;

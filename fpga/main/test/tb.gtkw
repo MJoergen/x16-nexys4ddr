@@ -1,27 +1,28 @@
 [*]
 [*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Fri Nov 22 09:16:35 2019
+[*] Wed Dec  4 13:51:54 2019
 [*]
 [dumpfile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.ghw"
-[dumpfile_mtime] "Fri Nov 22 08:57:50 2019"
-[dumpfile_size] 13162581
+[dumpfile_mtime] "Wed Dec  4 13:47:12 2019"
+[dumpfile_size] 14297913
 [savefile] "/home/mfj/git/x16-nexys4ddr/fpga/main/test/tb.gtkw"
-[timestart] 2400100000
+[timestart] 0
 [size] 1853 1145
 [pos] -1 -1
-*-25.506107 2646000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-32.904293 18520000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb.
 [treeopen] top.tb.i_main.
 [treeopen] top.tb.i_main.i_cpu_65c02.i_datapath.
-[treeopen] top.tb.i_vera.
+[treeopen] top.tb.i_main.i_ethernet.
+[treeopen] top.tb.i_main.i_ethernet.i_rx_dma.
 [treeopen] top.tb.i_vera.i_spi.
 [treeopen] top.tb.i_vera.i_spi.i_spi_master.
-[sst_width] 223
+[sst_width] 330
 [signals_width] 348
 [sst_expanded] 1
 [sst_vpaned_height] 340
-@c00200
+@800200
 -cpu_65c02
 @28
 top.tb.i_main.i_cpu_65c02.clk_i
@@ -43,7 +44,7 @@ top.tb.i_main.i_cpu_65c02.rd_en_o
 #{top.tb.i_main.i_cpu_65c02.i_datapath.yr[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.yr[7] top.tb.i_main.i_cpu_65c02.i_datapath.yr[6] top.tb.i_main.i_cpu_65c02.i_datapath.yr[5] top.tb.i_main.i_cpu_65c02.i_datapath.yr[4] top.tb.i_main.i_cpu_65c02.i_datapath.yr[3] top.tb.i_main.i_cpu_65c02.i_datapath.yr[2] top.tb.i_main.i_cpu_65c02.i_datapath.yr[1] top.tb.i_main.i_cpu_65c02.i_datapath.yr[0]
 #{top.tb.i_main.i_cpu_65c02.i_datapath.sp[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.sp[7] top.tb.i_main.i_cpu_65c02.i_datapath.sp[6] top.tb.i_main.i_cpu_65c02.i_datapath.sp[5] top.tb.i_main.i_cpu_65c02.i_datapath.sp[4] top.tb.i_main.i_cpu_65c02.i_datapath.sp[3] top.tb.i_main.i_cpu_65c02.i_datapath.sp[2] top.tb.i_main.i_cpu_65c02.i_datapath.sp[1] top.tb.i_main.i_cpu_65c02.i_datapath.sp[0]
 #{top.tb.i_main.i_cpu_65c02.i_datapath.sr[7:0]} top.tb.i_main.i_cpu_65c02.i_datapath.sr[7] top.tb.i_main.i_cpu_65c02.i_datapath.sr[6] top.tb.i_main.i_cpu_65c02.i_datapath.sr[5] top.tb.i_main.i_cpu_65c02.i_datapath.sr[4] top.tb.i_main.i_cpu_65c02.i_datapath.sr[3] top.tb.i_main.i_cpu_65c02.i_datapath.sr[2] top.tb.i_main.i_cpu_65c02.i_datapath.sr[1] top.tb.i_main.i_cpu_65c02.i_datapath.sr[0]
-@1401200
+@1000200
 -cpu_65c02
 @800200
 -VERA
@@ -109,7 +110,7 @@ top.tb.i_main.via2_porta_in_s[1]
 top.tb.i_main.via2_porta_in_s[0]
 @1401200
 -group_end
-@800200
+@c00200
 -spi_master
 @28
 top.tb.i_vera.i_spi.i_spi_master.valid_i
@@ -124,7 +125,39 @@ top.tb.i_vera.i_spi.i_spi_master.state
 #{top.tb.i_vera.i_spi.i_spi_master.timer[6:0]} top.tb.i_vera.i_spi.i_spi_master.timer[6] top.tb.i_vera.i_spi.i_spi_master.timer[5] top.tb.i_vera.i_spi.i_spi_master.timer[4] top.tb.i_vera.i_spi.i_spi_master.timer[3] top.tb.i_vera.i_spi.i_spi_master.timer[2] top.tb.i_vera.i_spi.i_spi_master.timer[1] top.tb.i_vera.i_spi.i_spi_master.timer[0]
 #{top.tb.i_vera.i_spi.i_spi_master.timer_next[6:0]} top.tb.i_vera.i_spi.i_spi_master.timer_next[6] top.tb.i_vera.i_spi.i_spi_master.timer_next[5] top.tb.i_vera.i_spi.i_spi_master.timer_next[4] top.tb.i_vera.i_spi.i_spi_master.timer_next[3] top.tb.i_vera.i_spi.i_spi_master.timer_next[2] top.tb.i_vera.i_spi.i_spi_master.timer_next[1] top.tb.i_vera.i_spi.i_spi_master.timer_next[0]
 #{top.tb.i_vera.i_spi.i_spi_master.data_o[7:0]} top.tb.i_vera.i_spi.i_spi_master.data_o[7] top.tb.i_vera.i_spi.i_spi_master.data_o[6] top.tb.i_vera.i_spi.i_spi_master.data_o[5] top.tb.i_vera.i_spi.i_spi_master.data_o[4] top.tb.i_vera.i_spi.i_spi_master.data_o[3] top.tb.i_vera.i_spi.i_spi_master.data_o[2] top.tb.i_vera.i_spi.i_spi_master.data_o[1] top.tb.i_vera.i_spi.i_spi_master.data_o[0]
-@1000200
+@1401200
 -spi_master
+@800200
+-ethernet
+@28
+top.tb.i_main.i_ethernet.eth_clk_i
+top.tb.i_main.i_ethernet.eth_txen_o
+#{top.tb.i_main.i_ethernet.eth_txd_o[1:0]} top.tb.i_main.i_ethernet.eth_txd_o[1] top.tb.i_main.i_ethernet.eth_txd_o[0]
+top.tb.i_main.i_ethernet.eth_crsdv_i
+#{top.tb.i_main.i_ethernet.eth_rxd_i[1:0]} top.tb.i_main.i_ethernet.eth_rxd_i[1] top.tb.i_main.i_ethernet.eth_rxd_i[0]
+top.tb.i_main.i_ethernet.i_rxfifo.wr_en_i
+@22
+#{top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[7:0]} top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[7] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[6] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[5] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[4] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[3] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[2] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[1] top.tb.i_main.i_ethernet.i_rxfifo.wr_data_i[0]
+@28
+top.tb.i_main.i_ethernet.i_rxfifo.wr_sb_i[0]
+@1000200
+-ethernet
+@800200
+-rx_dma
+@28
+#{top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_i[2:0]} top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_i[2] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_i[1] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_i[0]
+top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_en_i
+@23
+#{top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[7:0]} top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[7] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[6] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[5] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[4] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[3] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[2] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[1] top.tb.i_main.i_ethernet.i_rx_dma.cpu_wr_data_i[0]
+@28
+top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_en_i
+@22
+#{top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[7:0]} top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[7] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[6] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[5] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[4] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[3] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[2] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[1] top.tb.i_main.i_ethernet.i_rx_dma.cpu_rd_data_o[0]
+#{top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[15:0]} top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[15] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[14] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[13] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[12] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[11] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[10] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[9] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[8] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[7] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[6] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[5] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[4] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[3] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[2] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[1] top.tb.i_main.i_ethernet.i_rx_dma.cpu_addr_r[0]
+@28
+top.tb.i_main.i_ethernet.i_rx_dma.cpu_own_r
+top.tb.i_main.i_ethernet.i_rx_dma.cpu_own_clear_r
+@1000200
+-rx_dma
 [pattern_trace] 1
 [pattern_trace] 0

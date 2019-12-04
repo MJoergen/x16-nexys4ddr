@@ -17,7 +17,7 @@ SOURCES += ps2/ps2_writer.vhd ../vera/cpu/spi_slave.vhd
 SOURCES += ethernet/lan8720a/lan8720a.vhd ethernet/lan8720a/rmii_rx.vhd ethernet/lan8720a/rmii_tx.vhd
 SOURCES += ethernet/rx_dma.vhd ethernet/fifo.vhd ethernet/rx_header.vhd ethernet/tx_dma.vhd
 SOURCES += ethernet/ethernet.vhd
-SOURCES += test/tb.vhd
+SOURCES += test/tb.vhd test/phy_sim.vhd
 TB       = tb
 WAVE     = test/tb.ghw
 SAVE     = test/tb.gtkw
@@ -33,7 +33,7 @@ sim: $(SOURCES) rom.txt
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/primitive/*.vhd
 	ghdl -i --ieee=synopsys --std=08 --work=work $(SOURCES)
 	ghdl -m --ieee=synopsys --std=08 --ieee=synopsys -frelaxed-rules $(TB)
-	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=14000ns
+	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=100us
 	gtkwave $(WAVE) $(SAVE)
 
 # Uncomment the line below to run the 6502 functional test suite.

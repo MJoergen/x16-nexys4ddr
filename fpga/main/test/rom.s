@@ -13,9 +13,51 @@ main:
    STA $9F25
 
    LDY #$51
-   LDX #$20
+   LDX #$1E
    LDA #$44
-   JSR write_vram ; $2051 := $44
+   JSR write_vram ; $1E51 := $44
+
+; Test receiving Ethernet
+   LDA #$01
+   STA $9FC3
+@1:
+   LDA $9FC3
+   BNE @1
+
+   LDY #$52
+   LDX #$1E
+   LDA #$44
+   JSR write_vram ; $1E52 := $44
+
+   STZ $9FC0
+   STZ $9FC1
+   LDA $9FC2
+   CMP #$2A
+error01:   
+   BNE error01
+   LDA $9FC2
+   CMP #$00
+error02:   
+   BNE error02
+   LDA $9FC2
+   CMP #$FF
+error03:   
+   BNE error03
+   LDA $9FC2
+   LDA $9FC2
+   LDA $9FC2
+   LDA $9FC2
+   LDA $9FC2
+
+   LDA $9FC2
+   CMP #$F4
+error04:   
+   BNE error04
+
+   LDY #$53
+   LDX #$1E
+   LDA #$44
+   JSR write_vram ; $1E53 := $44
 
 
 ; Test reading from ROM

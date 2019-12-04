@@ -47,8 +47,8 @@ architecture structural of rom is
    end function;
 
    -- Initialize memory contents
---   signal mem_r : mem_t := InitRamFromFile(G_INIT_FILE);
-   signal mem_r : mem_t := (others => (others => '0'));
+   signal mem_r : mem_t := InitRamFromFile(G_INIT_FILE);
+--   signal mem_r : mem_t := (others => (others => '0'));
 
 begin
 

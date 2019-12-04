@@ -3,7 +3,9 @@
 # in your OS repository, otherwise it may be downloaded from here:
 # https://github.com/ghdl/ghdl
 
-SOURCES  = main.vhd rom.vhd ram.vhd via.vhd
+XILINX_DIR = /opt/Xilinx/Vivado/2018.2
+
+SOURCES  = main.vhd rom.vhd ram.vhd via.vhd ../cdc.vhd
 SOURCES += ps2/ps2_buffer.vhd ps2/ps2_reader.vhd
 SOURCES += cpu_65c02/cpu_65c02.vhd cpu_65c02/ctl.vhd cpu_65c02/datapath.vhd cpu_65c02/microcode.vhd
 SOURCES += cpu_65c02/alu.vhd cpu_65c02/ar.vhd cpu_65c02/hi.vhd cpu_65c02/lo.vhd
@@ -11,7 +13,11 @@ SOURCES += cpu_65c02/pc.vhd cpu_65c02/sp.vhd cpu_65c02/sr.vhd cpu_65c02/xr.vhd
 SOURCES += cpu_65c02/yr.vhd cpu_65c02/zp.vhd cpu_65c02/mr.vhd
 SOURCES += ../vera/cpu/mmu.vhd ../vera/cpu/config.vhd ../vera/cpu/cpu.vhd ../vera/vram.vhd
 SOURCES += ../vera/cpu/spi.vhd ../vera/cpu/spi_master.vhd
-SOURCES += ps2/ps2_writer.vhd ../vera/cpu/spi_slave.vhd test/tb.vhd 
+SOURCES += ps2/ps2_writer.vhd ../vera/cpu/spi_slave.vhd
+SOURCES += ethernet/lan8720a/lan8720a.vhd ethernet/lan8720a/rmii_rx.vhd ethernet/lan8720a/rmii_tx.vhd
+SOURCES += ethernet/rx_dma.vhd ethernet/fifo.vhd ethernet/rx_header.vhd ethernet/tx_dma.vhd
+SOURCES += ethernet/ethernet.vhd
+SOURCES += test/tb.vhd
 TB       = tb
 WAVE     = test/tb.ghw
 SAVE     = test/tb.gtkw
@@ -22,8 +28,11 @@ SAVE     = test/tb.gtkw
 #####################################
 
 sim: $(SOURCES) rom.txt
-	ghdl -i --std=08 --work=work $(SOURCES)
-	ghdl -m --std=08 --ieee=synopsys -frelaxed-rules $(TB)
+	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/unisim_VCOMP.vhd
+	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/unisim_VPKG.vhd
+	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/primitive/*.vhd
+	ghdl -i --ieee=synopsys --std=08 --work=work $(SOURCES)
+	ghdl -m --ieee=synopsys --std=08 --ieee=synopsys -frelaxed-rules $(TB)
 	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=14000ns
 	gtkwave $(WAVE) $(SAVE)
 

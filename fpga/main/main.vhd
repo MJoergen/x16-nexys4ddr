@@ -315,27 +315,27 @@ begin
    -------------------------------
 
    i_ethernet : entity work.ethernet
-   port map (
-      clk_i         => clkn_s,
-      rst_i         => rst_i,
-      addr_i        => cpu_addr_s(3 downto 0),
-      wr_en_i       => eth_wr_en_s,
-      wr_data_i     => cpu_wr_data_s,
-      rd_en_i       => eth_rd_en_s,
-      rd_data_o     => eth_rd_data_s,
-      --
-      eth_clk_i     => eth_clk_i,
-      eth_txd_o     => eth_txd_o,
-      eth_txen_o    => eth_txen_o,
-      eth_rxd_i     => eth_rxd_i,
-      eth_rxerr_i   => eth_rxerr_i,
-      eth_crsdv_i   => eth_crsdv_i,
-      eth_intn_i    => eth_intn_i,
-      eth_mdio_io   => eth_mdio_io,
-      eth_mdc_o     => eth_mdc_o,
-      eth_rstn_o    => eth_rstn_o,
-      eth_refclk_o  => eth_refclk_o
-   ); -- i_ethernet
+      port map (
+         cpu_clk_i     => clkn_s,
+         cpu_rst_i     => rst_i,
+         cpu_addr_i    => cpu_addr_s(3 downto 0),
+         cpu_wr_en_i   => eth_wr_en_s,
+         cpu_wr_data_i => cpu_wr_data_s,
+         cpu_rd_en_i   => eth_rd_en_s,
+         cpu_rd_data_o => eth_rd_data_s,
+         --
+         eth_clk_i     => eth_clk_i,
+         eth_txd_o     => eth_txd_o,
+         eth_txen_o    => eth_txen_o,
+         eth_rxd_i     => eth_rxd_i,
+         eth_rxerr_i   => eth_rxerr_i,
+         eth_crsdv_i   => eth_crsdv_i,
+         eth_intn_i    => eth_intn_i,
+         eth_mdio_io   => eth_mdio_io,
+         eth_mdc_o     => eth_mdc_o,
+         eth_rstn_o    => eth_rstn_o,
+         eth_refclk_o  => eth_refclk_o
+      ); -- i_ethernet
 
 
    --------------------------

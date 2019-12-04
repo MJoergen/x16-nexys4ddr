@@ -14,6 +14,9 @@ SOURCES += main/cpu_65c02/cpu_65c02.vhd main/cpu_65c02/ctl.vhd main/cpu_65c02/da
 SOURCES += main/cpu_65c02/alu.vhd main/cpu_65c02/ar.vhd main/cpu_65c02/hi.vhd main/cpu_65c02/lo.vhd
 SOURCES += main/cpu_65c02/pc.vhd main/cpu_65c02/sp.vhd main/cpu_65c02/sr.vhd main/cpu_65c02/xr.vhd
 SOURCES += main/cpu_65c02/yr.vhd main/cpu_65c02/zp.vhd main/cpu_65c02/mr.vhd
+SOURCES += main/ethernet/lan8720a/lan8720a.vhd main/ethernet/lan8720a/rmii_rx.vhd main/ethernet/lan8720a/rmii_tx.vhd
+SOURCES += main/ethernet/rx_dma.vhd main/ethernet/fifo.vhd main/ethernet/rx_header.vhd main/ethernet/tx_dma.vhd
+SOURCES += main/ethernet/ethernet.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file
 fpga: x16-rom.bit

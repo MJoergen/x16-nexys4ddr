@@ -56,9 +56,6 @@ set_property -dict { PACKAGE_PIN C12 IOSTANDARD LVCMOS33 } [get_ports { rstn_i }
 set_property -dict { PACKAGE_PIN F4  IOSTANDARD LVCMOS33 } [get_ports { ps2_clk_io }];       # PS2_CLK
 set_property -dict { PACKAGE_PIN B2  IOSTANDARD LVCMOS33 } [get_ports { ps2_data_io }];      # PS2_DATA
 
-#set_property PULLUP TRUE [get_ports { ps2_clk_io } ]
-#set_property PULLUP TRUE [get_ports { ps2_data_io } ]
-
 set_property -dict { PACKAGE_PIN E2  IOSTANDARD LVCMOS33 } [get_ports { sd_reset_o }];       # SD_RESET
 set_property -dict { PACKAGE_PIN A1  IOSTANDARD LVCMOS33 } [get_ports { sd_cd_i }];          # SD_CD
 set_property -dict { PACKAGE_PIN B1  IOSTANDARD LVCMOS33 } [get_ports { sd_sck_o }];         # SD_SCK
@@ -67,6 +64,20 @@ set_property -dict { PACKAGE_PIN C2  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_i
 set_property -dict { PACKAGE_PIN E1  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[1] }];     # SD_DAT1
 set_property -dict { PACKAGE_PIN F1  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[2] }];     # SD_DAT2
 set_property -dict { PACKAGE_PIN D2  IOSTANDARD LVCMOS33 } [get_ports { sd_dat_io[3] }];     # SD_DAT3
+
+set_property -dict { PACKAGE_PIN A9  IOSTANDARD LVCMOS33 } [get_ports { eth_mdio_io  }];     # ETH_MDIO
+set_property -dict { PACKAGE_PIN C9  IOSTANDARD LVCMOS33 } [get_ports { eth_mdc_o    }];     # ETH_MDC
+set_property -dict { PACKAGE_PIN B3  IOSTANDARD LVCMOS33 } [get_ports { eth_rstn_o   }];     # ETH_RSTN
+set_property -dict { PACKAGE_PIN D10 IOSTANDARD LVCMOS33 } [get_ports { eth_rxd_i[1] }];     # ETH_RXD[1]
+set_property -dict { PACKAGE_PIN C11 IOSTANDARD LVCMOS33 } [get_ports { eth_rxd_i[0] }];     # ETH_RXD[0]
+set_property -dict { PACKAGE_PIN C10 IOSTANDARD LVCMOS33 } [get_ports { eth_rxerr_i  }];     # ETH_RXERR
+set_property -dict { PACKAGE_PIN A10 IOSTANDARD LVCMOS33 } [get_ports { eth_txd_o[0] }];     # ETH_TXD[0]
+set_property -dict { PACKAGE_PIN A8  IOSTANDARD LVCMOS33 } [get_ports { eth_txd_o[1] }];     # ETH_TXD[1]
+set_property -dict { PACKAGE_PIN B9  IOSTANDARD LVCMOS33 } [get_ports { eth_txen_o   }];     # ETH_TXEN
+set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { eth_crsdv_i  }];     # ETH_CRSDV
+set_property -dict { PACKAGE_PIN B8  IOSTANDARD LVCMOS33 } [get_ports { eth_intn_i   }];     # ETH_INTN
+set_property -dict { PACKAGE_PIN D5  IOSTANDARD LVCMOS33 } [get_ports { eth_refclk_o }];     # ETH_REFCLK
+
 
 # Clock definition
 create_clock -name sys_clk -period 10.00 [get_ports {clk_i}];

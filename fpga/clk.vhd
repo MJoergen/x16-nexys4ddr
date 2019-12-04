@@ -72,10 +72,11 @@ use unisim.vcomponents.all;
 entity clk_wiz_0_clk_wiz is
 port
  (-- Clock in ports
-  clk_in1           : in     std_logic;   -- 100 MHz
+  clk_in1           : in     std_logic;   -- 100    MHz
   -- Clock out ports
-  cpu_clk           : out    std_logic;   --   8 MHz
-  vga_clk           : out    std_logic    --  25 MHz
+  eth_clk           : out    std_logic;   --  50    MHz
+  vga_clk           : out    std_logic;   --  25.2  MHz
+  cpu_clk           : out    std_logic    --   8.33 MHz
  );
 end clk_wiz_0_clk_wiz;
 
@@ -86,8 +87,9 @@ architecture xilinx of clk_wiz_0_clk_wiz is
   signal clkfbout_clk_wiz_0         : std_logic;
   signal clkfbout_buf_clk_wiz_0     : std_logic;
   signal clkfboutb_unused : std_logic;
-  signal cpu_clk_wiz_0          : std_logic;
+  signal eth_clk_wiz_0          : std_logic;
   signal vga_clk_wiz_0          : std_logic;
+  signal cpu_clk_wiz_0          : std_logic;
   signal clkout0b_unused         : std_logic;
   signal clkout1_unused   : std_logic;
   signal clkout1b_unused         : std_logic;
@@ -128,18 +130,22 @@ clk_in1_clk_wiz_0 <= clk_in1;
     CLKOUT4_CASCADE      => FALSE,
     COMPENSATION         => "ZHOLD",
     STARTUP_WAIT         => FALSE,
-    DIVCLK_DIVIDE        => 3,
-    CLKFBOUT_MULT_F      => 27.500,
+    DIVCLK_DIVIDE        => 1,
+    CLKFBOUT_MULT_F      => 8.000,
     CLKFBOUT_PHASE       => 0.000,
     CLKFBOUT_USE_FINE_PS => FALSE,
-    CLKOUT0_DIVIDE_F     => 36.375, -- VGA @ 25.20 MHz
+    CLKOUT0_DIVIDE_F     => 31.750,    -- VGA @ 25.20 MHz
     CLKOUT0_PHASE        => 0.000,
     CLKOUT0_DUTY_CYCLE   => 0.500,
     CLKOUT0_USE_FINE_PS  => FALSE,
-    CLKOUT1_DIVIDE       => 110,    -- CPU @  8.33 MHz
+    CLKOUT1_DIVIDE       => 16,        -- ETH @ 50.00 MHz
     CLKOUT1_PHASE        => 0.000,
     CLKOUT1_DUTY_CYCLE   => 0.500,
     CLKOUT1_USE_FINE_PS  => FALSE,
+    CLKOUT2_DIVIDE       => 96,        -- CPU @  8.33 MHz
+    CLKOUT2_PHASE        => 0.000,
+    CLKOUT2_DUTY_CYCLE   => 0.500,
+    CLKOUT2_USE_FINE_PS  => FALSE,
     CLKIN1_PERIOD        => 10.0,
     REF_JITTER1          => 0.010)
   port map
@@ -149,9 +155,9 @@ clk_in1_clk_wiz_0 <= clk_in1;
     CLKFBOUTB           => clkfboutb_unused,
     CLKOUT0             => vga_clk_wiz_0,
     CLKOUT0B            => clkout0b_unused,
-    CLKOUT1             => cpu_clk_wiz_0,
+    CLKOUT1             => eth_clk_wiz_0,
     CLKOUT1B            => clkout1b_unused,
-    CLKOUT2             => clkout2_unused,
+    CLKOUT2             => cpu_clk_wiz_0,
     CLKOUT2B            => clkout2b_unused,
     CLKOUT3             => clkout3_unused,
     CLKOUT3B            => clkout3b_unused,
@@ -200,6 +206,11 @@ clk_in1_clk_wiz_0 <= clk_in1;
     I   => vga_clk_wiz_0);
 
   clkout1_buf : BUFG
+  port map
+   (O   => eth_clk,
+    I   => eth_clk_wiz_0);
+
+  clkout2_buf : BUFG
   port map
    (O   => cpu_clk,
     I   => cpu_clk_wiz_0);

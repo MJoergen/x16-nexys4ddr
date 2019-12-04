@@ -16,12 +16,26 @@ entity main is
       rst_i          : in  std_logic;
       nmi_i          : in  std_logic;
       irq_i          : in  std_logic;
+      --
       ps2_data_in_i  : in  std_logic;
       ps2_data_out_o : out std_logic;
       ps2_dataen_o   : out std_logic;
       ps2_clk_in_i   : in  std_logic;
       ps2_clk_out_o  : out std_logic;
       ps2_clken_o    : out std_logic;
+      --
+      eth_clk_i      : in    std_logic;
+      eth_txd_o      : out   std_logic_vector(1 downto 0);
+      eth_txen_o     : out   std_logic;
+      eth_rxd_i      : in    std_logic_vector(1 downto 0);
+      eth_rxerr_i    : in    std_logic;
+      eth_crsdv_i    : in    std_logic;
+      eth_intn_i     : in    std_logic;
+      eth_mdio_io    : inout std_logic;
+      eth_mdc_o      : out   std_logic;
+      eth_rstn_o     : out   std_logic;
+      eth_refclk_o   : out   std_logic;
+      --
       vera_addr_o    : out std_logic_vector(2 downto 0);
       vera_wr_en_o   : out std_logic;
       vera_wr_data_o : out std_logic_vector(7 downto 0);
@@ -48,6 +62,7 @@ architecture structural of main is
    signal vera_cs_s        : std_logic;   -- 0x9F20 - 0x9F2F
    signal via1_cs_s        : std_logic;   -- 0x9F60 - 0x9F6F
    signal via2_cs_s        : std_logic;   -- 0x9F70 - 0x9F7F
+   signal eth_cs_s         : std_logic;   -- 0x9FC0 - 0x9FCF
    signal hiram_cs_s       : std_logic;   -- 0xA000 - 0xBFFF
    signal rom_cs_s         : std_logic;   -- 0xC000 - 0xFFFF
 
@@ -62,6 +77,7 @@ architecture structural of main is
    signal medram_wr_en_s   : std_logic;
    signal via1_wr_en_s     : std_logic;
    signal via2_wr_en_s     : std_logic;
+   signal eth_wr_en_s      : std_logic;
    signal hiram_wr_en_s    : std_logic;
 
    -- Read enable
@@ -69,6 +85,7 @@ architecture structural of main is
    signal medram_rd_en_s   : std_logic;
    signal via1_rd_en_s     : std_logic;
    signal via2_rd_en_s     : std_logic;
+   signal eth_rd_en_s      : std_logic;
    signal hiram_rd_en_s    : std_logic;
    signal rom_rd_en_s      : std_logic;
 
@@ -77,6 +94,7 @@ architecture structural of main is
    signal medram_rd_data_s : std_logic_vector(7 downto 0);
    signal via1_rd_data_s   : std_logic_vector(7 downto 0);
    signal via2_rd_data_s   : std_logic_vector(7 downto 0);
+   signal eth_rd_data_s    : std_logic_vector(7 downto 0);
    signal hiram_rd_data_s  : std_logic_vector(7 downto 0);
    signal rom_rd_data_s    : std_logic_vector(7 downto 0);
 
@@ -170,6 +188,7 @@ begin
    vera_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F2" else '0';  -- 0x9F20 - 0x9F2F
    via1_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F6" else '0';  -- 0x9F60 - 0x9F6F
    via2_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F7" else '0';  -- 0x9F70 - 0x9F7F
+   eth_cs_s    <= '1' when cpu_addr_s(15 downto  4) = X"9FC" else '0';  -- 0x9FC0 - 0x9FCF
    hiram_cs_s  <= '1' when cpu_addr_s(15 downto 13) = "101"  else '0';  -- 0xA000 - 0xBFFF
    rom_cs_s    <= '1' when cpu_addr_s(15 downto 14) = "11"   else '0';  -- 0xC000 - 0xFFFF
 
@@ -177,6 +196,7 @@ begin
                     vera_rd_data_i   when vera_cs_s   = '1' else
                     via1_rd_data_s   when via1_cs_s   = '1' else
                     via2_rd_data_s   when via2_cs_s   = '1' else
+                    eth_rd_data_s    when eth_cs_s    = '1' else
                     medram_rd_data_s when medram_cs_s = '1' else  -- Lower priority than VERA and VIA.
                     hiram_rd_data_s  when hiram_cs_s  = '1' else
                     rom_rd_data_s    when rom_cs_s    = '1' else
@@ -187,6 +207,7 @@ begin
    vera_rd_en_o   <= cpu_rd_en_s and vera_cs_s;
    via1_rd_en_s   <= cpu_rd_en_s and via1_cs_s;
    via2_rd_en_s   <= cpu_rd_en_s and via2_cs_s;
+   eth_rd_en_s    <= cpu_rd_en_s and eth_cs_s;
    hiram_rd_en_s  <= cpu_rd_en_s and hiram_cs_s;
    rom_rd_en_s    <= cpu_rd_en_s and rom_cs_s;
 
@@ -195,6 +216,7 @@ begin
    vera_wr_en_o   <= cpu_wr_en_s and vera_cs_s;
    via1_wr_en_s   <= cpu_wr_en_s and via1_cs_s;
    via2_wr_en_s   <= cpu_wr_en_s and via2_cs_s;
+   eth_wr_en_s    <= cpu_wr_en_s and eth_cs_s;
    hiram_wr_en_s  <= cpu_wr_en_s and hiram_cs_s;
 
 
@@ -286,6 +308,34 @@ begin
          portaen_o => via2_porta_en_s,          -- Keyboard
          portben_o => open                      -- Mouse
       ); -- i_via2
+
+
+   -------------------------------
+   -- Instantiate Ethernet module
+   -------------------------------
+
+   i_ethernet : entity work.ethernet
+   port map (
+      clk_i         => clkn_s,
+      rst_i         => rst_i,
+      addr_i        => cpu_addr_s(3 downto 0),
+      wr_en_i       => eth_wr_en_s,
+      wr_data_i     => cpu_wr_data_s,
+      rd_en_i       => eth_rd_en_s,
+      rd_data_o     => eth_rd_data_s,
+      --
+      eth_clk_i     => eth_clk_i,
+      eth_txd_o     => eth_txd_o,
+      eth_txen_o    => eth_txen_o,
+      eth_rxd_i     => eth_rxd_i,
+      eth_rxerr_i   => eth_rxerr_i,
+      eth_crsdv_i   => eth_crsdv_i,
+      eth_intn_i    => eth_intn_i,
+      eth_mdio_io   => eth_mdio_io,
+      eth_mdc_o     => eth_mdc_o,
+      eth_rstn_o    => eth_rstn_o,
+      eth_refclk_o  => eth_refclk_o
+   ); -- i_ethernet
 
 
    --------------------------

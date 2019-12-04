@@ -8,31 +8,45 @@ use ieee.std_logic_1164.all;
 
 entity x16 is
    port (
-      clk_i       : in    std_logic;                       -- 100 MHz
+      clk_i        : in    std_logic;                       -- 100 MHz
 
-      rstn_i      : in    std_logic;                       -- CPU reset, active low
+      rstn_i       : in    std_logic;                       -- CPU reset, active low
 
-      sw_i        : in    std_logic_vector(15 downto 0);   -- Used for debugging.
-      led_o       : out   std_logic_vector(15 downto 0);   -- Used for debugging.
+      sw_i         : in    std_logic_vector(15 downto 0);   -- Used for debugging.
+      led_o        : out   std_logic_vector(15 downto 0);   -- Used for debugging.
 
-      ps2_clk_io  : inout std_logic;                       -- Keyboard
-      ps2_data_io : inout std_logic;
+      ps2_clk_io   : inout std_logic;                       -- Keyboard
+      ps2_data_io  : inout std_logic;
 
-      sd_reset_o  : out   std_logic;                       -- SD card
-      sd_dat_io   : inout std_logic_vector(3 downto 0);    -- miso, cs
-      sd_cmd_io   : inout std_logic;                       -- mosi
-      sd_sck_o    : out   std_logic;
-      sd_cd_i     : in    std_logic;
+      -- Connected to Ethernet PHY
+      eth_txd_o    : out   std_logic_vector(1 downto 0);
+      eth_txen_o   : out   std_logic;
+      eth_rxd_i    : in    std_logic_vector(1 downto 0);
+      eth_rxerr_i  : in    std_logic;
+      eth_crsdv_i  : in    std_logic;
+      eth_intn_i   : in    std_logic;
+      eth_mdio_io  : inout std_logic;
+      eth_mdc_o    : out   std_logic;
+      eth_rstn_o   : out   std_logic;
+      eth_refclk_o : out   std_logic;
 
-      vga_hs_o    : out   std_logic;                       -- VGA
-      vga_vs_o    : out   std_logic;
-      vga_col_o   : out   std_logic_vector(11 downto 0)    -- 4 bits for each colour RGB.
+      sd_reset_o   : out   std_logic;                       -- SD card
+      sd_dat_io    : inout std_logic_vector(3 downto 0);    -- miso, cs
+      sd_cmd_io    : inout std_logic;                       -- mosi
+      sd_sck_o     : out   std_logic;
+      sd_cd_i      : in    std_logic;
+
+      vga_hs_o     : out   std_logic;                       -- VGA
+      vga_vs_o     : out   std_logic;
+      vga_col_o    : out   std_logic_vector(11 downto 0)    -- 4 bits for each colour RGB.
    );
 end x16;
 
 architecture structural of x16 is
 
    constant C_ROM_INIT_FILE : string := "main/rom.txt";     -- ROM contents.
+
+   signal eth_clk_s         : std_logic;                    -- 50 MHz
 
    signal vga_clk_s         : std_logic;                    -- 25.2 MHz
 
@@ -113,6 +127,7 @@ begin
    i_clk : entity work.clk_wiz_0_clk_wiz
       port map (
          clk_in1 => clk_i,      -- 100 MHz
+         eth_clk => eth_clk_s,  --  50 MHz
          vga_clk => vga_clk_s,  --  25.2 MHz
          cpu_clk => main_clk_s  --   8.33 MHz
       ); -- i_clk
@@ -188,7 +203,19 @@ begin
          ps2_dataen_o   => ps2_dataen_s,
          ps2_clk_in_i   => ps2_clk_in_s,
          ps2_clk_out_o  => ps2_clk_out_s,
-         ps2_clken_o    => ps2_clken_s
+         ps2_clken_o    => ps2_clken_s,
+         --
+         eth_clk_i      => eth_clk_s,
+         eth_txd_o      => eth_txd_o,
+         eth_txen_o     => eth_txen_o,
+         eth_rxd_i      => eth_rxd_i,
+         eth_rxerr_i    => eth_rxerr_i,
+         eth_crsdv_i    => eth_crsdv_i,
+         eth_intn_i     => eth_intn_i,
+         eth_mdio_io    => eth_mdio_io,
+         eth_mdc_o      => eth_mdc_o,
+         eth_rstn_o     => eth_rstn_o,
+         eth_refclk_o   => eth_refclk_o
       ); -- i_main
       
 

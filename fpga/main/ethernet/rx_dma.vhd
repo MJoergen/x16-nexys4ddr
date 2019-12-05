@@ -49,6 +49,13 @@ architecture structural of rx_dma is
    type state_t is (IDLE_ST, DATA_ST, WAIT_ST);
    signal state : state_t := IDLE_ST;
 
+   -- Debug
+   constant DEBUG_MODE               : boolean := false; -- TRUE OR FALSE
+
+   attribute mark_debug              : boolean;
+   attribute mark_debug of cpu_own_r : signal is DEBUG_MODE;
+   attribute mark_debug of state     : signal is DEBUG_MODE;
+
 begin
 
    ------------------------

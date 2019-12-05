@@ -57,6 +57,12 @@ architecture structural of tx_dma is
    signal eth_own_s       : std_logic;
    signal eth_own_clear_r : std_logic;
 
+   constant DEBUG_MODE                 : boolean := false; -- TRUE OR FALSE
+
+   attribute mark_debug                : boolean;
+   attribute mark_debug of cpu_own_r   : signal is DEBUG_MODE;
+   attribute mark_debug of eth_state_r : signal is DEBUG_MODE;
+
 begin
 
    ----------------------------------------------------------------------------------------------------

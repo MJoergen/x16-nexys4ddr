@@ -74,6 +74,19 @@ architecture structural of ethernet is
    signal cpu_tx_rd_en_s           : std_logic;
    signal cpu_tx_cs_s              : std_logic;
 
+   -- Debug
+   constant DEBUG_MODE                    : boolean := false; -- TRUE OR FALSE
+
+   attribute mark_debug                   : boolean;
+   attribute mark_debug of eth_rx_valid_s : signal is DEBUG_MODE;
+   attribute mark_debug of eth_rx_eof_s   : signal is DEBUG_MODE;
+   attribute mark_debug of eth_rx_data_s  : signal is DEBUG_MODE;
+   attribute mark_debug of eth_rx_error_s : signal is DEBUG_MODE;
+   attribute mark_debug of eth_tx_empty_s : signal is DEBUG_MODE;
+   attribute mark_debug of eth_tx_rden_s  : signal is DEBUG_MODE;
+   attribute mark_debug of eth_tx_data_s  : signal is DEBUG_MODE;
+   attribute mark_debug of eth_tx_eof_s   : signal is DEBUG_MODE;
+
 begin
 
    ------------------------------

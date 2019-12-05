@@ -321,3 +321,23 @@ When the CPU has released ownership all write accesses are disabled. The CPU
 may still read whatever contents are in the virtual memory, but any writes are
 ignored.
 
+# 2019-12-05
+First of all, I changed the ethernet memory map to 9FC\* instead of 9FE\*,
+because the latter was already in use by the sound device.
+
+I've been contemplating how to read and write files over ethernet.  I've
+started with the simple version, where the network interface supports two
+commands over UDP: "read block" and "write block", each block is 512 bytes, and
+is addressed by a 32-bit LBA (logical block address). This hooks nicely into
+the API provided in the file sdcard.asm.
+
+The above method is essentially a networked block device. Curiously, there
+already exists a standardized NBD (network block device), but it runs on top of
+TCP. So one option is to implement TCP.  But the main drawback with the above
+is that the SD card will no longer be available.
+
+A more general approach is to add support for an entire new Commodore device on
+the TALK/LISTEN layer. This requires adding support for the LOAD and SAVE
+commands. I initially considered TFTP, but it does not provide support for
+directory listing. So now I'm looking into NFS (RFC 1094) over RPC (RFC 1057).
+

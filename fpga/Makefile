@@ -40,9 +40,8 @@ x16.tcl: rom.tcl
 	echo "read_xdc x16.xdc" >> $@
 	echo "set_param synth.elaboration.rodinMoreOptions \"rt::set_parameter max_loop_limit 200000\"" >> $@
 	echo "synth_design -top x16 -part xc7a100tcsg324-1 -flatten_hierarchy none" >> $@
-	#echo "source debug.tcl" >> $@
+	echo "source debug.tcl" >> $@
 	echo "opt_design -directive NoBramPowerOpt" >> $@
-	#echo "write_debug_probes -force x16.ltx" >> $@
 	echo "place_design" >> $@
 	echo "route_design" >> $@
 	echo "write_checkpoint -force x16.dcp" >> $@

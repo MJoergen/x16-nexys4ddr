@@ -321,7 +321,7 @@ When the CPU has released ownership all write accesses are disabled. The CPU
 may still read whatever contents are in the virtual memory, but any writes are
 ignored.
 
-# 2019-12-05
+## 2019-12-05
 First of all, I changed the ethernet memory map to 9FC\* instead of 9FE\*,
 because the latter was already in use by the sound device.
 
@@ -340,4 +340,13 @@ A more general approach is to add support for an entire new Commodore device on
 the TALK/LISTEN layer. This requires adding support for the LOAD and SAVE
 commands. I initially considered TFTP, but it does not provide support for
 directory listing. So now I'm looking into NFS (RFC 1094) over RPC (RFC 1057).
+
+## 2019-12-06
+DONE:
+* Fix debug.tcl so it works with multiple clock nets.
+
+TODO:
+* Complete sd\_net.py so it can emulate read\_block and write\_block
+* Implement TFTP server in python
+* Implement TFTP client parallel with CBDOS (e.g. device number 9).
 

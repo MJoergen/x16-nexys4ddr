@@ -350,3 +350,18 @@ TODO:
 * Implement TFTP server in python
 * Implement TFTP client parallel with CBDOS (e.g. device number 9).
 
+## 2019-12-09
+So I went ahead and implemented the TFTP client, and removed the virtual SD
+card.  Currently, it supports reading a file from a TFTP server. The plan is to
+make an augmented TFTP server, which will "translate" the file named "$" to a
+directory listing. The ROM will be oblivious, so it means the user will have to
+type first: LOAD "$",9 and then type LIST to get the directory listing.
+
+I fixed a bug in the PS2 writer where it would sometimes come out of
+sync with the ROM.
+
+TODO:
+* Make an augmented TFTP server that can generate a directory listing.
+* Implement SAVE.
+* Allow both CBDOS and ETH to work simultaneously.
+

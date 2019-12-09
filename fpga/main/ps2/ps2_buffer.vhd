@@ -39,12 +39,9 @@ architecture structural of ps2_buffer is
    attribute mark_debug                  : boolean;
    attribute mark_debug of valid         : signal is DEBUG_MODE;
    attribute mark_debug of ready         : signal is DEBUG_MODE;
+   attribute mark_debug of data          : signal is DEBUG_MODE;
    attribute mark_debug of kbd_clk_i     : signal is DEBUG_MODE;
-   attribute mark_debug of kbd_clk_o     : signal is DEBUG_MODE;
-   attribute mark_debug of kbd_clken_o   : signal is DEBUG_MODE;
    attribute mark_debug of kbd_data_i    : signal is DEBUG_MODE;
-   attribute mark_debug of kbd_data_o    : signal is DEBUG_MODE;
-   attribute mark_debug of kbd_dataen_o  : signal is DEBUG_MODE;
    attribute mark_debug of main_clk_o    : signal is DEBUG_MODE;
    attribute mark_debug of main_clk_i    : signal is DEBUG_MODE;
    attribute mark_debug of main_clken_i  : signal is DEBUG_MODE;

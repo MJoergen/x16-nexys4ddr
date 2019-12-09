@@ -90,9 +90,6 @@ begin
                      state      <= T1_ST;
                      counter    <= counter - 1;
                   end if;
-                  if counter = 0 and ps2_clk = '1' then
-                     state      <= IDLE_ST;
-                  end if;
                end if;
 
             when T1_ST =>
@@ -107,6 +104,9 @@ begin
                   ps2_clk_o <= '1';
                   usec_next <= usecs + CLK_PERIOD_US/4;
                   state     <= T2_ST;
+                  if counter = 0 then
+                     state <= IDLE_ST;
+                  end if;
                end if;
          end case;
 

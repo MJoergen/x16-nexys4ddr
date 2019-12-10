@@ -2,8 +2,8 @@
 
 This directory contains the VHDL source code for the MAIN module.
 
-This module contains the CPU, RAM, ROM, I/O chips, as well as
-performs address decoding of the CPU's memory map.
+This module contains the CPU, RAM, ROM, I/O chips, and Ethernet port, as well
+as performs address decoding of the CPU's memory map.
 
 # Test in simulation
 This module can be tested separately in simulation. To do this, just type
@@ -22,7 +22,9 @@ This module can be tested separately in simulation. To do this, just type
 * 0x9F60 - 0x9F6F : VIA1 (Selects ROM and RAM bank)
 * 0x9F70 - 0x9F7F : VIA2 (Connected to PS/2 keyboard)
 * 0x9F80 - 0x9F9F : RTC (not present on Digilent)
-* 0x9FA0 - 0x9FFF : Reserved
+* 0x9FA0 - 0x9FBF : Reserved
+* 0x9FC0 - 0x9FCF : Ethrnet port
+* 0x9FD0 - 0x9FFF : Reserved
 
 ## Banking
 The ROM is banked as follows
@@ -31,7 +33,9 @@ The ROM is banked as follows
 * 2 : CBDOS
 * 3 : GEOS
 * 4 : BASIC
-* 5-7 : Unused
+* 5 : CHARSET
+* 6 : ETH
+* 7 : Unused
 
 To select the ROM bank, write to bits 2-0 of address 0x9F60.
 To select the RAM bank, write to address 0x9F61.

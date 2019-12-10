@@ -365,3 +365,10 @@ TODO:
 * Implement SAVE.
 * Allow both CBDOS and ETH to work simultaneously.
 
+## 2019-12-10
+I got TFTP SAVE to work in the emulator, so now it just needs testing on hardware.
+I've written a rudimentary TFTP server, and will then test it with the new ROM.
+Then I'll add support for directory listing!
+I still need to add simultaneous support for CBDOS and ETH.
+
+Later, I'll go back and add support for more VERA modes.

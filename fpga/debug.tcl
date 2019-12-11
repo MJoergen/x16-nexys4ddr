@@ -28,6 +28,7 @@ foreach d $dbgs {
       set paths [get_timing_paths -through $d]
       if {[llength $paths] > 0} {
           set clocks($name) [get_property ENDPOINT_CLOCK [lindex $paths 0]]
+          puts "name=$name, paths=$paths, clocks=$clocks($name)"
           if {![info exists clock_list($clocks($name))]} {
               # found a new clock
               set clock_list($clocks($name)) [list $name]
@@ -48,7 +49,7 @@ foreach c [array names clock_list] {
    ##################################################################
    # create ILA and connect its clock
    create_debug_core  $ila_inst        ila
-   set_property       C_DATA_DEPTH     16384 [get_debug_cores $ila_inst]
+   set_property       C_DATA_DEPTH     8192 [get_debug_cores $ila_inst]
    set_property       port_width 1     [get_debug_ports $ila_inst/clk]
    connect_debug_port $ila_inst/clk    $clk_net
    ##################################################################

@@ -223,8 +223,8 @@ begin
    -- Connect debug output signals 
    --------------------------------
 
-   led_o <= main_vera_debug_s(15 downto 0) when sw_i(0) = '1' else
-            main_debug_s;
+   led_o <= main_vera_debug_s(15 downto 0);
+
 
 end architecture structural;
 

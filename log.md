@@ -372,3 +372,13 @@ Then I'll add support for directory listing!
 I still need to add simultaneous support for CBDOS and ETH.
 
 Later, I'll go back and add support for more VERA modes.
+
+## 2019-12-11
+I simplified the implementation by removing a lot of unused functionality.
+Now the ROM works with my home-made TFTP server.
+
+TODO:
+* Add simultaneous support for CBDOS and ETH.
+* Add support for directory listing!
+* Add support for more VERA modes.
+

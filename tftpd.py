@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import socket
+import os
 
 UDP_PORT = 69
 
@@ -20,14 +21,16 @@ def build_dir(file_list):
    data = b'\x01\x08'
    addr = 0x0801
    for file_name in file_list:
-      file_size = os.stat(file_name).st_size / 256
-      next_addr = addr + 32
-      data += chr(next_addr & 0xff) + chr(next_addr >> 8)
-      data += chr(file_size & 0xff) + chr(file_size >> 8)
-      data += "{:<27}".format(file_name[:27]) # Truncate/pad file name
-      data += b'\x00'
-      addr = next_addr
+      if file_name == file_name.upper():
+         file_size = os.stat(file_name).st_size / 256
+         next_addr = addr + 32
+         data += chr(next_addr & 0xff) + chr(next_addr >> 8)
+         data += chr(file_size & 0xff) + chr(file_size >> 8)
+         data += "{:<27}".format(file_name[:27]) # Truncate/pad file name
+         data += b'\x00'
+         addr = next_addr
    data += b'\x00\x00'
+   return data
 
 
 # Infinite loop waiting for requests
@@ -39,7 +42,8 @@ while True:
        file_name = data[2:].split(b'\0')[0]
        print 'LOAD ' + file_name + ' ...',
        if file_name == '$':
-          os.remove('$')
+          if os.path.exists('$'):
+             os.remove('$')
           file_list = os.listdir('.')
           data = build_dir(file_list)
           file_handle = open('$', 'wb')  # Open file for reading

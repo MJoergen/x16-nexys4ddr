@@ -4,14 +4,14 @@ import sys
 import pathlib
 
 tokens = [ 
-    "EBD"   , "FOR"   , "NEXT"  , "DATA"  , "INPUT#", "INPUT" , "DIM"   , "READ"  , 
-    "LET"   , "GOTO"  , "RUN"   , "IF"    , "RESTOR", "GOSUB" , "RETURN", "REM"   , 
+    "EBD"   , "FOR"   , "NEXT"  , "DATA"  , "VPOKE" , "INPUT" , "DIM"   , "READ"  , 
+    "LET"   , "GOTO"  , "RUN"   , "IF"    , "RESTOR", "GOSUB" , "RETURN", "VPEEK" , 
 
     "STOP"  , "ON"    , "WAIT"  , "LOAD"  , "SAVE"  , "VERIFY", "DEF"   , "POKE"  , 
     "PRINT#", "PRINT" , "CONT"  , "LIST"  , "CLS"   , "CMD"   , "SYS"   , "OPEN"  , 
 
     "CLOSE" , "GET"   , "NEW"   , "TAB("  , "TO"    , "FN"    , "SPC("  , "THEN"  , 
-    "NOT"   , "STEP"  , "+"     , "-"     , "???"   , "???"   , "???"   , "AND"   , 
+    "NOT"   , "STEP"  , "+"     , "-"     , "*"     , "/"     , "???"   , "AND"   , 
 
     "OR"    , ">"     , "="     , "<"     , "SGN"   , "INT"   , "ABS"   , "USR"   , 
     "FRE"   , "POS"   , "SQR"   , "RND"   , "LOG"   , "EXP"   , "COS"   , "SIN"   , 

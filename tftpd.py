@@ -16,6 +16,20 @@ sock.bind(("", UDP_PORT))
 # State information
 file_handle = None
 
+def build_dir(file_list):
+   data = b'\x01\x08'
+   addr = 0x0801
+   for file_name in file_list:
+      file_size = os.stat(file_name).st_size / 256
+      next_addr = addr + 32
+      data += chr(next_addr & 0xff) + chr(next_addr >> 8)
+      data += chr(file_size & 0xff) + chr(file_size >> 8)
+      data += "{:<27}".format(file_name[:27]) # Truncate/pad file name
+      data += b'\x00'
+      addr = next_addr
+   data += b'\x00\x00'
+
+
 # Infinite loop waiting for requests
 while True:
     data, client = sock.recvfrom(1500)
@@ -23,7 +37,15 @@ while True:
 
     if opcode == TFTP_RRQ:
        file_name = data[2:].split(b'\0')[0]
-       print "LOAD " + file_name + " ...",
+       print 'LOAD ' + file_name + ' ...',
+       if file_name == '$':
+          os.remove('$')
+          file_list = os.listdir('.')
+          data = build_dir(file_list)
+          file_handle = open('$', 'wb')  # Open file for reading
+          file_handle.write(data)
+          file_handle.close()
+
        file_handle = open(file_name, 'rb')  # Open file for reading
        block = 1
 
@@ -34,7 +56,7 @@ while True:
 
     if opcode == TFTP_WRQ:
        file_name = data[2:].split(b'\0')[0]
-       print "SAVE " + file_name + " ...",
+       print 'SAVE ' + file_name + ' ...',
        file_handle = open(file_name, 'wb')  # Open file for reading
 
        # Generate response

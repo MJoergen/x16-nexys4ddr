@@ -382,3 +382,8 @@ TODO:
 * Add support for directory listing!
 * Add support for more VERA modes.
 
+## 2019-12-12
+So I got the directory listing working. And I've written a few sample
+programs in BASIC. I want to make some more simple programs in BASIC.
+
+

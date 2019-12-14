@@ -7,6 +7,12 @@ use ieee.std_logic_1164.all;
 entity vga is
    port (
       clk_i          : in  std_logic;                       -- 25.2 MHz
+      -- From Layer settings
+      mapbase_i      : in  std_logic_vector(17 downto 0);
+      tilebase_i     : in  std_logic_vector(17 downto 0);
+      mode_i         : in  std_logic_vector( 2 downto 0);
+      hscale_i       : in  std_logic_vector( 7 downto 0);
+      vscale_i       : in  std_logic_vector( 7 downto 0);
       -- video RAM
       vram_addr_o    : out std_logic_vector(16 downto 0);
       vram_rd_en_o   : out std_logic;
@@ -15,9 +21,6 @@ entity vga is
       pal_addr_o     : out std_logic_vector( 7 downto 0);
       pal_rd_en_o    : out std_logic;
       pal_rd_data_i  : in  std_logic_vector(11 downto 0);
-      -- configuration settings
-      map_base_i     : in  std_logic_vector(17 downto 0);
-      tile_base_i    : in  std_logic_vector(17 downto 0);
       -- interrupt
       vsync_irq_o    : out std_logic;
       -- VGA output
@@ -29,11 +32,12 @@ end vga;
 
 architecture structural of vga is
 
-   signal pix_x_s     : std_logic_vector( 9 downto 0);
-   signal pix_y_s     : std_logic_vector( 9 downto 0);
-   signal pix_x_out_s : std_logic_vector( 9 downto 0);
-   signal pix_y_out_s : std_logic_vector( 9 downto 0);
-   signal col_out_s   : std_logic_vector(11 downto 0);
+   signal pix_x_s            : std_logic_vector( 9 downto 0);
+   signal pix_y_s            : std_logic_vector( 9 downto 0);
+   signal pix_x_scaled_s     : std_logic_vector( 9 downto 0);
+   signal pix_y_scaled_s     : std_logic_vector( 9 downto 0);
+
+   signal col_out_s          : std_logic_vector(11 downto 0);
 
 begin
 
@@ -52,6 +56,12 @@ begin
          pix_y_o => pix_y_s
       ); -- i_pix
 
+   pix_x_scaled_s <= "00" & pix_x_s(9 downto 2) when hscale_i = X"20" else
+                      "0" & pix_x_s(9 downto 1) when hscale_i = X"40" else
+                            pix_x_s;
+   pix_y_scaled_s <= "00" & pix_y_s(9 downto 2) when vscale_i = X"20" else
+                      "0" & pix_y_s(9 downto 1) when vscale_i = X"40" else
+                            pix_y_s;
 
    ------------------------------
    -- Instantiate layer renderer
@@ -60,18 +70,17 @@ begin
    i_layer : entity work.layer
       port map (
          clk_i          => clk_i,
-         pix_x_i        => pix_x_s,
-         pix_y_i        => pix_y_s,
+         mapbase_i      => mapbase_i(16 downto 0),
+         tilebase_i     => tilebase_i(16 downto 0),
+         mode_i         => mode_i,
+         pix_x_i        => pix_x_scaled_s,
+         pix_y_i        => pix_y_scaled_s,
          vram_addr_o    => vram_addr_o,
          vram_rd_en_o   => vram_rd_en_o,
          vram_rd_data_i => vram_rd_data_i,
          pal_addr_o     => pal_addr_o,
          pal_rd_en_o    => pal_rd_en_o,
          pal_rd_data_i  => pal_rd_data_i,
-         mapbase_i      => map_base_i(16 downto 0),
-         tilebase_i     => tile_base_i(16 downto 0),
-         pix_x_o        => pix_x_out_s,
-         pix_y_o        => pix_y_out_s,
          col_o          => col_out_s
       ); -- i_layer
 
@@ -81,10 +90,13 @@ begin
    ------------------------------
 
    i_sync : entity work.sync
+      generic map (
+         G_DELAY => 7
+      )
       port map (
          clk_i       => clk_i,
-         pix_x_i     => pix_x_out_s,
-         pix_y_i     => pix_y_out_s,
+         pix_x_i     => pix_x_s,
+         pix_y_i     => pix_y_s,
          col_i       => col_out_s,
          vsync_irq_o => vsync_irq_o,
          vga_hs_o    => hs_o,

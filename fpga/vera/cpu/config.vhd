@@ -16,7 +16,10 @@ entity config is
       rd_data_o   : out std_logic_vector( 7 downto 0);
 
       map_base_o  : out std_logic_vector(17 downto 0);
-      tile_base_o : out std_logic_vector(17 downto 0)
+      tile_base_o : out std_logic_vector(17 downto 0);
+      mode_o      : out std_logic_vector( 2 downto 0);
+      hscale_o    : out std_logic_vector( 7 downto 0);
+      vscale_o    : out std_logic_vector( 7 downto 0)
    );
 end config;
 
@@ -32,10 +35,16 @@ begin
 
          if wr_en_i = '1' then
             case addr_i(19 downto 12) is
-               when X"F0" => null;                                               -- Display composer
+               when X"F0" =>                                                     -- Display composer
+                  case addr_i is
+                     when X"F0001" => hscale_o <= wr_data_i;                     -- DC_HSCALE
+                     when X"F0002" => vscale_o <= wr_data_i;                     -- DC_VSCALE
+                     when others => null;
+                  end case;
                when X"F2" => null;                                               -- Layer 0
                when X"F3" =>                                                     -- Layer 1
-                  case addr_i is  
+                  case addr_i is
+                     when X"F3000" => mode_o <= wr_data_i(7 downto 5);           -- L1_MODE
                      when X"F3002" => map_base_o(  9 downto  2) <= wr_data_i;    -- L1_MAP_BASE_L
                      when X"F3003" => map_base_o( 17 downto 10) <= wr_data_i;    -- L1_MAP_BASE_H
                      when X"F3004" => tile_base_o( 9 downto  2) <= wr_data_i;    -- L1_TILE_BASE_L
@@ -56,8 +65,15 @@ begin
 
          if rd_en_i = '1' then
             case addr_i(19 downto 12) is
+               when X"F0" =>                                                     -- Displace composer
+                  case addr_i is
+                     when X"F0001" => rd_data_o <= hscale_o;
+                     when X"F0002" => rd_data_o <= vscale_o;
+                     when others => null;
+                  end case;
                when X"F3" =>                                                     -- Layer 1
-                  case addr_i is                                     
+                  case addr_i is
+                     when X"F3000" => rd_data_o <= mode_o & "00001";
                      when X"F3002" => rd_data_o <= map_base_o(  9 downto  2);
                      when X"F3003" => rd_data_o <= map_base_o( 17 downto 10);
                      when X"F3004" => rd_data_o <= tile_base_o( 9 downto  2);

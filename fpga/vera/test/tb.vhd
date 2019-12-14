@@ -9,6 +9,7 @@ end tb;
 architecture simulation of tb is
 
    signal cpu_clk_s     : std_logic;                       -- 8.3 MHz
+   signal cpu_rst_s     : std_logic;
    signal cpu_addr_s    : std_logic_vector(15 downto 0);
    signal cpu_wr_en_s   : std_logic;
    signal cpu_wr_data_s : std_logic_vector(7 downto 0);
@@ -31,6 +32,8 @@ begin
       cpu_clk_s <= '1', '0' after 3*2 ns;
       wait for 3*4 ns; -- 8.3 MHz
    end process p_cpu_clk;
+
+   cpu_rst_s <= '1', '0' after 100 ns;
 
    p_vga_clk : process
    begin
@@ -61,11 +64,16 @@ begin
    i_vera : entity work.vera
       port map (
          cpu_clk_i     => cpu_clk_s,
+         cpu_rst_i     => cpu_rst_s,
          cpu_addr_i    => cpu_addr_s(2 downto 0),
          cpu_wr_en_i   => cpu_wr_en_s,
          cpu_wr_data_i => cpu_wr_data_s,
          cpu_rd_en_i   => cpu_rd_en_s,
          cpu_rd_data_o => cpu_rd_data_s,
+         spi_sclk_o    => open,
+         spi_mosi_o    => open,
+         spi_miso_i    => '1',
+         spi_cs_o      => open,
          vga_clk_i     => vga_clk_s,
          vga_hs_o      => vga_hs_s,
          vga_vs_o      => vga_vs_s,

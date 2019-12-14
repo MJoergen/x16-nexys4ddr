@@ -38,6 +38,9 @@ entity cpu is
       -- configruation settings
       map_base_o     : out std_logic_vector(17 downto 0);
       tile_base_o    : out std_logic_vector(17 downto 0);
+      mode_o         : out std_logic_vector( 2 downto 0);
+      hscale_o       : out std_logic_vector( 7 downto 0);
+      vscale_o       : out std_logic_vector( 7 downto 0);
       -- interrupt
       vsync_irq_i    : in  std_logic
    );
@@ -121,7 +124,10 @@ begin
          rd_en_i     => internal_rd_en_s,
          rd_data_o   => config_rd_data_s,
          map_base_o  => map_base_o,
-         tile_base_o => tile_base_o
+         tile_base_o => tile_base_o,
+         hscale_o    => hscale_o,
+         vscale_o    => vscale_o,
+         mode_o      => mode_o
       ); -- i_config
 
 

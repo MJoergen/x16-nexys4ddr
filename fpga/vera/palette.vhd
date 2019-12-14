@@ -25,76 +25,91 @@ end palette;
 architecture rtl of palette is
 
    -- This defines a type containing an array of bytes.
-   type mem_t is array (0 to 511) of std_logic_vector(7 downto 0);
+   type mem_t is array (0 to 255) of std_logic_vector(11 downto 0);
 
    -- Default palette. Copied from x16-emulator.
+   -- Format is GGGGBBBBRRRR
    signal mem_r : mem_t := ( 
-      X"00", X"00", X"FF", X"0F", X"00", X"08", X"FE", X"0A",
-      X"4C", X"0C", X"C5", X"00", X"0A", X"00", X"E7", X"0E",
-      X"85", X"0D", X"40", X"06", X"77", X"0F", X"33", X"03",
-      X"77", X"07", X"F6", X"0A", X"8F", X"00", X"BB", X"0B",
-      X"00", X"00", X"11", X"01", X"22", X"02", X"33", X"03",
-      X"44", X"04", X"55", X"05", X"66", X"06", X"77", X"07",
-      X"88", X"08", X"99", X"09", X"AA", X"0A", X"BB", X"0B",
-      X"CC", X"0C", X"DD", X"0D", X"EE", X"0E", X"FF", X"0F",
-      X"11", X"02", X"33", X"04", X"44", X"06", X"66", X"08",
-      X"88", X"0A", X"99", X"0C", X"BB", X"0F", X"11", X"02",
-      X"22", X"04", X"33", X"06", X"44", X"08", X"55", X"0A",
-      X"66", X"0C", X"77", X"0F", X"00", X"02", X"11", X"04",
-      X"11", X"06", X"22", X"08", X"22", X"0A", X"33", X"0C",
-      X"33", X"0F", X"00", X"02", X"00", X"04", X"00", X"06",
-      X"00", X"08", X"00", X"0A", X"00", X"0C", X"00", X"0F",
-      X"21", X"02", X"43", X"04", X"64", X"06", X"86", X"08",
-      X"A8", X"0A", X"C9", X"0C", X"EB", X"0F", X"11", X"02",
-      X"32", X"04", X"53", X"06", X"74", X"08", X"95", X"0A",
-      X"B6", X"0C", X"D7", X"0F", X"10", X"02", X"31", X"04",
-      X"51", X"06", X"62", X"08", X"82", X"0A", X"A3", X"0C",
-      X"C3", X"0F", X"10", X"02", X"30", X"04", X"40", X"06",
-      X"60", X"08", X"80", X"0A", X"90", X"0C", X"B0", X"0F",
-      X"21", X"01", X"43", X"03", X"64", X"05", X"86", X"07",
-      X"A8", X"09", X"C9", X"0B", X"FB", X"0D", X"21", X"01",
-      X"42", X"03", X"63", X"04", X"84", X"06", X"A5", X"08",
-      X"C6", X"09", X"F7", X"0B", X"20", X"01", X"41", X"02",
-      X"61", X"04", X"82", X"05", X"A2", X"06", X"C3", X"08",
-      X"F3", X"09", X"20", X"01", X"40", X"02", X"60", X"03",
-      X"80", X"04", X"A0", X"05", X"C0", X"06", X"F0", X"07",
-      X"21", X"01", X"43", X"03", X"65", X"04", X"86", X"06",
-      X"A8", X"08", X"CA", X"09", X"FC", X"0B", X"21", X"01",
-      X"42", X"02", X"64", X"03", X"85", X"04", X"A6", X"05",
-      X"C8", X"06", X"F9", X"07", X"20", X"00", X"41", X"01",
-      X"62", X"01", X"83", X"02", X"A4", X"02", X"C5", X"03",
-      X"F6", X"03", X"20", X"00", X"41", X"00", X"61", X"00",
-      X"82", X"00", X"A2", X"00", X"C3", X"00", X"F3", X"00",
-      X"22", X"01", X"44", X"03", X"66", X"04", X"88", X"06",
-      X"AA", X"08", X"CC", X"09", X"FF", X"0B", X"22", X"01",
-      X"44", X"02", X"66", X"03", X"88", X"04", X"AA", X"05",
-      X"CC", X"06", X"FF", X"07", X"22", X"00", X"44", X"01",
-      X"66", X"01", X"88", X"02", X"AA", X"02", X"CC", X"03",
-      X"FF", X"03", X"22", X"00", X"44", X"00", X"66", X"00",
-      X"88", X"00", X"AA", X"00", X"CC", X"00", X"FF", X"00",
-      X"12", X"01", X"34", X"03", X"56", X"04", X"68", X"06",
-      X"8A", X"08", X"AC", X"09", X"CF", X"0B", X"12", X"01",
-      X"24", X"02", X"46", X"03", X"58", X"04", X"6A", X"05",
-      X"8C", X"06", X"9F", X"07", X"02", X"00", X"14", X"01",
-      X"26", X"01", X"38", X"02", X"4A", X"02", X"5C", X"03",
-      X"6F", X"03", X"02", X"00", X"14", X"00", X"16", X"00",
-      X"28", X"00", X"2A", X"00", X"3C", X"00", X"3F", X"00",
-      X"12", X"01", X"34", X"03", X"46", X"05", X"68", X"07",
-      X"8A", X"09", X"9C", X"0B", X"BF", X"0D", X"12", X"01",
-      X"24", X"03", X"36", X"04", X"48", X"06", X"5A", X"08",
-      X"6C", X"09", X"7F", X"0B", X"02", X"01", X"14", X"02",
-      X"16", X"04", X"28", X"05", X"2A", X"06", X"3C", X"08",
-      X"3F", X"09", X"02", X"01", X"04", X"02", X"06", X"03",
-      X"08", X"04", X"0A", X"05", X"0C", X"06", X"0F", X"07",
-      X"12", X"02", X"34", X"04", X"46", X"06", X"68", X"08",
-      X"8A", X"0A", X"9C", X"0C", X"BE", X"0F", X"11", X"02",
-      X"23", X"04", X"35", X"06", X"47", X"08", X"59", X"0A",
-      X"6B", X"0C", X"7D", X"0F", X"01", X"02", X"13", X"04",
-      X"15", X"06", X"26", X"08", X"28", X"0A", X"3A", X"0C",
-      X"3C", X"0F", X"01", X"02", X"03", X"04", X"04", X"06",
-      X"06", X"08", X"08", X"0A", X"09", X"0C", X"0B", X"0F"
+      X"000", X"FFF", X"008", X"FEA",
+      X"4CC", X"C50", X"0A0", X"E7E",
+      X"85D", X"406", X"77F", X"333",
+      X"777", X"F6A", X"8F0", X"BBB",
+      X"000", X"111", X"222", X"333",
+      X"444", X"555", X"666", X"777",
+      X"888", X"999", X"AAA", X"BBB",
+      X"CCC", X"DDD", X"EEE", X"FFF",
+      X"112", X"334", X"446", X"668",
+      X"88A", X"99C", X"BBF", X"112",
+      X"224", X"336", X"448", X"55A",
+      X"66C", X"77F", X"002", X"114",
+      X"116", X"228", X"22A", X"33C",
+      X"33F", X"002", X"004", X"006",
+      X"008", X"00A", X"00C", X"00F",
+      X"212", X"434", X"646", X"868",
+      X"A8A", X"C9C", X"EBF", X"112",
+      X"324", X"536", X"748", X"95A",
+      X"B6C", X"D7F", X"102", X"314",
+      X"516", X"628", X"82A", X"A3C",
+      X"C3F", X"102", X"304", X"406",
+      X"608", X"80A", X"90C", X"B0F",
+      X"211", X"433", X"645", X"867",
+      X"A89", X"C9B", X"FBD", X"211",
+      X"423", X"634", X"846", X"A58",
+      X"C69", X"F7B", X"201", X"412",
+      X"614", X"825", X"A26", X"C38",
+      X"F39", X"201", X"402", X"603",
+      X"804", X"A05", X"C06", X"F07",
+      X"211", X"433", X"654", X"866",
+      X"A88", X"CA9", X"FCB", X"211",
+      X"422", X"643", X"854", X"A65",
+      X"C86", X"F97", X"200", X"411",
+      X"621", X"832", X"A42", X"C53",
+      X"F63", X"200", X"410", X"610",
+      X"820", X"A20", X"C30", X"F30",
+      X"221", X"443", X"664", X"886",
+      X"AA8", X"CC9", X"FFB", X"221",
+      X"442", X"663", X"884", X"AA5",
+      X"CC6", X"FF7", X"220", X"441",
+      X"661", X"882", X"AA2", X"CC3",
+      X"FF3", X"220", X"440", X"660",
+      X"880", X"AA0", X"CC0", X"FF0",
+      X"121", X"343", X"564", X"686",
+      X"8A8", X"AC9", X"CFB", X"121",
+      X"242", X"463", X"584", X"6A5",
+      X"8C6", X"9F7", X"020", X"141",
+      X"261", X"382", X"4A2", X"5C3",
+      X"6F3", X"020", X"140", X"160",
+      X"280", X"2A0", X"3C0", X"3F0",
+      X"121", X"343", X"465", X"687",
+      X"8A9", X"9CB", X"BFD", X"121",
+      X"243", X"364", X"486", X"5A8",
+      X"6C9", X"7FB", X"021", X"142",
+      X"164", X"285", X"2A6", X"3C8",
+      X"3F9", X"021", X"042", X"063",
+      X"084", X"0A5", X"0C6", X"0F7",
+      X"122", X"344", X"466", X"688",
+      X"8AA", X"9CC", X"BEF", X"112",
+      X"234", X"356", X"478", X"59A",
+      X"6BC", X"7DF", X"012", X"134",
+      X"156", X"268", X"28A", X"3AC",
+      X"3CF", X"012", X"034", X"046",
+      X"068", X"08A", X"09C", X"0BF"
    );
  
+   -- Debug
+   constant DEBUG_MODE                   : boolean := false; -- TRUE OR FALSE
+
+   attribute mark_debug                  : boolean;
+   attribute mark_debug of vga_rd_addr_i : signal is DEBUG_MODE;
+   attribute mark_debug of vga_rd_en_i   : signal is DEBUG_MODE;
+   attribute mark_debug of vga_rd_data_o : signal is DEBUG_MODE;
+
+   attribute mark_debug of cpu_addr_i    : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_en_i   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_i : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_en_i   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_data_o : signal is DEBUG_MODE;
+
 begin
 
    ---------------
@@ -105,7 +120,11 @@ begin
    begin
       if rising_edge(cpu_clk_i) then
          if cpu_wr_en_i = '1' then
-            mem_r(to_integer(cpu_addr_i)) <= cpu_wr_data_i;
+            case cpu_addr_i(0) is
+               when '0' => mem_r(to_integer(cpu_addr_i(8 downto 1)))(7 downto 0) <= cpu_wr_data_i;
+               when '1' => mem_r(to_integer(cpu_addr_i(8 downto 1)))(11 downto 8) <= cpu_wr_data_i(3 downto 0);
+               when others => null;
+            end case;
          end if;
       end if;
    end process p_cpu_write;
@@ -114,7 +133,11 @@ begin
    begin
       if rising_edge(cpu_clk_i) then
          if cpu_rd_en_i = '1' then
-            cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i));
+            case cpu_addr_i(0) is
+               when '0' => cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i(8 downto 1)))(7 downto 0);
+               when '1' => cpu_rd_data_o <= "0000" & mem_r(to_integer(cpu_addr_i(8 downto 1)))(11 downto 8);
+               when others => null;
+            end case;
          end if;
       end if;
    end process p_cpu_read;
@@ -128,8 +151,7 @@ begin
    begin
       if rising_edge(vga_clk_i) then
          if vga_rd_en_i = '1' then
-            vga_rd_data_o(11 downto 8) <= mem_r(to_integer(vga_rd_addr_i & "1"))(3 downto 0);
-            vga_rd_data_o(7 downto 0)  <= mem_r(to_integer(vga_rd_addr_i & "0"));
+            vga_rd_data_o <= mem_r(to_integer(vga_rd_addr_i));
          end if;
       end if;
    end process p_vga;

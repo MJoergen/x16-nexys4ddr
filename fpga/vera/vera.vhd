@@ -57,6 +57,9 @@ architecture structural of vera is
    -- configuration registers
    signal cpu_map_base_s     : std_logic_vector(17 downto 0);
    signal cpu_tile_base_s    : std_logic_vector(17 downto 0);
+   signal cpu_mode_s         : std_logic_vector( 2 downto 0);
+   signal cpu_hscale_s       : std_logic_vector( 7 downto 0);
+   signal cpu_vscale_s       : std_logic_vector( 7 downto 0);
    -- interrupt
    signal cpu_vsync_irq_s    : std_logic;
 
@@ -76,6 +79,9 @@ architecture structural of vera is
    -- configuration registers
    signal vga_map_base_r     : std_logic_vector(17 downto 0);
    signal vga_tile_base_r    : std_logic_vector(17 downto 0);
+   signal vga_mode_r         : std_logic_vector( 2 downto 0);
+   signal vga_hscale_r       : std_logic_vector( 7 downto 0);
+   signal vga_vscale_r       : std_logic_vector( 7 downto 0);
    -- interrupt
    signal vga_vsync_irq_s    : std_logic;
 
@@ -107,6 +113,9 @@ begin
          pal_rd_data_i  => cpu_pal_rd_data_s,
          map_base_o     => cpu_map_base_s,
          tile_base_o    => cpu_tile_base_s,
+         mode_o         => cpu_mode_s,
+         hscale_o       => cpu_hscale_s,
+         vscale_o       => cpu_vscale_s,
          vsync_irq_i    => cpu_vsync_irq_s,
          -- SPI
          spi_sclk_o     => spi_sclk_o,
@@ -180,15 +189,21 @@ begin
 
    i_cdc : entity work.cdc
       generic map (
-         G_SIZE => 36
+         G_SIZE => 55
       )
       port map (
          src_clk_i               => cpu_clk_i,
          src_dat_i(17 downto  0) => cpu_map_base_s,
          src_dat_i(35 downto 18) => cpu_tile_base_s,
+         src_dat_i(38 downto 36) => cpu_mode_s,
+         src_dat_i(46 downto 39) => cpu_hscale_s,
+         src_dat_i(54 downto 47) => cpu_vscale_s,
          dst_clk_i               => vga_clk_i,
          dst_dat_o(17 downto  0) => vga_map_base_r,
-         dst_dat_o(35 downto 18) => vga_tile_base_r
+         dst_dat_o(35 downto 18) => vga_tile_base_r,
+         dst_dat_o(38 downto 36) => vga_mode_r,
+         dst_dat_o(46 downto 39) => vga_hscale_r,
+         dst_dat_o(54 downto 47) => vga_vscale_r
       ); -- i_cdc
 
 
@@ -199,14 +214,17 @@ begin
    i_vga : entity work.vga
       port map (
          clk_i          => vga_clk_i,
+         mapbase_i      => vga_map_base_r,
+         tilebase_i     => vga_tile_base_r,
+         mode_i         => vga_mode_r,
+         hscale_i       => vga_hscale_r,
+         vscale_i       => vga_vscale_r,
          vram_addr_o    => vga_vram_addr_s,
          vram_rd_en_o   => vga_vram_rd_en_s,
          vram_rd_data_i => vga_vram_rd_data_s,
          pal_addr_o     => vga_pal_addr_s,
          pal_rd_en_o    => vga_pal_rd_en_s,
          pal_rd_data_i  => vga_pal_rd_data_s,
-         map_base_i     => vga_map_base_r,
-         tile_base_i    => vga_tile_base_r,
          vsync_irq_o    => vga_vsync_irq_s,
          hs_o           => vga_hs_o,
          vs_o           => vga_vs_o,

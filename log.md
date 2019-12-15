@@ -386,4 +386,10 @@ TODO:
 So I got the directory listing working. And I've written a few sample
 programs in BASIC. I want to make some more simple programs in BASIC.
 
+## 2019-12-15
+Now VERA mode 7 works, so I can display bitmap images in 160x120x8bpp.
+
+TODO:
+* Make a BASIC program demonstrating Feigenbaum
+* Make a BASIC program that solves Sudoku
 

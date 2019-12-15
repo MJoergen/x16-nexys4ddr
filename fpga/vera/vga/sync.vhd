@@ -8,15 +8,13 @@ use ieee.numeric_std_unsigned.all;
 -- synchronization signals and colour signal adheres to the VESA standard.
 
 entity sync is
-   generic (
-      G_DELAY     : integer   -- Number of clock cycles the colour is delayed.
-   );
    port (
       clk_i       : in  std_logic;
 
       pix_x_i     : in  std_logic_vector( 9 downto 0);
       pix_y_i     : in  std_logic_vector( 9 downto 0);
       col_i       : in  std_logic_vector(11 downto 0);
+      delay_i     : in  std_logic_vector( 9 downto 0);
       vsync_irq_o : out std_logic;
 
       vga_hs_o    : out std_logic;
@@ -52,7 +50,7 @@ begin
    begin
       if rising_edge(clk_i) then
          -- Generate horizontal sync signal
-         if pix_x_i >= HS_START+G_DELAY and pix_x_i < HS_START+HS_TIME+G_DELAY then
+         if pix_x_i >= HS_START+delay_i and pix_x_i < HS_START+HS_TIME+delay_i then
             vga_hs_o <= '0';
          else
             vga_hs_o <= '1';
@@ -69,12 +67,12 @@ begin
          vga_col_o <= col_i;
 
          -- Make sure colour is black outside visible screen
-         if pix_x_i >= H_PIXELS+G_DELAY or pix_x_i < G_DELAY or pix_y_i >= V_PIXELS then
+         if pix_x_i >= H_PIXELS+delay_i or pix_x_i < delay_i or pix_y_i >= V_PIXELS then
             vga_col_o <= (others => '0');    -- Black
          end if;
 
          -- Interrupt when reached bottom right corner.
-         if pix_x_i = H_PIXELS-1+G_DELAY and pix_y_i = V_PIXELS-1 then
+         if pix_x_i = H_PIXELS-1+delay_i and pix_y_i = V_PIXELS-1 then
             vsync_irq_o <= '1';
          else
             vsync_irq_o <= '0';

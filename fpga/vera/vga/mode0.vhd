@@ -53,7 +53,8 @@ entity mode0 is
       tilebase_i     : in  std_logic_vector(16 downto 0);
 
       -- Output colour
-      col_o          : out std_logic_vector(11 downto 0)
+      col_o          : out std_logic_vector(11 downto 0);
+      delay_o        : out std_logic_vector( 9 downto 0)     -- Length of pipeline
    );
 end mode0;
 
@@ -203,7 +204,8 @@ begin
    p_output : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         col_o  <= pal_rd_data_i(3 downto 0) & pal_rd_data_i(11 downto 4);
+         col_o   <= pal_rd_data_i(3 downto 0) & pal_rd_data_i(11 downto 4);
+         delay_o <= "0000001000";
       end if;
    end process p_output;
 

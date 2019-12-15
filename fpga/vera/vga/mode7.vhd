@@ -43,7 +43,8 @@ entity mode7 is
       tilebase_i     : in  std_logic_vector(16 downto 0);
 
       -- Output colour
-      col_o          : out std_logic_vector(11 downto 0)
+      col_o          : out std_logic_vector(11 downto 0);
+      delay_o        : out std_logic_vector( 9 downto 0)     -- Length of pipeline
    );
 end mode7;
 
@@ -51,11 +52,10 @@ architecture rtl of mode7 is
 
    -- Pipeline
    signal pal_rd_data_r   : std_logic_vector(11 downto 0);
-   signal pal_rd_data_d   : std_logic_vector(11 downto 0);
 
 
    -- Debug
-   constant DEBUG_MODE                    : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                    : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug                   : boolean;
    attribute mark_debug of pix_x_i        : signal is DEBUG_MODE;
@@ -107,8 +107,8 @@ begin
    begin
       if rising_edge(clk_i) then
          pal_rd_data_r <= pal_rd_data_i;
-         pal_rd_data_d <= pal_rd_data_r;
-         col_o         <= pal_rd_data_d;
+         col_o         <= pal_rd_data_r;
+         delay_o       <= "0000000110";
       end if;
    end process p_output;
 

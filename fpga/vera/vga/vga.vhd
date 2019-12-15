@@ -37,7 +37,8 @@ architecture structural of vga is
    signal pix_x_scaled_s     : std_logic_vector( 9 downto 0);
    signal pix_y_scaled_s     : std_logic_vector( 9 downto 0);
 
-   signal col_out_s          : std_logic_vector(11 downto 0);
+   signal col_s              : std_logic_vector(11 downto 0);
+   signal delay_s            : std_logic_vector( 9 downto 0);
 
 begin
 
@@ -81,7 +82,8 @@ begin
          pal_addr_o     => pal_addr_o,
          pal_rd_en_o    => pal_rd_en_o,
          pal_rd_data_i  => pal_rd_data_i,
-         col_o          => col_out_s
+         col_o          => col_s,
+         delay_o        => delay_s
       ); -- i_layer
 
 
@@ -90,14 +92,12 @@ begin
    ------------------------------
 
    i_sync : entity work.sync
-      generic map (
-         G_DELAY => 7
-      )
       port map (
          clk_i       => clk_i,
          pix_x_i     => pix_x_s,
          pix_y_i     => pix_y_s,
-         col_i       => col_out_s,
+         col_i       => col_s,
+         delay_i     => delay_s,
          vsync_irq_o => vsync_irq_o,
          vga_hs_o    => hs_o,
          vga_vs_o    => vs_o,

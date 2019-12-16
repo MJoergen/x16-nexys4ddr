@@ -393,3 +393,10 @@ TODO:
 * Make a BASIC program demonstrating Feigenbaum
 * Make a BASIC program that solves Sudoku
 
+## 2019-12-16
+So I made the two BASIC programs: FEIGEN and SUDOKU. The sudoku solver is
+surprisingly fast using just the brute-force method.
+
+So the next thing on my list is to implement sprites in the VERA
+and then make a small tennis game in BASIC.
+

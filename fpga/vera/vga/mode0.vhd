@@ -204,7 +204,7 @@ begin
    p_output : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         col_o   <= pal_rd_data_i(3 downto 0) & pal_rd_data_i(11 downto 4);
+         col_o   <= pal_rd_data_i;
          delay_o <= "0000001000";
       end if;
    end process p_output;

@@ -167,18 +167,17 @@ begin
 
    i_palette : entity work.palette
       port map (
-         -- Writes from CPU:
+         -- Read and writes from CPU
          cpu_clk_i     => cpu_clk_i,
+         cpu_rst_i     => cpu_rst_i,
          cpu_addr_i    => cpu_pal_addr_s,
          cpu_wr_en_i   => cpu_pal_wr_en_s,
          cpu_wr_data_i => cpu_pal_wr_data_s,
-         cpu_rd_en_i   => cpu_pal_rd_en_s,
          cpu_rd_data_o => cpu_pal_rd_data_s,
 
-         -- Reads from the Mode 0 block:
+         -- Reads from the VGA block
          vga_clk_i     => vga_clk_i,
          vga_rd_addr_i => vga_pal_addr_s,
-         vga_rd_en_i   => vga_pal_rd_en_s,
          vga_rd_data_o => vga_pal_rd_data_s
       ); -- i_palette
 

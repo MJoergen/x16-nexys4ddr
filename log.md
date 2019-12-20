@@ -400,3 +400,11 @@ surprisingly fast using just the brute-force method.
 So the next thing on my list is to implement sprites in the VERA
 and then make a small tennis game in BASIC.
 
+## 2019-12-20
+TODO:
+* Finish the TENNIS game
+* Implement a Pull Request for https://github.com/commanderx16/x16-rom/issues/97
+* Implement sprites in VERA
+* Implement the remaining video modes in VERA.
+* Implement audio.
+

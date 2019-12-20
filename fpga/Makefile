@@ -64,6 +64,8 @@ clean:
 	rm -rf x16-rom.bit
 	rm -rf x16.bit
 	rm -rf x16.dcp
+	rm -rf post_synth.dcp
+	rm -rf post_opt.dcp
 	rm -rf x16.tcl
 	rm -rf .Xil
 	rm -rf .cache

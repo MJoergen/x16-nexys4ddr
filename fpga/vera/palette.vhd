@@ -9,15 +9,14 @@ entity palette is
    port (
       -- CPU port
       cpu_clk_i     : in  std_logic;
+      cpu_rst_i     : in  std_logic;
       cpu_addr_i    : in  std_logic_vector( 8 downto 0);
       cpu_wr_en_i   : in  std_logic;
       cpu_wr_data_i : in  std_logic_vector( 7 downto 0);
-      cpu_rd_en_i   : in  std_logic;
       cpu_rd_data_o : out std_logic_vector( 7 downto 0);
       -- VGA port
       vga_clk_i     : in  std_logic;
       vga_rd_addr_i : in  std_logic_vector( 7 downto 0);
-      vga_rd_en_i   : in  std_logic;
       vga_rd_data_o : out std_logic_vector(11 downto 0)
    );
 end palette;
@@ -25,90 +24,115 @@ end palette;
 architecture rtl of palette is
 
    -- This defines a type containing an array of bytes.
-   type mem_t is array (0 to 255) of std_logic_vector(11 downto 0);
+   type mem_t is array (0 to 255) of std_logic_vector(7 downto 0);
 
-   -- Default palette. Copied from x16-emulator.
-   -- Format is GGGGBBBBRRRR
-   signal mem_r : mem_t := ( 
-      X"000", X"FFF", X"008", X"FEA",
-      X"4CC", X"C50", X"0A0", X"E7E",
-      X"85D", X"406", X"77F", X"333",
-      X"777", X"F6A", X"8F0", X"BBB",
-      X"000", X"111", X"222", X"333",
-      X"444", X"555", X"666", X"777",
-      X"888", X"999", X"AAA", X"BBB",
-      X"CCC", X"DDD", X"EEE", X"FFF",
-      X"112", X"334", X"446", X"668",
-      X"88A", X"99C", X"BBF", X"112",
-      X"224", X"336", X"448", X"55A",
-      X"66C", X"77F", X"002", X"114",
-      X"116", X"228", X"22A", X"33C",
-      X"33F", X"002", X"004", X"006",
-      X"008", X"00A", X"00C", X"00F",
-      X"212", X"434", X"646", X"868",
-      X"A8A", X"C9C", X"EBF", X"112",
-      X"324", X"536", X"748", X"95A",
-      X"B6C", X"D7F", X"102", X"314",
-      X"516", X"628", X"82A", X"A3C",
-      X"C3F", X"102", X"304", X"406",
-      X"608", X"80A", X"90C", X"B0F",
-      X"211", X"433", X"645", X"867",
-      X"A89", X"C9B", X"FBD", X"211",
-      X"423", X"634", X"846", X"A58",
-      X"C69", X"F7B", X"201", X"412",
-      X"614", X"825", X"A26", X"C38",
-      X"F39", X"201", X"402", X"603",
-      X"804", X"A05", X"C06", X"F07",
-      X"211", X"433", X"654", X"866",
-      X"A88", X"CA9", X"FCB", X"211",
-      X"422", X"643", X"854", X"A65",
-      X"C86", X"F97", X"200", X"411",
-      X"621", X"832", X"A42", X"C53",
-      X"F63", X"200", X"410", X"610",
-      X"820", X"A20", X"C30", X"F30",
-      X"221", X"443", X"664", X"886",
-      X"AA8", X"CC9", X"FFB", X"221",
-      X"442", X"663", X"884", X"AA5",
-      X"CC6", X"FF7", X"220", X"441",
-      X"661", X"882", X"AA2", X"CC3",
-      X"FF3", X"220", X"440", X"660",
-      X"880", X"AA0", X"CC0", X"FF0",
-      X"121", X"343", X"564", X"686",
-      X"8A8", X"AC9", X"CFB", X"121",
-      X"242", X"463", X"584", X"6A5",
-      X"8C6", X"9F7", X"020", X"141",
-      X"261", X"382", X"4A2", X"5C3",
-      X"6F3", X"020", X"140", X"160",
-      X"280", X"2A0", X"3C0", X"3F0",
-      X"121", X"343", X"465", X"687",
-      X"8A9", X"9CB", X"BFD", X"121",
-      X"243", X"364", X"486", X"5A8",
-      X"6C9", X"7FB", X"021", X"142",
-      X"164", X"285", X"2A6", X"3C8",
-      X"3F9", X"021", X"042", X"063",
-      X"084", X"0A5", X"0C6", X"0F7",
-      X"122", X"344", X"466", X"688",
-      X"8AA", X"9CC", X"BEF", X"112",
-      X"234", X"356", X"478", X"59A",
-      X"6BC", X"7DF", X"012", X"134",
-      X"156", X"268", X"28A", X"3AC",
-      X"3CF", X"012", X"034", X"046",
-      X"068", X"08A", X"09C", X"0BF"
+   signal mem_hi_r : mem_t := (others => X"00");
+   signal mem_lo_r : mem_t := (others => X"00");
+
+   signal cpu_rd_hi_r      : std_logic_vector(7 downto 0);
+   signal cpu_rd_lo_r      : std_logic_vector(7 downto 0);
+
+   signal cpu_rst_addr_r   : std_logic_vector(7 downto 0);
+   signal cpu_rst_done_r   : std_logiC;
+   signal cpu_addr_s       : std_logic_vector(7 downto 0);
+   signal cpu_wr_data_hi_s : std_logic_vector(7 downto 0);
+   signal cpu_wr_data_lo_s : std_logic_vector(7 downto 0);
+
+   signal vga_rd_hi_r      : std_logic_vector(7 downto 0);
+   signal vga_rd_lo_r      : std_logic_vector(7 downto 0);
+
+   -- Encoding: 0000RRRR
+   constant cpu_rst_data_hi_c : mem_t := (
+      X"00", X"0F", X"08", X"0A", X"0C", X"00", X"00", X"0E",
+      X"0D", X"06", X"0F", X"03", X"07", X"0A", X"00", X"0B",
+      X"00", X"01", X"02", X"03", X"04", X"05", X"06", X"07",
+      X"08", X"09", X"0A", X"0B", X"0C", X"0D", X"0E", X"0F",
+      X"02", X"04", X"06", X"08", X"0A", X"0C", X"0F", X"02",
+      X"04", X"06", X"08", X"0A", X"0C", X"0F", X"02", X"04",
+      X"06", X"08", X"0A", X"0C", X"0F", X"02", X"04", X"06",
+      X"08", X"0A", X"0C", X"0F", X"02", X"04", X"06", X"08",
+      X"0A", X"0C", X"0F", X"02", X"04", X"06", X"08", X"0A",
+      X"0C", X"0F", X"02", X"04", X"06", X"08", X"0A", X"0C",
+      X"0F", X"02", X"04", X"06", X"08", X"0A", X"0C", X"0F",
+      X"01", X"03", X"05", X"07", X"09", X"0B", X"0D", X"01",
+      X"03", X"04", X"06", X"08", X"09", X"0B", X"01", X"02",
+      X"04", X"05", X"06", X"08", X"09", X"01", X"02", X"03",
+      X"04", X"05", X"06", X"07", X"01", X"03", X"04", X"06",
+      X"08", X"09", X"0B", X"01", X"02", X"03", X"04", X"05",
+      X"06", X"07", X"00", X"01", X"01", X"02", X"02", X"03",
+      X"03", X"00", X"00", X"00", X"00", X"00", X"00", X"00",
+      X"01", X"03", X"04", X"06", X"08", X"09", X"0B", X"01",
+      X"02", X"03", X"04", X"05", X"06", X"07", X"00", X"01",
+      X"01", X"02", X"02", X"03", X"03", X"00", X"00", X"00",
+      X"00", X"00", X"00", X"00", X"01", X"03", X"04", X"06",
+      X"08", X"09", X"0B", X"01", X"02", X"03", X"04", X"05",
+      X"06", X"07", X"00", X"01", X"01", X"02", X"02", X"03",
+      X"03", X"00", X"00", X"00", X"00", X"00", X"00", X"00",
+      X"01", X"03", X"05", X"07", X"09", X"0B", X"0D", X"01",
+      X"03", X"04", X"06", X"08", X"09", X"0B", X"01", X"02",
+      X"04", X"05", X"06", X"08", X"09", X"01", X"02", X"03",
+      X"04", X"05", X"06", X"07", X"02", X"04", X"06", X"08",
+      X"0A", X"0C", X"0F", X"02", X"04", X"06", X"08", X"0A",
+      X"0C", X"0F", X"02", X"04", X"06", X"08", X"0A", X"0C",
+      X"0F", X"02", X"04", X"06", X"08", X"0A", X"0C", X"0F"
    );
- 
+
+   -- Encoding: GGGGBBBB
+   constant cpu_rst_data_lo_c : mem_t := (
+      X"00", X"FF", X"00", X"FE", X"4C", X"C5", X"0A", X"E7",
+      X"85", X"40", X"77", X"33", X"77", X"F6", X"8F", X"BB",
+      X"00", X"11", X"22", X"33", X"44", X"55", X"66", X"77",
+      X"88", X"99", X"AA", X"BB", X"CC", X"DD", X"EE", X"FF",
+      X"11", X"33", X"44", X"66", X"88", X"99", X"BB", X"11",
+      X"22", X"33", X"44", X"55", X"66", X"77", X"00", X"11",
+      X"11", X"22", X"22", X"33", X"33", X"00", X"00", X"00",
+      X"00", X"00", X"00", X"00", X"21", X"43", X"64", X"86",
+      X"A8", X"C9", X"EB", X"11", X"32", X"53", X"74", X"95",
+      X"B6", X"D7", X"10", X"31", X"51", X"62", X"82", X"A3",
+      X"C3", X"10", X"30", X"40", X"60", X"80", X"90", X"B0",
+      X"21", X"43", X"64", X"86", X"A8", X"C9", X"FB", X"21",
+      X"42", X"63", X"84", X"A5", X"C6", X"F7", X"20", X"41",
+      X"61", X"82", X"A2", X"C3", X"F3", X"20", X"40", X"60",
+      X"80", X"A0", X"C0", X"F0", X"21", X"43", X"65", X"86",
+      X"A8", X"CA", X"FC", X"21", X"42", X"64", X"85", X"A6",
+      X"C8", X"F9", X"20", X"41", X"62", X"83", X"A4", X"C5",
+      X"F6", X"20", X"41", X"61", X"82", X"A2", X"C3", X"F3",
+      X"22", X"44", X"66", X"88", X"AA", X"CC", X"FF", X"22",
+      X"44", X"66", X"88", X"AA", X"CC", X"FF", X"22", X"44",
+      X"66", X"88", X"AA", X"CC", X"FF", X"22", X"44", X"66",
+      X"88", X"AA", X"CC", X"FF", X"12", X"34", X"56", X"68",
+      X"8A", X"AC", X"CF", X"12", X"24", X"46", X"58", X"6A",
+      X"8C", X"9F", X"02", X"14", X"26", X"38", X"4A", X"5C",
+      X"6F", X"02", X"14", X"16", X"28", X"2A", X"3C", X"3F",
+      X"12", X"34", X"46", X"68", X"8A", X"9C", X"BF", X"12",
+      X"24", X"36", X"48", X"5A", X"6C", X"7F", X"02", X"14",
+      X"16", X"28", X"2A", X"3C", X"3F", X"02", X"04", X"06",
+      X"08", X"0A", X"0C", X"0F", X"12", X"34", X"46", X"68",
+      X"8A", X"9C", X"BE", X"11", X"23", X"35", X"47", X"59",
+      X"6B", X"7D", X"01", X"13", X"15", X"26", X"28", X"3A",
+      X"3C", X"01", X"03", X"04", X"06", X"08", X"09", X"0B"
+   );
+
    -- Debug
-   constant DEBUG_MODE                   : boolean := false; -- TRUE OR FALSE
+   constant DEBUG_MODE                      : boolean := false; -- TRUE OR FALSE
 
-   attribute mark_debug                  : boolean;
-   attribute mark_debug of vga_rd_addr_i : signal is DEBUG_MODE;
-   attribute mark_debug of vga_rd_en_i   : signal is DEBUG_MODE;
-   attribute mark_debug of vga_rd_data_o : signal is DEBUG_MODE;
+   attribute mark_debug                     : boolean;
+   attribute mark_debug of vga_rd_addr_i    : signal is DEBUG_MODE;
+   attribute mark_debug of vga_rd_data_o    : signal is DEBUG_MODE;
+   attribute mark_debug of vga_rd_hi_r      : signal is DEBUG_MODE;
+   attribute mark_debug of vga_rd_lo_r      : signal is DEBUG_MODE;
 
-   attribute mark_debug of cpu_addr_i    : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_wr_en_i   : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_wr_data_i : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_rd_en_i   : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_rd_data_o : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_addr_i       : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_en_i      : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_i    : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_data_o    : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_hi_r      : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rd_lo_r      : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rst_addr_r   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_rst_done_r   : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_addr_s       : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_hi_s : signal is DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_lo_s : signal is DEBUG_MODE;
 
 begin
 
@@ -116,45 +140,80 @@ begin
    -- CPU access.
    ---------------
 
-   p_cpu_write : process (cpu_clk_i)
-   begin
-      if rising_edge(cpu_clk_i) then
-         if cpu_wr_en_i = '1' then
-            case cpu_addr_i(0) is
-               when '0' => mem_r(to_integer(cpu_addr_i(8 downto 1)))(7 downto 0) <= cpu_wr_data_i;
-               when '1' => mem_r(to_integer(cpu_addr_i(8 downto 1)))(11 downto 8) <= cpu_wr_data_i(3 downto 0);
-               when others => null;
-            end case;
-         end if;
-      end if;
-   end process p_cpu_write;
+   cpu_addr_s       <= cpu_addr_i(8 downto 1) when cpu_rst_done_r = '1' else cpu_rst_addr_r;
+   cpu_wr_data_hi_s <= cpu_wr_data_i          when cpu_rst_done_r = '1' else cpu_rst_data_hi_c(to_integer(cpu_rst_addr_r));
+   cpu_wr_data_lo_s <= cpu_wr_data_i          when cpu_rst_done_r = '1' else cpu_rst_data_lo_c(to_integer(cpu_rst_addr_r));
 
-   p_cpu_read : process (cpu_clk_i)
+   p_cpu_reset : process (cpu_clk_i)
    begin
       if rising_edge(cpu_clk_i) then
-         if cpu_rd_en_i = '1' then
-            case cpu_addr_i(0) is
-               when '0' => cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i(8 downto 1)))(7 downto 0);
-               when '1' => cpu_rd_data_o <= "0000" & mem_r(to_integer(cpu_addr_i(8 downto 1)))(11 downto 8);
-               when others => null;
-            end case;
+         if cpu_rst_done_r = '0' then
+            cpu_rst_addr_r <= cpu_rst_addr_r + 1;
+            if cpu_rst_addr_r = X"FF" then
+               cpu_rst_done_r <= '1';
+            end if;
+         end if;
+         if cpu_rst_i = '1' then
+            cpu_rst_addr_r <= (others => '0');
+            cpu_rst_done_r <= '0';
          end if;
       end if;
-   end process p_cpu_read;
+   end process p_cpu_reset;
+
+   p_cpu_write_hi : process (cpu_clk_i)
+   begin
+      if rising_edge(cpu_clk_i) then
+         if (cpu_wr_en_i = '1' and cpu_addr_i(0) = '1') or cpu_rst_done_r = '0' then
+            mem_hi_r(to_integer(cpu_addr_s)) <= cpu_wr_data_hi_s;
+         end if;
+      end if;
+   end process p_cpu_write_hi;
+
+   p_cpu_write_lo : process (cpu_clk_i)
+   begin
+      if rising_edge(cpu_clk_i) then
+         if (cpu_wr_en_i = '1' and cpu_addr_i(0) = '0') or cpu_rst_done_r = '0' then
+            mem_lo_r(to_integer(cpu_addr_s)) <= cpu_wr_data_lo_s;
+         end if;
+      end if;
+   end process p_cpu_write_lo;
+
+   p_cpu_read_hi : process (cpu_clk_i)
+   begin
+      if rising_edge(cpu_clk_i) then
+         cpu_rd_hi_r <= mem_hi_r(to_integer(cpu_addr_i(8 downto 1)));
+      end if;
+   end process p_cpu_read_hi;
+
+   p_cpu_read_lo : process (cpu_clk_i)
+   begin
+      if rising_edge(cpu_clk_i) then
+         cpu_rd_lo_r <= mem_lo_r(to_integer(cpu_addr_i(8 downto 1)));
+      end if;
+   end process p_cpu_read_lo;
+
+   cpu_rd_data_o <= cpu_rd_hi_r when cpu_addr_i(0) = '1' else cpu_rd_lo_r;
 
 
    ---------------
    -- VGA access.
    ---------------
 
-   p_vga : process (vga_clk_i)
+   p_vga_read_hi : process (vga_clk_i)
    begin
       if rising_edge(vga_clk_i) then
-         if vga_rd_en_i = '1' then
-            vga_rd_data_o <= mem_r(to_integer(vga_rd_addr_i));
-         end if;
+         vga_rd_hi_r <= mem_hi_r(to_integer(vga_rd_addr_i));
       end if;
-   end process p_vga;
+   end process p_vga_read_hi;
+
+   p_vga_read_lo : process (vga_clk_i)
+   begin
+      if rising_edge(vga_clk_i) then
+         vga_rd_lo_r <= mem_lo_r(to_integer(vga_rd_addr_i));
+      end if;
+   end process p_vga_read_lo;
+
+   vga_rd_data_o <= vga_rd_hi_r(3 downto 0) & vga_rd_lo_r;
 
 end rtl;
 

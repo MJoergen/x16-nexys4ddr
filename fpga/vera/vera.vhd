@@ -46,13 +46,11 @@ architecture structural of vera is
    signal cpu_vram_addr_s    : std_logic_vector(16 downto 0);
    signal cpu_vram_wr_en_s   : std_logic;
    signal cpu_vram_wr_data_s : std_logic_vector( 7 downto 0);
-   signal cpu_vram_rd_en_s   : std_logic;
    signal cpu_vram_rd_data_s : std_logic_vector( 7 downto 0);
    -- palette RAM
    signal cpu_pal_addr_s     : std_logic_vector( 8 downto 0);
    signal cpu_pal_wr_en_s    : std_logic;
    signal cpu_pal_wr_data_s  : std_logic_vector( 7 downto 0);
-   signal cpu_pal_rd_en_s    : std_logic;
    signal cpu_pal_rd_data_s  : std_logic_vector( 7 downto 0);
    -- configuration registers
    signal cpu_map_base_s     : std_logic_vector(17 downto 0);
@@ -70,11 +68,9 @@ architecture structural of vera is
 
    -- video RAM
    signal vga_vram_addr_s    : std_logic_vector(16 downto 0);
-   signal vga_vram_rd_en_s   : std_logic;
    signal vga_vram_rd_data_s : std_logic_vector( 7 downto 0);
    -- palette RAM
    signal vga_pal_addr_s     : std_logic_vector( 7 downto 0);
-   signal vga_pal_rd_en_s    : std_logic;
    signal vga_pal_rd_data_s  : std_logic_vector(11 downto 0);
    -- configuration registers
    signal vga_map_base_r     : std_logic_vector(17 downto 0);
@@ -104,12 +100,10 @@ begin
          vram_addr_o    => cpu_vram_addr_s,
          vram_wr_en_o   => cpu_vram_wr_en_s,
          vram_wr_data_o => cpu_vram_wr_data_s,
-         vram_rd_en_o   => cpu_vram_rd_en_s,
          vram_rd_data_i => cpu_vram_rd_data_s,
          pal_addr_o     => cpu_pal_addr_s,
          pal_wr_en_o    => cpu_pal_wr_en_s,
          pal_wr_data_o  => cpu_pal_wr_data_s,
-         pal_rd_en_o    => cpu_pal_rd_en_s,
          pal_rd_data_i  => cpu_pal_rd_data_s,
          map_base_o     => cpu_map_base_s,
          tile_base_o    => cpu_tile_base_s,
@@ -150,13 +144,11 @@ begin
          cpu_addr_i    => cpu_vram_addr_s,
          cpu_wr_en_i   => cpu_vram_wr_en_s,
          cpu_wr_data_i => cpu_vram_wr_data_s,
-         cpu_rd_en_i   => cpu_vram_rd_en_s,
          cpu_rd_data_o => cpu_vram_rd_data_s,
 
          -- VGA access
          vga_clk_i     => vga_clk_i,
          vga_rd_addr_i => vga_vram_addr_s,
-         vga_rd_en_i   => vga_vram_rd_en_s,
          vga_rd_data_o => vga_vram_rd_data_s
       ); -- i_vram
 
@@ -219,10 +211,8 @@ begin
          hscale_i       => vga_hscale_r,
          vscale_i       => vga_vscale_r,
          vram_addr_o    => vga_vram_addr_s,
-         vram_rd_en_o   => vga_vram_rd_en_s,
          vram_rd_data_i => vga_vram_rd_data_s,
          pal_addr_o     => vga_pal_addr_s,
-         pal_rd_en_o    => vga_pal_rd_en_s,
          pal_rd_data_i  => vga_pal_rd_data_s,
          vsync_irq_o    => vga_vsync_irq_s,
          hs_o           => vga_hs_o,

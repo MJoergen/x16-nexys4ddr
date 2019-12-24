@@ -408,3 +408,11 @@ TODO:
 * Implement the remaining video modes in VERA.
 * Implement audio.
 
+## 2019-12-24
+Removed some unneeded rd\_en signals from the VGA part of the VERA. This is to
+prepare for adding sprites at a later time.
+Some more TODO's:
+* Write a beginners tutorial on how to make the TENNIS game.
+* Rewrite ethernet/tx\_dma to make it use BRAM. Currently it uses LUTRAM, due
+  to some inefficient coding.
+

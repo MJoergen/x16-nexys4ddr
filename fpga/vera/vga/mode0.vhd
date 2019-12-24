@@ -40,12 +40,10 @@ entity mode0 is
 
       -- Interface to Video RAM
       vram_addr_o    : out std_logic_vector(16 downto 0);
-      vram_rd_en_o   : out std_logic;
       vram_rd_data_i : in  std_logic_vector( 7 downto 0);
 
       -- Interface to Palette RAM
       pal_addr_o     : out std_logic_vector( 7 downto 0);
-      pal_rd_en_o    : out std_logic;
       pal_rd_data_i  : in  std_logic_vector(11 downto 0);
 
       -- From Layer settings 
@@ -107,8 +105,6 @@ begin
       variable tile_offset_v : std_logic_vector(16 downto 0);
    begin
       if rising_edge(clk_i) then
-         vram_rd_en_o <= '0';
-
          pix_x_0r <= pix_x_i;
          pix_y_0r <= pix_y_i;
 
@@ -131,7 +127,6 @@ begin
             map_offset_v := "000" & map_row_v & map_column_v & "0";
 
             vram_addr_o  <= mapbase_i + map_offset_v;
-            vram_rd_en_o <= '1';
          end if;
 
          -- Stage 1. Read colour index from Video RAM. Ready in stage 3.
@@ -142,7 +137,6 @@ begin
             map_offset_v := "000" & map_row_v & map_column_v & "1";
 
             vram_addr_o  <= mapbase_i + map_offset_v;
-            vram_rd_en_o <= '1';
          end if;
 
          -- Stage 2. Read tile data from Video RAM. Ready in stage 4.
@@ -152,7 +146,6 @@ begin
             tile_offset_v := "000000" & map_value_v & tile_row_v;
 
             vram_addr_o  <= tilebase_i + tile_offset_v;
-            vram_rd_en_o <= '1';
          end if;
 
          -- Stage 3. Store colour value.
@@ -180,8 +173,6 @@ begin
       variable tile_offset_v : std_logic_vector(16 downto 0);
    begin
       if rising_edge(clk_i) then
-         pal_rd_en_o <= '1';
-
          tile_column_v := 7-to_integer(pix_x_4r(2 downto 0));     -- Subtract from 7, because the MSB of the tile data
                                                                   -- corresponds to the lowest pixel coordinate.
 

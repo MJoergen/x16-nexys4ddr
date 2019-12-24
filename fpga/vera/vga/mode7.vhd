@@ -31,12 +31,10 @@ entity mode7 is
 
       -- Interface to Video RAM
       vram_addr_o    : out std_logic_vector(16 downto 0);
-      vram_rd_en_o   : out std_logic;
       vram_rd_data_i : in  std_logic_vector( 7 downto 0);
 
       -- Interface to Palette RAM
       pal_addr_o     : out std_logic_vector( 7 downto 0);
-      pal_rd_en_o    : out std_logic;
       pal_rd_data_i  : in  std_logic_vector(11 downto 0);
 
       -- From Layer settings 
@@ -81,7 +79,6 @@ begin
                          (pix_y_i & "0000000") +
                          (pix_y_i(7 downto 0) & "000000000") +
                          ("0000000" & pix_x_i);
-         vram_rd_en_o <= '1';
       end if;
    end process p_vram;
 
@@ -94,7 +91,6 @@ begin
    begin
       if rising_edge(clk_i) then
          pal_addr_o  <= vram_rd_data_i;
-         pal_rd_en_o <= '1';
       end if;
    end process p_pal;
 

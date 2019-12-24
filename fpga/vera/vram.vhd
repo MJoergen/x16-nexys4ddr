@@ -14,12 +14,10 @@ entity vram is
       cpu_addr_i    : in  std_logic_vector(16 downto 0);  -- 17 bit address allows for 128 kB
       cpu_wr_en_i   : in  std_logic;
       cpu_wr_data_i : in  std_logic_vector( 7 downto 0);
-      cpu_rd_en_i   : in  std_logic;
       cpu_rd_data_o : out std_logic_vector( 7 downto 0);
       -- VGA port
       vga_clk_i     : in  std_logic;
       vga_rd_addr_i : in  std_logic_vector(16 downto 0);  -- 17 bit address allows for 128 kB
-      vga_rd_en_i   : in  std_logic;
       vga_rd_data_o : out std_logic_vector( 7 downto 0)
    );
 end vram;
@@ -50,9 +48,7 @@ begin
    p_cpu_read : process (cpu_clk_i)
    begin
       if rising_edge(cpu_clk_i) then
-         if cpu_rd_en_i = '1' then
-            cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i));
-         end if;
+         cpu_rd_data_o <= mem_r(to_integer(cpu_addr_i));
       end if;
    end process p_cpu_read;
 
@@ -64,9 +60,7 @@ begin
    p_vga : process (vga_clk_i)
    begin
       if rising_edge(vga_clk_i) then
-         if vga_rd_en_i = '1' then
-            vga_rd_data_o <= mem_r(to_integer(vga_rd_addr_i));
-         end if;
+         vga_rd_data_o <= mem_r(to_integer(vga_rd_addr_i));
       end if;
    end process p_vga;
 

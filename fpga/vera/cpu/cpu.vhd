@@ -27,13 +27,11 @@ entity cpu is
       vram_addr_o    : out std_logic_vector(16 downto 0);
       vram_wr_en_o   : out std_logic;
       vram_wr_data_o : out std_logic_vector( 7 downto 0);
-      vram_rd_en_o   : out std_logic;
       vram_rd_data_i : in  std_logic_vector( 7 downto 0);
       -- palette RAM
       pal_addr_o     : out std_logic_vector( 8 downto 0);
       pal_wr_en_o    : out std_logic;
       pal_wr_data_o  : out std_logic_vector( 7 downto 0);
-      pal_rd_en_o    : out std_logic;
       pal_rd_data_i  : in  std_logic_vector( 7 downto 0);
       -- configruation settings
       map_base_o     : out std_logic_vector(17 downto 0);
@@ -60,6 +58,11 @@ architecture structural of cpu is
    signal spi_wr_data_s      : std_logic_vector( 7 downto 0);
    signal spi_rd_en_s        : std_logic;
    signal spi_rd_data_s      : std_logic_vector( 7 downto 0);
+
+   -- Memory map
+   signal vram_cs_s          : std_logic;
+   signal pal_cs_s           : std_logic;
+   signal spi_cs_s           : std_logic;
 
    -- Read data
    signal config_rd_data_s   : std_logic_vector( 7 downto 0);
@@ -133,27 +136,28 @@ begin
 
    -- Access Video RAM
    vram_addr_o    <= internal_addr_s(16 downto 0);
-   vram_wr_en_o   <= '1' when internal_wr_en_s = '1' and internal_addr_s(19 downto 17) = "000" else '0';
+   vram_cs_s      <= '1' when internal_addr_s(19 downto 17) = "000" else '0';
+   vram_wr_en_o   <= vram_cs_s and internal_wr_en_s;
    vram_wr_data_o <= internal_wr_data_s;
-   vram_rd_en_o   <= '1' when internal_rd_en_s = '1' and internal_addr_s(19 downto 17) = "000" else '0';
 
    -- Access palette RAM
    pal_addr_o    <= internal_addr_s(8 downto 0);
-   pal_wr_en_o   <= '1' when internal_wr_en_s = '1' and internal_addr_s(19 downto 12) = X"F1" else '0';
+   pal_cs_s      <= '1' when internal_addr_s(19 downto 12) = X"F1" else '0';
+   pal_wr_en_o   <= pal_cs_s and internal_wr_en_s;
    pal_wr_data_o <= internal_wr_data_s;
-   pal_rd_en_o   <= '1' when internal_rd_en_s = '1' and internal_addr_s(19 downto 12) = X"F1" else '0';
 
    -- Access SPI
    spi_addr_s    <= internal_addr_s(0 downto 0);
-   spi_wr_en_s   <= '1' when internal_wr_en_s = '1' and internal_addr_s(19 downto 12) = X"F7" else '0';
+   spi_cs_s      <= '1' when internal_addr_s(19 downto 12) = X"F7" else '0';
+   spi_wr_en_s   <= spi_cs_s and internal_wr_en_s;
    spi_wr_data_s <= internal_wr_data_s;
-   spi_rd_en_s   <= '1' when internal_rd_en_s = '1' and internal_addr_s(19 downto 12) = X"F7" else '0';
+   spi_rd_en_s   <= spi_cs_s and internal_rd_en_s;
    
 
    -- Multiplex CPU read
-   internal_rd_data_s <= vram_rd_data_i when vram_rd_en_o = '1' else
-                         pal_rd_data_i  when pal_rd_en_o  = '1' else
-                         spi_rd_data_s  when spi_rd_en_s  = '1' else
+   internal_rd_data_s <= vram_rd_data_i when vram_cs_s = '1' else
+                         pal_rd_data_i  when pal_cs_s  = '1' else
+                         spi_rd_data_s  when spi_cs_s  = '1' else
                          config_rd_data_s;
 
 end architecture structural;

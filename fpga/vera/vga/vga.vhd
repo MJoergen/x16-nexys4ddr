@@ -15,11 +15,9 @@ entity vga is
       vscale_i       : in  std_logic_vector( 7 downto 0);
       -- video RAM
       vram_addr_o    : out std_logic_vector(16 downto 0);
-      vram_rd_en_o   : out std_logic;
       vram_rd_data_i : in  std_logic_vector( 7 downto 0);
       -- palette RAM
       pal_addr_o     : out std_logic_vector( 7 downto 0);
-      pal_rd_en_o    : out std_logic;
       pal_rd_data_i  : in  std_logic_vector(11 downto 0);
       -- interrupt
       vsync_irq_o    : out std_logic;
@@ -77,10 +75,8 @@ begin
          pix_x_i        => pix_x_scaled_s,
          pix_y_i        => pix_y_scaled_s,
          vram_addr_o    => vram_addr_o,
-         vram_rd_en_o   => vram_rd_en_o,
          vram_rd_data_i => vram_rd_data_i,
          pal_addr_o     => pal_addr_o,
-         pal_rd_en_o    => pal_rd_en_o,
          pal_rd_data_i  => pal_rd_data_i,
          col_o          => col_s,
          delay_o        => delay_s

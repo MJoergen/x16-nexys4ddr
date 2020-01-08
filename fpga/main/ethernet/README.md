@@ -5,6 +5,7 @@ This directory contains the VHDL source code for the Ethernet port.
 This gives the CPU access to send and receive Ethernet frames.
 
 ## Memory map
+```
 9FC0 : ETH\_RX\_LO
 9FC1 : ETH\_RX\_HI
 9FC2 : ETH\_RX\_DAT
@@ -14,6 +15,7 @@ This gives the CPU access to send and receive Ethernet frames.
 9FC9 : ETH\_TX\_HI
 9FCA : ETH\_TX\_DAT
 9FCB : ETH\_TX\_OWN
+```
 
 The memory map is designed to resemble that of the VERA. So there are two
 separate virtual address spaces, one for receiving frames and one for

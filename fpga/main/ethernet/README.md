@@ -6,15 +6,15 @@ This gives the CPU access to send and receive Ethernet frames.
 
 ## Memory map
 ```
-9FC0 : ETH\_RX\_LO
-9FC1 : ETH\_RX\_HI
-9FC2 : ETH\_RX\_DAT
-9FC3 : ETH\_RX\_OWN
+9FC0 : ETH_RX_LO
+9FC1 : ETH_RX_HI
+9FC2 : ETH_RX_DAT
+9FC3 : ETH_RX_OWN
 
-9FC8 : ETH\_TX\_LO
-9FC9 : ETH\_TX\_HI
-9FCA : ETH\_TX\_DAT
-9FCB : ETH\_TX\_OWN
+9FC8 : ETH_TX_LO
+9FC9 : ETH_TX_HI
+9FCA : ETH_TX_DAT
+9FCB : ETH_TX_OWN
 ```
 
 The memory map is designed to resemble that of the VERA. So there are two

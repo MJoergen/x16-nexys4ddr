@@ -24,6 +24,8 @@ entity main is
       ps2_clk_out_o  : out std_logic;
       ps2_clken_o    : out std_logic;
       --
+      aud_val_o      : out std_logic_vector(9 downto 0);
+      --
       eth_clk_i      : in    std_logic;
       eth_txd_o      : out   std_logic_vector(1 downto 0);
       eth_txen_o     : out   std_logic;
@@ -63,6 +65,7 @@ architecture structural of main is
    signal via1_cs_s        : std_logic;   -- 0x9F60 - 0x9F6F
    signal via2_cs_s        : std_logic;   -- 0x9F70 - 0x9F7F
    signal eth_cs_s         : std_logic;   -- 0x9FC0 - 0x9FCF
+   signal aud_cs_s         : std_logic;   -- 0x9FE0 - 0x9FEF
    signal hiram_cs_s       : std_logic;   -- 0xA000 - 0xBFFF
    signal rom_cs_s         : std_logic;   -- 0xC000 - 0xFFFF
 
@@ -78,6 +81,7 @@ architecture structural of main is
    signal via1_wr_en_s     : std_logic;
    signal via2_wr_en_s     : std_logic;
    signal eth_wr_en_s      : std_logic;
+   signal aud_wr_en_s      : std_logic;
    signal hiram_wr_en_s    : std_logic;
 
    -- Read enable
@@ -189,6 +193,7 @@ begin
    via1_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F6" else '0';  -- 0x9F60 - 0x9F6F
    via2_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F7" else '0';  -- 0x9F70 - 0x9F7F
    eth_cs_s    <= '1' when cpu_addr_s(15 downto  4) = X"9FC" else '0';  -- 0x9FC0 - 0x9FCF
+   aud_cs_s    <= '1' when cpu_addr_s(15 downto  4) = X"9FE" else '0';  -- 0x9FE0 - 0x9FEF
    hiram_cs_s  <= '1' when cpu_addr_s(15 downto 13) = "101"  else '0';  -- 0xA000 - 0xBFFF
    rom_cs_s    <= '1' when cpu_addr_s(15 downto 14) = "11"   else '0';  -- 0xC000 - 0xFFFF
 
@@ -217,6 +222,7 @@ begin
    via1_wr_en_s   <= cpu_wr_en_s and via1_cs_s;
    via2_wr_en_s   <= cpu_wr_en_s and via2_cs_s;
    eth_wr_en_s    <= cpu_wr_en_s and eth_cs_s;
+   aud_wr_en_s    <= cpu_wr_en_s and aud_cs_s;
    hiram_wr_en_s  <= cpu_wr_en_s and hiram_cs_s;
 
 
@@ -308,6 +314,21 @@ begin
          portaen_o => via2_porta_en_s,          -- Keyboard
          portben_o => open                      -- Mouse
       ); -- i_via2
+
+
+   --------------------------------------------------------
+   -- Instantiate YM2151 module
+   --------------------------------------------------------
+
+   i_ym2151 : entity work.ym2151
+      port map (
+         clk_i     => clk_i,
+         rst_i     => rst_i,
+         addr_i    => cpu_addr_s(0 downto 0),
+         wr_en_i   => aud_wr_en_s,
+         wr_data_i => cpu_wr_data_s,
+         val_o     => aud_val_o
+      ); -- i_ym2151
 
 
    -------------------------------

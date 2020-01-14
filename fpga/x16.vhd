@@ -77,11 +77,8 @@ architecture structural of x16 is
    signal spi_miso_s        : std_logic;
    signal spi_cs_s          : std_logic;
 
+   signal aud_val_s         : std_logic_vector(9 downto 0);
    signal aud_pwm_s         : std_logic;
-
-   signal ym2151_clk_s      : std_logic;
-   signal ym2151_rst_s      : std_logic;
-   signal ym2151_val_s      : std_logic_vector(9 downto 0);
 
    -- Debug
    constant DEBUG_MODE                : boolean := false; -- TRUE OR FALSE
@@ -205,21 +202,9 @@ begin
    i_pwm : entity work.pwm
       port map (
          clk_i    => clk_i,      -- 100 MHz
-         val_i    => ym2151_val_s,
+         val_i    => aud_val_s,
          pwm_o    => aud_pwm_s
       ); -- i_pwm
-
-
-   --------------------------------------------------------
-   -- Instantiate YM2151 module
-   --------------------------------------------------------
-
-   i_ym2151 : entity work.ym2151
-      port map (
-         clk_i => main_clk_s,
-         rst_i => main_rst_s(3),
-         val_o => ym2151_val_s
-      ); -- i_ym2151
 
 
    --------------------------------------------------------
@@ -248,6 +233,8 @@ begin
          ps2_clk_in_i   => ps2_clk_in_s,
          ps2_clk_out_o  => ps2_clk_out_s,
          ps2_clken_o    => ps2_clken_s,
+         --
+         aud_val_o      => aud_val_s,
          --
          eth_clk_i      => eth_clk_s,
          eth_txd_o      => eth_txd_o,

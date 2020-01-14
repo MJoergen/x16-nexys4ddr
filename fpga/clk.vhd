@@ -136,7 +136,6 @@ clk_in1_clk_wiz_0 <= clk_in1;
     CLKFBOUT_USE_FINE_PS => FALSE,
     CLKOUT0_DIVIDE_F     => 31.750,    -- VGA @ 25.20 MHz
     CLKOUT0_PHASE        => 0.000,
-    CLKOUT0_DUTY_CYCLE   => 0.500,
     CLKOUT0_USE_FINE_PS  => FALSE,
     CLKOUT1_DIVIDE       => 16,        -- ETH @ 50.00 MHz
     CLKOUT1_PHASE        => 0.000,

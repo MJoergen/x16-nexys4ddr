@@ -180,7 +180,7 @@ begin
          wr_error_o => open,  -- Ignored
          --
          rd_clk_i   => cpu_clk_i,
-         rd_rst_i   => cpu_rst_i,
+         rd_rst_i   => '0',
          rd_en_i    => cpu_rxfifo_rden_s,
          rd_data_o  => cpu_rxfifo_data_s,
          rd_sb_o    => cpu_rxfifo_eof_s,

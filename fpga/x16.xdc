@@ -78,6 +78,9 @@ set_property -dict { PACKAGE_PIN D9  IOSTANDARD LVCMOS33 } [get_ports { eth_crsd
 set_property -dict { PACKAGE_PIN B8  IOSTANDARD LVCMOS33 } [get_ports { eth_intn_i   }];     # ETH_INTN
 set_property -dict { PACKAGE_PIN D5  IOSTANDARD LVCMOS33 } [get_ports { eth_refclk_o }];     # ETH_REFCLK
 
+set_property -dict { PACKAGE_PIN A11 IOSTANDARD LVCMOS33 } [get_ports { aud_pwm_o }];        # AUD_PWM
+set_property -dict { PACKAGE_PIN D12 IOSTANDARD LVCMOS33 } [get_ports { aud_sd_o }];         # AUD_SD
+
 
 # Clock definition
 create_clock -name sys_clk -period 10.00 [get_ports {clk_i}];

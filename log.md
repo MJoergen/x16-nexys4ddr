@@ -436,3 +436,17 @@ A guide to the MIDI file format is
 [https://www.cs.cmu.edu/~music/cmsip/readings/MIDI%20tutorial%20for%20programmers.html](this)
 webpage has some more information.
 
+The audio output is PWM with an additional inverted shutdown pin. So pin
+aud\_sd\_o should always be driven high, whereas the digital output aud\_pwn\_o
+should be a pulse width modulated signal. The Nexys4DDR board has a low-pass
+filter with a cut-off frequency around 10 kHz. The signal aud\_pwm\_o is an
+open-drain signal, and must therefore either be driven low, or left in
+high-impedance. Don't drive the signal high.  This is to reduce noise.
+
+The PWN frequency should be at least 100 kHz. With a 10-bit amplitude
+resolution, this works fine with an input frequency of 100 MHz.
+
+So far I've made a small dummy YM2151 module to generate a triangular waveform
+at around 400 Hz.
+
+

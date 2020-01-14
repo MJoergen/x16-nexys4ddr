@@ -70,149 +70,155 @@ library unisim;
 use unisim.vcomponents.all;
 
 entity clk_wiz_0_clk_wiz is
-port
- (-- Clock in ports
-  clk_in1           : in     std_logic;   -- 100    MHz
-  -- Clock out ports
-  eth_clk           : out    std_logic;   --  50    MHz
-  vga_clk           : out    std_logic;   --  25.2  MHz
-  cpu_clk           : out    std_logic    --   8.33 MHz
- );
+   port (
+      -- Clock in ports
+      clk_in1           : in     std_logic;   -- 100    MHz
+                                              -- Clock out ports
+      eth_clk           : out    std_logic;   --  50    MHz
+      vga_clk           : out    std_logic;   --  25.2  MHz
+      cpu_clk           : out    std_logic    --   8.33 MHz
+   );
 end clk_wiz_0_clk_wiz;
 
 architecture xilinx of clk_wiz_0_clk_wiz is
-  -- Input clock buffering / unused connectors
-  signal clk_in1_clk_wiz_0      : std_logic;
-  -- Output clock buffering / unused connectors
-  signal clkfbout_clk_wiz_0         : std_logic;
-  signal clkfbout_buf_clk_wiz_0     : std_logic;
-  signal clkfboutb_unused : std_logic;
-  signal eth_clk_wiz_0          : std_logic;
-  signal vga_clk_wiz_0          : std_logic;
-  signal cpu_clk_wiz_0          : std_logic;
-  signal clkout0b_unused         : std_logic;
-  signal clkout1_unused   : std_logic;
-  signal clkout1b_unused         : std_logic;
-  signal clkout2_unused   : std_logic;
-  signal clkout2b_unused         : std_logic;
-  signal clkout3_unused   : std_logic;
-  signal clkout3b_unused  : std_logic;
-  signal clkout4_unused   : std_logic;
-  signal clkout5_unused   : std_logic;
-  signal clkout6_unused   : std_logic;
-  -- Dynamic programming unused signals
-  signal do_unused        : std_logic_vector(15 downto 0);
-  signal drdy_unused      : std_logic;
-  -- Dynamic phase shift unused signals
-  signal psdone_unused    : std_logic;
-  signal locked_int : std_logic;
-  -- Unused status signals
-  signal clkfbstopped_unused : std_logic;
-  signal clkinstopped_unused : std_logic;
+   -- Input clock buffering / unused connectors
+   signal clk_in1_clk_wiz_0      : std_logic;
+   -- Output clock buffering / unused connectors
+   signal clkfbout_clk_wiz_0     : std_logic;
+   signal clkfbout_buf_clk_wiz_0 : std_logic;
+   signal clkfboutb_unused       : std_logic;
+   signal eth_clk_wiz_0          : std_logic;
+   signal vga_clk_wiz_0          : std_logic;
+   signal cpu_clk_wiz_0          : std_logic;
+   signal clkout0b_unused        : std_logic;
+   signal clkout1_unused         : std_logic;
+   signal clkout1b_unused        : std_logic;
+   signal clkout2_unused         : std_logic;
+   signal clkout2b_unused        : std_logic;
+   signal clkout3_unused         : std_logic;
+   signal clkout3b_unused        : std_logic;
+   signal clkout4_unused         : std_logic;
+   signal clkout5_unused         : std_logic;
+   signal clkout6_unused         : std_logic;
+   -- Dynamic programming unused signals
+   signal do_unused              : std_logic_vector(15 downto 0);
+   signal drdy_unused            : std_logic;
+   -- Dynamic phase shift unused signals
+   signal psdone_unused          : std_logic;
+   signal locked_int             : std_logic;
+   -- Unused status signals
+   signal clkfbstopped_unused    : std_logic;
+   signal clkinstopped_unused    : std_logic;
 
 begin
 
+   -------------------------------------
+   -- Input buffering
+   --------------------------------------
 
-  -- Input buffering
-  --------------------------------------
-clk_in1_clk_wiz_0 <= clk_in1;
-
-
-
-  -- Clocking PRIMITIVE
-  --------------------------------------
-  -- Instantiation of the MMCM PRIMITIVE
-  --    * Unused inputs are tied off
-  --    * Unused outputs are labeled unused
-  mmcm_adv_inst : MMCME2_ADV
-  generic map
-   (BANDWIDTH            => "OPTIMIZED",
-    CLKOUT4_CASCADE      => FALSE,
-    COMPENSATION         => "ZHOLD",
-    STARTUP_WAIT         => FALSE,
-    DIVCLK_DIVIDE        => 1,
-    CLKFBOUT_MULT_F      => 8.000,
-    CLKFBOUT_PHASE       => 0.000,
-    CLKFBOUT_USE_FINE_PS => FALSE,
-    CLKOUT0_DIVIDE_F     => 31.750,    -- VGA @ 25.20 MHz
-    CLKOUT0_PHASE        => 0.000,
-    CLKOUT0_USE_FINE_PS  => FALSE,
-    CLKOUT1_DIVIDE       => 16,        -- ETH @ 50.00 MHz
-    CLKOUT1_PHASE        => 0.000,
-    CLKOUT1_DUTY_CYCLE   => 0.500,
-    CLKOUT1_USE_FINE_PS  => FALSE,
-    CLKOUT2_DIVIDE       => 96,        -- CPU @  8.33 MHz
-    CLKOUT2_PHASE        => 0.000,
-    CLKOUT2_DUTY_CYCLE   => 0.500,
-    CLKOUT2_USE_FINE_PS  => FALSE,
-    CLKIN1_PERIOD        => 10.0,
-    REF_JITTER1          => 0.010)
-  port map
-    -- Output clocks
-   (
-    CLKFBOUT            => clkfbout_clk_wiz_0,
-    CLKFBOUTB           => clkfboutb_unused,
-    CLKOUT0             => vga_clk_wiz_0,
-    CLKOUT0B            => clkout0b_unused,
-    CLKOUT1             => eth_clk_wiz_0,
-    CLKOUT1B            => clkout1b_unused,
-    CLKOUT2             => cpu_clk_wiz_0,
-    CLKOUT2B            => clkout2b_unused,
-    CLKOUT3             => clkout3_unused,
-    CLKOUT3B            => clkout3b_unused,
-    CLKOUT4             => clkout4_unused,
-    CLKOUT5             => clkout5_unused,
-    CLKOUT6             => clkout6_unused,
-    -- Input clock control
-    CLKFBIN             => clkfbout_buf_clk_wiz_0,
-    CLKIN1              => clk_in1_clk_wiz_0,
-    CLKIN2              => '0',
-    -- Tied to always select the primary input clock
-    CLKINSEL            => '1',
-    -- Ports for dynamic reconfiguration
-    DADDR               => (others => '0'),
-    DCLK                => '0',
-    DEN                 => '0',
-    DI                  => (others => '0'),
-    DO                  => do_unused,
-    DRDY                => drdy_unused,
-    DWE                 => '0',
-    -- Ports for dynamic phase shift
-    PSCLK               => '0',
-    PSEN                => '0',
-    PSINCDEC            => '0',
-    PSDONE              => psdone_unused,
-    -- Other control and status signals
-    LOCKED              => locked_int,
-    CLKINSTOPPED        => clkinstopped_unused,
-    CLKFBSTOPPED        => clkfbstopped_unused,
-    PWRDWN              => '0',
-    RST                 => '0');
+   clk_in1_clk_wiz_0 <= clk_in1;
 
 
-  -- Output buffering
-  -------------------------------------
+   --------------------------------------
+   -- Clocking PRIMITIVE
+   --------------------------------------
+   -- Instantiation of the MMCM PRIMITIVE
+   --    * Unused inputs are tied off
+   --    * Unused outputs are labeled unused
+   i_mmcm_adv : MMCME2_ADV
+      generic map (
+         BANDWIDTH            => "OPTIMIZED",
+         CLKOUT4_CASCADE      => FALSE,
+         COMPENSATION         => "ZHOLD",
+         STARTUP_WAIT         => FALSE,
+         DIVCLK_DIVIDE        => 1,
+         CLKFBOUT_MULT_F      => 8.000,
+         CLKFBOUT_PHASE       => 0.000,
+         CLKFBOUT_USE_FINE_PS => FALSE,
+         CLKOUT0_DIVIDE_F     => 31.750,    -- VGA @ 25.20 MHz
+         CLKOUT0_PHASE        => 0.000,
+         CLKOUT0_USE_FINE_PS  => FALSE,
+         CLKOUT1_DIVIDE       => 16,        -- ETH @ 50.00 MHz
+         CLKOUT1_PHASE        => 0.000,
+         CLKOUT1_DUTY_CYCLE   => 0.500,
+         CLKOUT1_USE_FINE_PS  => FALSE,
+         CLKOUT2_DIVIDE       => 96,        -- CPU @  8.33 MHz
+         CLKOUT2_PHASE        => 0.000,
+         CLKOUT2_DUTY_CYCLE   => 0.500,
+         CLKOUT2_USE_FINE_PS  => FALSE,
+         CLKIN1_PERIOD        => 10.0,
+         REF_JITTER1          => 0.010
+      )
+      port map (
+         -- Output clocks
+         CLKFBOUT            => clkfbout_clk_wiz_0,
+         CLKFBOUTB           => clkfboutb_unused,
+         CLKOUT0             => vga_clk_wiz_0,
+         CLKOUT0B            => clkout0b_unused,
+         CLKOUT1             => eth_clk_wiz_0,
+         CLKOUT1B            => clkout1b_unused,
+         CLKOUT2             => cpu_clk_wiz_0,
+         CLKOUT2B            => clkout2b_unused,
+         CLKOUT3             => clkout3_unused,
+         CLKOUT3B            => clkout3b_unused,
+         CLKOUT4             => clkout4_unused,
+         CLKOUT5             => clkout5_unused,
+         CLKOUT6             => clkout6_unused,
+         -- Input clock control
+         CLKFBIN             => clkfbout_buf_clk_wiz_0,
+         CLKIN1              => clk_in1_clk_wiz_0,
+         CLKIN2              => '0',
+         -- Tied to always select the primary input clock
+         CLKINSEL            => '1',
+         -- Ports for dynamic reconfiguration
+         DADDR               => (others => '0'),
+         DCLK                => '0',
+         DEN                 => '0',
+         DI                  => (others => '0'),
+         DO                  => do_unused,
+         DRDY                => drdy_unused,
+         DWE                 => '0',
+         -- Ports for dynamic phase shift
+         PSCLK               => '0',
+         PSEN                => '0',
+         PSINCDEC            => '0',
+         PSDONE              => psdone_unused,
+         -- Other control and status signals
+         LOCKED              => locked_int,
+         CLKINSTOPPED        => clkinstopped_unused,
+         CLKFBSTOPPED        => clkfbstopped_unused,
+         PWRDWN              => '0',
+         RST                 => '0'
+      );
 
-  clkf_buf : BUFG
-  port map
-   (O => clkfbout_buf_clk_wiz_0,
-    I => clkfbout_clk_wiz_0);
 
+   -------------------------------------
+   -- Output buffering
+   -------------------------------------
 
-  clkout0_buf : BUFG
-  port map
-   (O   => vga_clk,
-    I   => vga_clk_wiz_0);
+   clkf_buf : BUFG
+      port map (
+         O => clkfbout_buf_clk_wiz_0,
+         I => clkfbout_clk_wiz_0
+      );
 
-  clkout1_buf : BUFG
-  port map
-   (O   => eth_clk,
-    I   => eth_clk_wiz_0);
+   clkout0_buf : BUFG
+      port map (
+         O => vga_clk,
+         I => vga_clk_wiz_0
+      );
 
-  clkout2_buf : BUFG
-  port map
-   (O   => cpu_clk,
-    I   => cpu_clk_wiz_0);
+   clkout1_buf : BUFG
+      port map (
+         O => eth_clk,
+         I => eth_clk_wiz_0
+      );
+
+   clkout2_buf : BUFG
+      port map (
+         O => cpu_clk,
+         I => cpu_clk_wiz_0
+      );
 
 end xilinx;
 

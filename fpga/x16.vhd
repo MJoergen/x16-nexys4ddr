@@ -36,6 +36,9 @@ entity x16 is
       sd_sck_o     : out   std_logic;
       sd_cd_i      : in    std_logic;
 
+      aud_pwm_o    : inout std_logic;
+      aud_sd_o     : out   std_logic;
+
       vga_hs_o     : out   std_logic;                       -- VGA
       vga_vs_o     : out   std_logic;
       vga_col_o    : out   std_logic_vector(11 downto 0)    -- 4 bits for each colour RGB.
@@ -74,6 +77,12 @@ architecture structural of x16 is
    signal spi_miso_s        : std_logic;
    signal spi_cs_s          : std_logic;
 
+   signal aud_pwm_s         : std_logic;
+
+   signal ym2151_clk_s      : std_logic;
+   signal ym2151_rst_s      : std_logic;
+   signal ym2151_val_s      : std_logic_vector(9 downto 0);
+
    -- Debug
    constant DEBUG_MODE                : boolean := false; -- TRUE OR FALSE
 
@@ -82,9 +91,17 @@ architecture structural of x16 is
    attribute mark_debug of spi_mosi_s : signal is DEBUG_MODE;
    attribute mark_debug of spi_miso_s : signal is DEBUG_MODE;
    attribute mark_debug of spi_cs_s   : signal is DEBUG_MODE;
-   attribute mark_debug of sd_cd_i    : signal is DEBUG_MODE;
 
 begin
+
+   aud_sd_o <= '1';
+
+   ----------------------------------------------------------------
+   -- Generate AUD tristate buffers.
+   ----------------------------------------------------------------
+
+   aud_pwm_o <= '0' when aud_pwm_s = '0' else 'Z';
+
 
    ----------------------------------------------------------------
    -- Generate SPI tristate buffers.
@@ -176,6 +193,33 @@ begin
          vga_vs_o      => vga_vs_o,
          vga_col_o     => vga_col_o
       ); -- i_vera
+
+
+   --------------------------------------------------------
+   -- Instantiate PWM module
+   --------------------------------------------------------
+
+   aud_sd_o <= '1';
+   aud_pwm_o <= '0' when aud_pwm_s = '0' else 'Z';
+
+   i_pwm : entity work.pwm
+      port map (
+         clk_i    => clk_i,      -- 100 MHz
+         val_i    => ym2151_val_s,
+         pwm_o    => aud_pwm_s
+      ); -- i_pwm
+
+
+   --------------------------------------------------------
+   -- Instantiate YM2151 module
+   --------------------------------------------------------
+
+   i_ym2151 : entity work.ym2151
+      port map (
+         clk_i => main_clk_s,
+         rst_i => main_rst_s(3),
+         val_o => ym2151_val_s
+      ); -- i_ym2151
 
 
    --------------------------------------------------------

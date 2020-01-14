@@ -20,11 +20,40 @@ end ym2151;
 
 architecture structural of ym2151 is
 
-   -- Register interface
-   signal wr_addr_r : std_logic_vector(7 downto 0);
+   -----------------
+   -- CPU interface
+   -----------------
 
-   type t_regs is array (0 to 255) of std_logic_vector(7 downto 0);
-   signal regs_r : t_regs;
+   signal wr_addr_r : std_logic_vector(7 downto 0);
+   signal wr_data_r : std_logic_vector(7 downto 0);
+   signal wr_en_r   : std_logic;
+
+
+   ------------
+   -- Channels
+   ------------
+
+   type t_channel is record
+      m1 : std_logic;
+      c1 : std_logic;
+      m2 : std_logic;
+      c2 : std_logic;
+   end record t_channel;
+
+   constant C_CHANNEL_DEFAULT : t_channel := (
+      m1 => '0',
+      c1 => '0',
+      m2 => '0',
+      c2 => '0'
+   );
+
+   type t_channel_vector is array (natural range<>) of t_channel;
+   signal channels : t_channel_vector(7 downto 0) := (others => C_CHANNEL_DEFAULT);
+
+
+   ------------
+   -- Waveform
+   ------------
 
    -- Counter to control when to update the waveform (approx. 100 kHz).
    constant C_CNT_MAX : std_logic_vector(7 downto 0) := to_stdlogicvector(8333/100, 8);
@@ -36,23 +65,49 @@ architecture structural of ym2151 is
 begin
 
    ----------------------
-   -- Write to registers
+   -- CPU interface
    ----------------------
 
    p_regs : process (clk_i)
    begin
       if rising_edge(clk_i) then
+         wr_en_r <= '0';
          if wr_en_i = '1' then
             case addr_i is
                when "0" => 
                   wr_addr_r <= wr_data_i;
                when "1" => 
-                  regs_r(to_integer(wr_addr_r)) <= wr_data_i;
+                  wr_data_r <= wr_data_i;
+                  wr_en_r   <= '1';
                when others => null;
             end case;
          end if;
       end if;
    end process p_regs;
+
+
+   ----------------------
+   -- Channels
+   ----------------------
+
+   p_channels : process (clk_i)
+      variable channel_v : integer;
+   begin
+      if rising_edge(clk_i) then
+         channel_v := to_integer(wr_data_r(2 downto 0));
+         if wr_en_r = '1' then
+            case wr_addr_r is
+               when X"08" => -- Key ON/OFF
+                  channels(channel_v).m1 <= wr_data_r(3);
+                  channels(channel_v).c1 <= wr_data_r(4);
+                  channels(channel_v).m2 <= wr_data_r(5);
+                  channels(channel_v).c2 <= wr_data_r(6);
+
+               when others => null;
+            end case;
+         end if;
+      end if;
+   end process p_channels;
 
 
    ----------------------

@@ -60,15 +60,16 @@ architecture structural of rx_header is
    constant C_ADDR_SIZE : integer := 11;
    type t_buf is array (0 to 2**C_ADDR_SIZE-1) of std_logic_vector(7 downto 0);
    signal rx_buf : t_buf := (others => (others => '0'));
+   signal rx_buf_data : std_logic_vector(7 downto 0);
 
    -- Current write pointer.
-   signal wrptr     : std_logic_vector(C_ADDR_SIZE-1 downto 0) := (others => '0');
+   signal wrptr     : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    -- Start of current frame.
-   signal start_ptr : std_logic_vector(C_ADDR_SIZE-1 downto 0) := (others => '0');
+   signal start_ptr : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    -- End of current frame.
-   signal end_ptr   : std_logic_vector(C_ADDR_SIZE-1 downto 0) := (others => '0');
+   signal end_ptr   : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    -- Current read pointer.
-   signal rdptr     : std_logic_vector(C_ADDR_SIZE-1 downto 0) := (others => '0');
+   signal rdptr     : std_logic_vector(C_ADDR_SIZE-1 downto 0);
 
    -- Control fifo, contains address of each EOF.
    signal ctrl_wren   : std_logic;
@@ -78,7 +79,7 @@ architecture structural of rx_header is
    signal ctrl_empty  : std_logic;
 
    -- State machine for header insertion.
-   type t_fsm_state is (IDLE_ST, LEN_MSB_ST, FWD_ST);
+   type t_fsm_state is (IDLE_ST, LEN_MSB_ST, FWD_ST, END_ST);
    signal fsm_state : t_fsm_state := IDLE_ST;
 
 begin
@@ -197,10 +198,11 @@ begin
       variable end_ptr_v      : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    begin
       if rising_edge(clk_i) then
-         ctrl_rden <= '0';
-         out_valid <= '0';
-         out_data  <= (others => '0');
-         out_eof   <= '0';
+         ctrl_rden   <= '0';
+         out_valid   <= '0';
+         out_data    <= (others => '0');
+         out_eof     <= '0';
+         rx_buf_data <= rx_buf(to_integer(rdptr));
 
          if out_afull_i = '0' then  -- Pause, if receiver is not ready.
             case fsm_state is
@@ -227,22 +229,31 @@ begin
                   out_valid <= '1';
                   out_data(7 downto C_ADDR_SIZE-8) <= (others => '0');
                   out_data(C_ADDR_SIZE-9 downto 0) <= frame_length_v(C_ADDR_SIZE-1 downto 8);
+                  rdptr     <= rdptr + 1;
                   fsm_state <= FWD_ST;
 
                when FWD_ST =>
                   -- Transfer frame data
                   out_valid <= '1';
-                  out_data  <= rx_buf(to_integer(rdptr));
+                  out_data  <= rx_buf_data;
                   rdptr     <= rdptr + 1;
                   if rdptr = end_ptr then
-                     out_eof   <= '1';
-                     fsm_state <= IDLE_ST;
+                     fsm_state <= END_ST;
                   end if;
+
+               when END_ST =>
+                  -- Transfer frame data
+                  out_valid <= '1';
+                  out_data  <= rx_buf_data;
+                  out_eof   <= '1';
+                  fsm_state <= IDLE_ST;
             end case;
          end if;
 
          if rst_i = '1' then
             fsm_state <= IDLE_ST;
+            rdptr     <= (others => '0');
+            end_ptr   <= (others => '0');
          end if;
       end if;
    end process proc_output;

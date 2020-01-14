@@ -37,14 +37,12 @@ architecture structural of rx_dma is
    signal cpu_addr_r      : std_logic_vector(15 downto 0);
    signal cpu_own_r       : std_logic;
    signal cpu_own_clear_r : std_logic;
+   signal cpu_rd_data_r   : std_logic_vector(7 downto 0);
    signal fifo_addr_r     : std_logic_vector(15 downto 0);
 
    type mem_t is array (0 to 2**G_ADDR_BITS-1) of std_logic_vector(7 downto 0);
 
    signal mem_r : mem_t := (others => (others => '0'));
-
-   attribute ram_style : string;
-   attribute ram_style of mem_r : signal is "block";
 
    type state_t is (IDLE_ST, DATA_ST, WAIT_ST);
    signal state : state_t := IDLE_ST;
@@ -77,11 +75,13 @@ begin
             end case;
          end if;
 
+         cpu_rd_data_r <= mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0)));
+
          if cpu_rd_en_i = '1' then
             case cpu_addr_i is
                when "000" => cpu_rd_data_o <= cpu_addr_r( 7 downto 0);
                when "001" => cpu_rd_data_o <= cpu_addr_r(15 downto 8);
-               when "010" => cpu_rd_data_o <= mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0)));
+               when "010" => cpu_rd_data_o <= cpu_rd_data_r;
                              cpu_addr_r <= cpu_addr_r + 1;
                when "011" => cpu_rd_data_o(0) <= cpu_own_r;
                when others => null;

@@ -41,6 +41,8 @@ architecture structural of tx_dma is
    signal cpu_own_r       : std_logic;
    signal cpu_own_clear_s : std_logic;
 
+   signal cpu_rd_data_r   : std_logic_vector(7 downto 0);
+
    -- Dual Port RAM
    type mem_t is array (0 to 2**G_ADDR_BITS-1) of std_logic_vector(7 downto 0);
    signal mem_r : mem_t := (others => (others => '0'));
@@ -51,7 +53,7 @@ architecture structural of tx_dma is
    -- ETH clock domain
    type t_eth_state is (IDLE_ST, LEN_LO_ST, LEN_HI_ST, DATA_ST, WAIT_ST);
    signal eth_state_r     : t_eth_state := IDLE_ST;
-   signal eth_fifo_s      : std_logic_vector( 7 downto 0);
+   signal eth_fifo_r      : std_logic_vector( 7 downto 0);
    signal eth_addr_r      : std_logic_vector(15 downto 0);
    signal eth_len_r       : std_logic_vector(15 downto 0);
    signal eth_own_s       : std_logic;
@@ -85,11 +87,13 @@ begin
             end case;
          end if;
 
+         cpu_rd_data_r <= mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0)));
+
          if cpu_rd_en_i = '1' then
             case cpu_addr_i is
                when "000" => cpu_rd_data_o <= cpu_addr_r( 7 downto 0);
                when "001" => cpu_rd_data_o <= cpu_addr_r(15 downto 8);
-               when "010" => cpu_rd_data_o <= mem_r(to_integer(cpu_addr_r(G_ADDR_BITS-1 downto 0)));
+               when "010" => cpu_rd_data_o <= cpu_rd_data_r;
                              cpu_addr_r    <= cpu_addr_r + 1;
                when "011" => cpu_rd_data_o(0) <= cpu_own_r;
                when others => null;
@@ -139,33 +143,33 @@ begin
    -- ETH clock domain
    ----------------------------------------------------------------------------------------------------
 
-   eth_fifo_s <= mem_r(to_integer(eth_addr_r(G_ADDR_BITS-1 downto 0)));
 
    p_eth : process (eth_clk_i)
    begin
       if rising_edge(eth_clk_i) then
+         eth_fifo_r  <= mem_r(to_integer(eth_addr_r(G_ADDR_BITS-1 downto 0)));
          eth_empty_o <= '1';
 
          case eth_state_r is
             when IDLE_ST =>
                if eth_own_s = '1' then
-                  eth_addr_r  <= (others => '0');
+                  eth_addr_r  <= eth_addr_r + 1;
                   eth_state_r <= LEN_LO_ST;
                end if;
 
             when LEN_LO_ST =>
-               eth_len_r(7 downto 0) <= eth_fifo_s;
+               eth_len_r(7 downto 0) <= eth_fifo_r;
                eth_addr_r  <= eth_addr_r + 1;
                eth_state_r <= LEN_HI_ST;
 
             when LEN_HI_ST =>
-               eth_len_r(15 downto 8) <= eth_fifo_s;
-               eth_addr_r  <= eth_addr_r + 1;
+               eth_len_r(15 downto 8) <= eth_fifo_r;
+               --eth_addr_r  <= eth_addr_r + 1;
                eth_state_r <= DATA_ST;
 
             when DATA_ST =>
                eth_sb_o    <= '0';
-               eth_data_o  <= eth_fifo_s;
+               eth_data_o  <= eth_fifo_r;
                eth_empty_o <= '0';
 
                if eth_len_r = 1 then
@@ -184,6 +188,7 @@ begin
             when WAIT_ST =>
                if eth_own_s = '0' then
                   eth_own_clear_r <= '0';
+                  eth_addr_r      <= (others => '0');
                   eth_state_r     <= IDLE_ST;
                end if;
          end case;

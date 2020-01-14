@@ -11,16 +11,19 @@ end entity ym2151_tb;
 architecture structural of ym2151_tb is
 
    -- Connected to DUT
-   signal clk_s              : std_logic;  -- 8.33 MHz
-   signal rst_s              : std_logic;
-   signal addr_s             : std_logic_vector(0 downto 0);
-   signal wr_en_s            : std_logic := '0';
-   signal wr_data_s          : std_logic_vector(7 downto 0);
+   signal clk_s               : std_logic;  -- 8.33 MHz
+   signal rst_s               : std_logic;
+   signal addr_s              : std_logic_vector(0 downto 0);
+   signal wr_en_s             : std_logic := '0';
+   signal wr_data_s           : std_logic_vector(7 downto 0);
 
-   signal ym2151_val_s       : std_logic_vector(9 downto 0);
+   signal ym2151_val_s        : std_logic_vector(9 downto 0);
 
    -- Control the execution of the test.
-   signal sim_test_running_s : std_logic := '1';
+   signal sim_test_running_s  : std_logic := '1';
+
+   constant C_INPUT_FILENAME  : string := "music.bin";
+   constant C_OUTPUT_FILENAME : string := "music.wav";
 
 begin
 
@@ -67,6 +70,24 @@ begin
 
    p_test : process
 
+      type CHAR_FILE_TYPE is file of character;
+      file input_file : CHAR_FILE_TYPE;
+
+      -- Helper function
+      -- Read a single byte from the file
+      impure function read_8_bits
+      (
+         file data_file : CHAR_FILE_TYPE
+      ) return std_logic_vector is
+         variable char_read_v : character; -- char read from file
+         variable byte_v      : std_logic_vector(7 downto 0);
+      begin
+         read(data_file, char_read_v);
+         byte_v := to_std_logic_vector(character'pos(char_read_v), 8);
+         return byte_v;
+      end function read_8_bits;
+
+
       procedure write(addr : std_logic_vector; value : std_logic_vector) is
       begin
          addr_s    <= "0";
@@ -84,10 +105,24 @@ begin
          wait until clk_s = '1';
       end procedure write;
 
+      variable addr_v : std_logic_vector(7 downto 0);
+      variable data_v : std_logic_vector(7 downto 0);
+
    begin
 
       -- Wait for reset
       wait until clk_s  = '1';
+
+      file_open(input_file, C_INPUT_FILENAME, READ_MODE);
+
+      cpu_loop : while not endfile(input_file) loop
+
+         addr_v := read_8_bits(input_file); 
+         data_v := read_8_bits(input_file); 
+
+         write(addr_v, data_v);
+      end loop cpu_loop;
+
 
       -----------------------------------------------
       -- END OF TEST

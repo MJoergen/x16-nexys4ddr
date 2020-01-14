@@ -121,6 +121,10 @@ begin
          if cnt_r = C_CNT_MAX then
             cnt_r <= (others => '0');
          end if;
+
+         if rst_i = '1' then
+            cnt_r <= (others => '0');
+         end if;
       end if;
    end process p_cnt;
 
@@ -134,6 +138,9 @@ begin
       if rising_edge(clk_i) then
          if cnt_r = 0 then
             val_r <= val_r + 4;
+         end if;
+         if rst_i = '1' then
+            val_r <= (others => '0');
          end if;
       end if;
    end process p_val;

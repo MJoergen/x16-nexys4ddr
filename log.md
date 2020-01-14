@@ -431,3 +431,8 @@ the following:
 
 So the plan at the moment is to implement a MIDI player on the X16 :-)
 
+A guide to the MIDI file format is
+[http://www.music.mcgill.ca/~ich/classes/mumt306/midiformat.pdf](here).  And
+[https://www.cs.cmu.edu/~music/cmsip/readings/MIDI%20tutorial%20for%20programmers.html](this)
+webpage has some more information.
+

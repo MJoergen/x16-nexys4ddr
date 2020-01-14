@@ -3,7 +3,7 @@
 # in your OS repository, otherwise it may be downloaded from here:
 # https://github.com/ghdl/ghdl
 
-XILINX_DIR = /opt/Xilinx/Vivado/2018.2
+XILINX_DIR = /opt/Xilinx/Vivado/2019.2
 
 SOURCES  = main.vhd rom.vhd ram.vhd via.vhd ../cdc.vhd
 SOURCES += ps2/ps2_buffer.vhd ps2/ps2_reader.vhd

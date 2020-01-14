@@ -1,4 +1,4 @@
-XILINX_DIR = /opt/Xilinx/Vivado/2018.2
+XILINX_DIR = /opt/Xilinx/Vivado/2019.2
 
 SRC  = ethernet.vhd rx_dma.vhd fifo.vhd rx_header.vhd tx_dma.vhd \
        lan8720a/lan8720a.vhd lan8720a/rmii_rx.vhd lan8720a/rmii_tx.vhd \

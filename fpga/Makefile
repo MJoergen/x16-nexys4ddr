@@ -1,5 +1,5 @@
 # Specify install location of the Xilinx Vivado tool
-XILINX_DIR = /opt/Xilinx/Vivado/2018.2
+XILINX_DIR = /opt/Xilinx/Vivado/2019.2
 
 # This defines all the source files (VHDL) used in the project
 SOURCES  = x16.vhd

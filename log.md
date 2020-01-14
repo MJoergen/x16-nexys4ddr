@@ -416,3 +416,18 @@ Some more TODO's:
 * Rewrite ethernet/tx\_dma to make it use BRAM. Currently it uses LUTRAM, due
   to some inefficient coding.
 
+## 2020-01-14
+After a long X-max break and some sickness, I'm back again.
+
+* I've tidied up the LUTRAM's in the Ethernet module, so now they use BRAM's instead.
+
+I've been thinking about sprites, and should really get working on that. But
+I've also been looking into playing music on the X16. So far I've come up with
+the following:
+
+* The Ubuntu package tuxguitar can read and write Guitar Pro files (.gp3 to
+* .gp5) and convert then to midi.
+* The github package vishnubob/python-midi can read and write MIDI files.
+
+So the plan at the moment is to implement a MIDI player on the X16 :-)
+

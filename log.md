@@ -417,7 +417,7 @@ Some more TODO's:
   to some inefficient coding.
 
 ## 2020-01-14
-After a long X-max break and some sickness, I'm back again.
+After a long X-mas break and some sickness, I'm back again.
 
 * I've tidied up the LUTRAM's in the Ethernet module, so now they use BRAM's instead.
 
@@ -426,7 +426,7 @@ I've also been looking into playing music on the X16. So far I've come up with
 the following:
 
 * The Ubuntu package tuxguitar can read and write Guitar Pro files (.gp3 to
-* .gp5) and convert then to midi.
+  .gp5) and convert them to midi.
 * The github package vishnubob/python-midi can read and write MIDI files.
 
 So the plan at the moment is to implement a MIDI player on the X16 :-)
@@ -436,18 +436,21 @@ A guide to the MIDI file format is
 [https://www.cs.cmu.edu/~music/cmsip/readings/MIDI%20tutorial%20for%20programmers.html](this)
 webpage has some more information.
 
-The audio output is PWM with an additional inverted shutdown pin. So pin
-aud\_sd\_o should always be driven high, whereas the digital output aud\_pwn\_o
-should be a pulse width modulated signal. The Nexys4DDR board has a low-pass
-filter with a cut-off frequency around 10 kHz. The signal aud\_pwm\_o is an
-open-drain signal, and must therefore either be driven low, or left in
-high-impedance. Don't drive the signal high.  This is to reduce noise.
+The audio output of the Nexys4DDR is Pulse Width Modulated with an additional
+inverted shutdown pin. So pin aud\_sd\_o should always be driven high, whereas
+the digital output aud\_pwn\_o should be a PWM signal. The Nexys4DDR board has
+a low-pass filter with a cut-off frequency around 10 kHz. The signal
+aud\_pwm\_o is an open-drain signal, and must therefore either be driven low,
+or left in high-impedance; don't drive the signal high.  This is to reduce
+noise.
 
-The PWN frequency should be at least 100 kHz. With a 10-bit amplitude
-resolution, this works fine with an input frequency of 100 MHz.
+The PWM frequency should be at least 100 kHz. With an input frequency of 100
+MHz this gives a ratio of 1:1000. This corresponds to approx. 10 bits of
+resolution in the amplitude, which seems perfect.
 
-So far I've made a small dummy YM2151 module to generate a triangular waveform
-at around 400 Hz.
+The plan is to implement (a subset of) the YM2151 sound chip found on the X16
+boaard.  So far I've made a small dummy YM2151 module that just generates a
+triangular waveform at around 400 Hz.
 
 ## 2020-01-15
 A nice blog post on (another) Yamaha chip:

@@ -457,4 +457,17 @@ A nice blog post on (another) Yamaha chip:
 [https://www.aidanlawrence.com/mega-midi-a-playable-version-of-my-hardware-sega-genesis-synth/](https://www.aidanlawrence.com/mega-midi-a-playable-version-of-my-hardware-sega-genesis-synth/)
 There is github repo as well: [https://github.com/AidanHockey5/MegaMIDI](https://github.com/AidanHockey5/MegaMIDI)
 
+It seems almost overwhelming to embark on implementing the YM2151, given that
+the documentation for it is, shall we say, convoluted. I plan on sticking
+with my philosophy:
+
+* Keeping things simple
+* Implementing small steps at a time
+* Repeated testing.
+
+So how do we test the implementation? My first through was to consider the
+YM2151 as a simple data converter: Some data (in the form of register writes)
+goes into the module, and some other data (the waveform) goes out again.  So if
+we know what the expected output is, given some input, then that can be used as
+the test.
 

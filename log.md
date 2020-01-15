@@ -449,4 +449,9 @@ resolution, this works fine with an input frequency of 100 MHz.
 So far I've made a small dummy YM2151 module to generate a triangular waveform
 at around 400 Hz.
 
+## 2020-01-15
+A nice blog post on (another) Yamaha chip:
+[https://www.aidanlawrence.com/mega-midi-a-playable-version-of-my-hardware-sega-genesis-synth/](https://www.aidanlawrence.com/mega-midi-a-playable-version-of-my-hardware-sega-genesis-synth/)
+There is github repo as well: [https://github.com/AidanHockey5/MegaMIDI](https://github.com/AidanHockey5/MegaMIDI)
+
 

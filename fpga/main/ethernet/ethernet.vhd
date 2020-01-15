@@ -172,7 +172,7 @@ begin
       )
       port map (
          wr_clk_i   => eth_clk_i,
-         wr_rst_i   => eth_rst_r,
+         wr_rst_i   => '0',
          wr_en_i    => eth_rxheader_valid_s,
          wr_data_i  => eth_rxheader_data_s,
          wr_sb_i    => eth_rxheader_eof_s,
@@ -180,7 +180,7 @@ begin
          wr_error_o => open,  -- Ignored
          --
          rd_clk_i   => cpu_clk_i,
-         rd_rst_i   => '0',
+         rd_rst_i   => cpu_rst_i,
          rd_en_i    => cpu_rxfifo_rden_s,
          rd_data_o  => cpu_rxfifo_data_s,
          rd_sb_o    => cpu_rxfifo_eof_s,

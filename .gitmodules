@@ -1,0 +1,3 @@
+[submodule "sub/65c02"]
+	path = sub/65c02
+	url = git@github.com:MJoergen/65c02.git

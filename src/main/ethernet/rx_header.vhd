@@ -42,7 +42,7 @@ end rx_header;
 architecture structural of rx_header is
 
    -- Input buffer overflow
-   signal rx_error : std_logic := '0';
+   signal rx_error     : std_logic := '0';
 
    -- Statistics
    signal cnt_good     : std_logic_vector(15 downto 0);
@@ -51,36 +51,36 @@ architecture structural of rx_header is
    signal cnt_overflow : std_logic_vector( 7 downto 0);
 
    -- Output interface
-   signal out_valid : std_logic;
-   signal out_data  : std_logic_vector(7 downto 0);
-   signal out_eof   : std_logic;
+   signal out_valid    : std_logic;
+   signal out_data     : std_logic_vector(7 downto 0);
+   signal out_eof      : std_logic;
 
 
    -- The size of the input buffer is 2K bytes. This fits nicely in a single BRAM.
    constant C_ADDR_SIZE : integer := 11;
    type t_buf is array (0 to 2**C_ADDR_SIZE-1) of std_logic_vector(7 downto 0);
    signal rx_buf : t_buf := (others => (others => '0'));
-   signal rx_buf_data : std_logic_vector(7 downto 0);
+   signal rx_buf_data  : std_logic_vector(7 downto 0);
 
    -- Current write pointer.
-   signal wrptr     : std_logic_vector(C_ADDR_SIZE-1 downto 0);
+   signal wrptr        : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    -- Start of current frame.
-   signal start_ptr : std_logic_vector(C_ADDR_SIZE-1 downto 0);
+   signal start_ptr    : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    -- End of current frame.
-   signal end_ptr   : std_logic_vector(C_ADDR_SIZE-1 downto 0);
+   signal end_ptr      : std_logic_vector(C_ADDR_SIZE-1 downto 0);
    -- Current read pointer.
-   signal rdptr     : std_logic_vector(C_ADDR_SIZE-1 downto 0);
+   signal rdptr        : std_logic_vector(C_ADDR_SIZE-1 downto 0);
 
    -- Control fifo, contains address of each EOF.
-   signal ctrl_wren   : std_logic;
-   signal ctrl_wrdata : std_logic_vector(15 downto 0);
-   signal ctrl_rden   : std_logic;
-   signal ctrl_rddata : std_logic_vector(15 downto 0);
-   signal ctrl_empty  : std_logic;
+   signal ctrl_wren    : std_logic;
+   signal ctrl_wrdata  : std_logic_vector(15 downto 0);
+   signal ctrl_rden    : std_logic;
+   signal ctrl_rddata  : std_logic_vector(15 downto 0);
+   signal ctrl_empty   : std_logic;
 
    -- State machine for header insertion.
    type t_fsm_state is (IDLE_ST, LEN_MSB_ST, FWD_ST, END_ST);
-   signal fsm_state : t_fsm_state := IDLE_ST;
+   signal fsm_state    : t_fsm_state := IDLE_ST;
 
 begin
 
@@ -170,26 +170,26 @@ begin
    -- so not very many entries in total. Therefore, we can safely ignore any
    -- write errors.
    inst_ctrl_fifo : entity work.fifo
-   generic map (
-      G_WIDTH => 16
+      generic map (
+         G_WIDTH => 16
       )
-   port map (
-      wr_clk_i    => clk_i,
-      wr_rst_i    => rst_i,
-      wr_en_i     => ctrl_wren,
-      wr_data_i   => ctrl_wrdata,
-      wr_sb_i     => "00",
-      wr_afull_o  => open,
-      wr_error_o  => open,
-      --
-      rd_clk_i    => clk_i,
-      rd_rst_i    => rst_i,
-      rd_en_i     => ctrl_rden,
-      rd_data_o   => ctrl_rddata,
-      rd_sb_o     => open,
-      rd_empty_o  => ctrl_empty,
-      rd_error_o  => open
-      );
+      port map (
+         wr_clk_i    => clk_i,
+         wr_rst_i    => rst_i,
+         wr_en_i     => ctrl_wren,
+         wr_data_i   => ctrl_wrdata,
+         wr_sb_i     => "00",
+         wr_afull_o  => open,
+         wr_error_o  => open,
+         --
+         rd_clk_i    => clk_i,
+         rd_rst_i    => rst_i,
+         rd_en_i     => ctrl_rden,
+         rd_data_o   => ctrl_rddata,
+         rd_sb_o     => open,
+         rd_empty_o  => ctrl_empty,
+         rd_error_o  => open
+      ); -- inst_ctrl_fifo
 
 
    -- This process generates the output stream.

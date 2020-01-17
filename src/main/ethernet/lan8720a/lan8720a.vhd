@@ -28,8 +28,8 @@ use ieee.numeric_std_unsigned.all;
 
 entity lan8720a is
    port (
-      clk_i        : in    std_logic;
-      rst_i        : in    std_logic;
+      clk_i        : in    std_logic;  -- 50 MHz
+      rst_i        : in    std_logic;  -- Must be asserted for minimum 25 ms.
 
       -- Rx interface
       rx_valid_o   : out   std_logic;

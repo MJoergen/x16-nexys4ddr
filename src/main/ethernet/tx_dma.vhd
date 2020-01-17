@@ -143,7 +143,6 @@ begin
    -- ETH clock domain
    ----------------------------------------------------------------------------------------------------
 
-
    p_eth : process (eth_clk_i)
    begin
       if rising_edge(eth_clk_i) then
@@ -201,7 +200,6 @@ begin
             eth_own_clear_r <= '0';
             eth_state_r     <= IDLE_ST;
          end if;
-
       end if;
    end process p_eth;
 

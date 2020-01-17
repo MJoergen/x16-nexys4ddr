@@ -7,7 +7,7 @@ use ieee.numeric_std_unsigned.all;
 entity ethernet is
    port (
       -- Connected to CPU
-      cpu_clk_i     : in    std_logic;    -- 8.33 MHz
+      cpu_clk_i     : in    std_logic;
       cpu_rst_i     : in    std_logic;
       cpu_addr_i    : in    std_logic_vector(3 downto 0);
       cpu_wr_en_i   : in    std_logic;
@@ -56,23 +56,23 @@ architecture structural of ethernet is
    signal eth_rxheader_afull_s : std_logic;
 
    -- Connection from rxfifo to rx_dma
-   signal cpu_rxfifo_empty_s       : std_logic;
-   signal cpu_rxfifo_data_s        : std_logic_vector(7 downto 0);
-   signal cpu_rxfifo_eof_s         : std_logic_vector(0 downto 0);
-   signal cpu_rxfifo_rden_s        : std_logic;
+   signal cpu_rxfifo_empty_s   : std_logic;
+   signal cpu_rxfifo_data_s    : std_logic_vector(7 downto 0);
+   signal cpu_rxfifo_eof_s     : std_logic_vector(0 downto 0);
+   signal cpu_rxfifo_rden_s    : std_logic;
 
    -- Connection from tx_dma to txfifo
-   signal cpu_rx_rd_data_s         : std_logic_vector(7 downto 0);
-   signal cpu_tx_rd_data_s         : std_logic_vector(7 downto 0);
+   signal cpu_rx_rd_data_s     : std_logic_vector(7 downto 0);
+   signal cpu_tx_rd_data_s     : std_logic_vector(7 downto 0);
 
    -- Address decoding
-   signal cpu_rx_wr_en_s           : std_logic;
-   signal cpu_rx_rd_en_s           : std_logic;
-   signal cpu_rx_cs_s              : std_logic;
+   signal cpu_rx_wr_en_s       : std_logic;
+   signal cpu_rx_rd_en_s       : std_logic;
+   signal cpu_rx_cs_s          : std_logic;
 
-   signal cpu_tx_wr_en_s           : std_logic;
-   signal cpu_tx_rd_en_s           : std_logic;
-   signal cpu_tx_cs_s              : std_logic;
+   signal cpu_tx_wr_en_s       : std_logic;
+   signal cpu_tx_rd_en_s       : std_logic;
+   signal cpu_tx_cs_s          : std_logic;
 
    -- Debug
    constant DEBUG_MODE                    : boolean := false; -- TRUE OR FALSE

@@ -1,4 +1,4 @@
-XILINX_DIR = /opt/Xilinx/Vivado/2017.3
+XILINX_DIR = /opt/Xilinx/Vivado/2019.2
 
 SRC  = rmii_rx.vhd rmii_tx.vhd lan8720a.vhd
 TB   = lan8720a_tb.vhd sim_tx.vhd sim_rx.vhd

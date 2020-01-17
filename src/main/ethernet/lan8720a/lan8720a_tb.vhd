@@ -28,7 +28,6 @@ architecture simulation of lan8720a_tb is
    signal tx_rden   : std_logic;
    signal tx_data   : std_logic_vector(7 downto 0);
    signal tx_eof    : std_logic;
-   signal tx_err    : std_logic;
    signal eth_rxd   : std_logic_vector(1 downto 0);
    signal eth_crsdv : std_logic;
    signal eth_txd   : std_logic_vector(1 downto 0);
@@ -103,7 +102,6 @@ begin
       tx_rden_o    => tx_rden,
       tx_data_i    => tx_data,
       tx_eof_i     => tx_eof,
-      tx_err_o     => tx_err,
       eth_txd_o    => eth_txd,
       eth_txen_o   => eth_txen,
       eth_rxd_i    => eth_rxd,
@@ -157,7 +155,7 @@ begin
          sim_tx_data(8*i+7 downto 8*i) <= to_std_logic_vector(i+12, 8);
       end loop;
       for i in 16 to 127 loop
-         sim_tx_data(8*i+7 downto 8*i) <= (others => 'X');
+         sim_tx_data(8*i+7 downto 8*i) <= (others => '0');
       end loop;
       sim_tx_len   <= X"0010";
       sim_tx_start <= '1';
@@ -174,7 +172,7 @@ begin
          sim_tx_data(8*i+7 downto 8*i) <= to_std_logic_vector(i+22, 8);
       end loop;
       for i in 32 to 127 loop
-         sim_tx_data(8*i+7 downto 8*i) <= (others => 'X');
+         sim_tx_data(8*i+7 downto 8*i) <= (others => '0');
       end loop;
       sim_tx_len   <= X"0020";
       sim_tx_start <= '1';

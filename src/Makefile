@@ -2,6 +2,7 @@
 XILINX_DIR = /opt/Xilinx/Vivado/2019.2
 
 # This defines all the source files (VHDL) used in the project
+SUB      = ../sub
 SOURCES  = x16.vhd
 SOURCES += clk.vhd
 SOURCES += cdc.vhd
@@ -27,21 +28,21 @@ SOURCES += main/via.vhd
 SOURCES += main/ps2/ps2_buffer.vhd
 SOURCES += main/ps2/ps2_reader.vhd
 SOURCES += main/ps2/ps2_writer.vhd
-SOURCES += ../sub/65c02/src/cpu_65c02.vhd
-SOURCES += ../sub/65c02/src/control/control.vhd
-SOURCES += ../sub/65c02/src/control/microcode.vhd
-SOURCES += ../sub/65c02/src/datapath/datapath.vhd
-SOURCES += ../sub/65c02/src/datapath/alu.vhd
-SOURCES += ../sub/65c02/src/datapath/ar.vhd
-SOURCES += ../sub/65c02/src/datapath/hi.vhd
-SOURCES += ../sub/65c02/src/datapath/lo.vhd
-SOURCES += ../sub/65c02/src/datapath/pc.vhd
-SOURCES += ../sub/65c02/src/datapath/sp.vhd
-SOURCES += ../sub/65c02/src/datapath/sr.vhd
-SOURCES += ../sub/65c02/src/datapath/xr.vhd
-SOURCES += ../sub/65c02/src/datapath/yr.vhd
-SOURCES += ../sub/65c02/src/datapath/zp.vhd
-SOURCES += ../sub/65c02/src/datapath/mr.vhd
+SOURCES += $(SUB)/65c02/src/cpu_65c02.vhd
+SOURCES += $(SUB)/65c02/src/control/control.vhd
+SOURCES += $(SUB)/65c02/src/control/microcode.vhd
+SOURCES += $(SUB)/65c02/src/datapath/datapath.vhd
+SOURCES += $(SUB)/65c02/src/datapath/alu.vhd
+SOURCES += $(SUB)/65c02/src/datapath/ar.vhd
+SOURCES += $(SUB)/65c02/src/datapath/hi.vhd
+SOURCES += $(SUB)/65c02/src/datapath/lo.vhd
+SOURCES += $(SUB)/65c02/src/datapath/pc.vhd
+SOURCES += $(SUB)/65c02/src/datapath/sp.vhd
+SOURCES += $(SUB)/65c02/src/datapath/sr.vhd
+SOURCES += $(SUB)/65c02/src/datapath/xr.vhd
+SOURCES += $(SUB)/65c02/src/datapath/yr.vhd
+SOURCES += $(SUB)/65c02/src/datapath/zp.vhd
+SOURCES += $(SUB)/65c02/src/datapath/mr.vhd
 SOURCES += main/ethernet/lan8720a/lan8720a.vhd
 SOURCES += main/ethernet/lan8720a/rmii_rx.vhd
 SOURCES += main/ethernet/lan8720a/rmii_tx.vhd
@@ -59,9 +60,12 @@ fpga: x16-rom.bit
 x16-rom.bit: x16.bit x16.mmi rom.mem
 	bash -c "source $(XILINX_DIR)/settings64.sh ; updatemem -debug -meminfo x16.mmi -data rom.mem -proc dummy -bit x16.bit -out x16-rom.bit -force > updatemem.txt"
 
-rom.mem: main/rom.txt
+rom.mem:
+	make -C $(SUB)/x16-rom
+	main/bin2hex.py $(SUB)/x16-rom/build/x16/rom.bin rom.txt
 	echo "@0000" > $@
-	cat $< >> $@
+	cat rom.txt >> $@
+
 
 # Generate the bit-file used to configure the FPGA
 x16.bit: x16.tcl $(SOURCES) x16.xdc
@@ -85,12 +89,9 @@ x16.tcl: rom.tcl Makefile
 	echo "write_bitstream -force x16.bit" >> $@
 	echo "exit" >> $@
 
-main/rom.txt:
-	make -C main rom.txt
-
 # Remove all generated files
 clean:
-	make -C main clean
+	make -C $(SUB)/x16-rom clean
 	rm -rf usage_statistics_webtalk.*
 	rm -rf vivado*
 	rm -rf updatemem*
@@ -103,5 +104,6 @@ clean:
 	rm -rf .Xil
 	rm -rf .cache
 	rm -rf rom.mem
+	rm -rf rom.txt
 	rm -rf x16.mmi
 	rm -rf x16.ltx

@@ -33,6 +33,17 @@ architecture structural of rom is
       variable RamFileLine : line;
       variable RAM : mem_t := (others => (others => '0'));
    begin
+      RAM(0)  := X"FF"; -- These initial values are to prevent Vivado from collapsing the ROM.
+      RAM(1)  := X"5A";
+      RAM(2)  := X"A5";
+      RAM(3)  := X"01";
+      RAM(4)  := X"02";
+      RAM(5)  := X"04";
+      RAM(6)  := X"08";
+      RAM(7)  := X"10";
+      RAM(8)  := X"20";
+      RAM(9)  := X"40";
+      RAM(10) := X"80";
       if C_SIMULATION then
          file_open(RamFile, RamFileName, read_mode);
          for i in mem_t'range loop
@@ -46,27 +57,8 @@ architecture structural of rom is
       return RAM;
    end function;
 
-   function mem_init return mem_t is
-      variable res : mem_t := (others => X"00");
-   begin
-      res(0)  := X"FF";
-      res(1)  := X"5A";
-      res(2)  := X"A5";
-      res(3)  := X"01";
-      res(4)  := X"02";
-      res(5)  := X"04";
-      res(6)  := X"08";
-      res(7)  := X"10";
-      res(8)  := X"20";
-      res(9)  := X"40";
-      res(10) := X"80";
-      return res;
-   end function mem_init;
-
    -- Initialize memory contents
---   signal mem_r : mem_t := InitRamFromFile(G_INIT_FILE);
-   signal mem_r : mem_t := mem_init;
---   signal mem_r : mem_t := (others => (others => '0'));
+   signal mem_r : mem_t := InitRamFromFile(G_INIT_FILE);
 
 begin
 

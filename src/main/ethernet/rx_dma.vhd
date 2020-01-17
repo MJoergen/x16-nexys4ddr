@@ -39,6 +39,7 @@ architecture structural of rx_dma is
    signal cpu_own_clear_r : std_logic;
    signal cpu_rd_data_r   : std_logic_vector(7 downto 0);
    signal fifo_addr_r     : std_logic_vector(15 downto 0);
+   signal fifo_rd_en_r    : std_logic := '0';
 
    type mem_t is array (0 to 2**G_ADDR_BITS-1) of std_logic_vector(7 downto 0);
 
@@ -105,7 +106,7 @@ begin
       if rising_edge(cpu_clk_i) then
 
          -- Default values
-         fifo_rd_en_o <= '0';
+         fifo_rd_en_r <= '0';
          cpu_own_clear_r  <= '0';
 
          case state is
@@ -116,8 +117,8 @@ begin
                end if;
 
             when DATA_ST =>
-               if fifo_empty_i = '0' and fifo_rd_en_o = '0' then
-                  fifo_rd_en_o <= '1';
+               if fifo_empty_i = '0' and fifo_rd_en_r = '0' then
+                  fifo_rd_en_r <= '1';
                   mem_r(to_integer(fifo_addr_r)) <= fifo_data_i;
                   fifo_addr_r <= fifo_addr_r + 1;
 
@@ -136,13 +137,15 @@ begin
          end case;
 
          if cpu_rst_i = '1' then
-            fifo_rd_en_o <= '0';
+            fifo_rd_en_r <= '0';
             cpu_own_clear_r  <= '0';
             state        <= IDLE_ST;
          end if;
       end if;
    end process p_fsm;
 
+
+   fifo_rd_en_o <= fifo_rd_en_r;
 
 end structural;
 

@@ -1,3 +1,6 @@
 [submodule "sub/65c02"]
 	path = sub/65c02
 	url = git@github.com:MJoergen/65c02.git
+[submodule "sub/x16-rom"]
+	path = sub/x16-rom
+	url = git@github.com:commanderx16/x16-rom.git

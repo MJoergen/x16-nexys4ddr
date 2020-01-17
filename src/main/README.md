@@ -16,26 +16,22 @@ This module can be tested separately in simulation. To do this, just type
 * 0xC000 - 0xFFFF : Banked ROM (8 banks of 16 kB)
 
 ## I/O memory map
-* 0x9F00 - 0x9F1F : Reserved
 * 0x9F20 - 0x9F3F : [VERA](../vera/README.md)
-* 0x9F40 - 0x9F5F : Reserved
 * 0x9F60 - 0x9F6F : VIA1 (Selects ROM and RAM bank)
 * 0x9F70 - 0x9F7F : VIA2 (Connected to PS/2 keyboard)
-* 0x9F80 - 0x9F9F : RTC (not present on Digilent)
-* 0x9FA0 - 0x9FBF : Reserved
-* 0x9FC0 - 0x9FCF : Ethrnet port
-* 0x9FD0 - 0x9FFF : Reserved
+* 0x9FC0 - 0x9FCF : Ethernet port
+* 0x9FE0 - 0x9FEF : YM2151
 
-## Banking
+## ROM banking
 The ROM is banked as follows
 * 0 : KERNAL
 * 1 : KEYBD
 * 2 : CBDOS
 * 3 : GEOS
 * 4 : BASIC
-* 5 : CHARSET
-* 6 : ETH
-* 7 : Unused
+* 5 : MONITOR
+* 6 : CHARSET
+* 7 : ETH
 
 To select the ROM bank, write to bits 2-0 of address 0x9F60.
 To select the RAM bank, write to address 0x9F61.

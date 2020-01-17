@@ -4,3 +4,4 @@
 [submodule "sub/x16-rom"]
 	path = sub/x16-rom
 	url = git@github.com:commanderx16/x16-rom.git
+	branch = ethernet

@@ -52,7 +52,7 @@ SOURCES += src/main/ethernet/rx_header.vhd
 SOURCES += src/main/ethernet/tx_dma.vhd
 SOURCES += src/main/ethernet/ethernet.vhd
 SOURCES += src/pwm.vhd
-SOURCES += src/main/ym2151/ym2151.vhd
+SOURCES += src/main/ym2151/src/ym2151.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file
 fpga: build/x16-rom.bit

@@ -101,4 +101,5 @@ clean:
 	rm -rf vivado*
 	rm -rf updatemem*
 	rm -rf .Xil
+	rm -rf usage_statistics_webtalk.*
 

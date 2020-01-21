@@ -120,7 +120,11 @@ begin
          addr_v := read_8_bits(input_file); 
          data_v := read_8_bits(input_file); 
 
-         write(addr_v, data_v);
+         if addr_v = X"02" then
+            wait for to_integer(data_v) * 10 us;
+         else
+            write(addr_v, data_v);
+         end if;
       end loop cpu_loop;
 
 

@@ -471,3 +471,15 @@ goes into the module, and some other data (the waveform) goes out again.  So if
 we know what the expected output is, given some input, then that can be used as
 the test.
 
+## 2020-01-16
+I spent quite a long time debugging a possible bug in Vivado 2019.2, where it
+would incorrectly optimize aways most of the BRAMs in the ROM. This used to
+work fine in Vivado 2018.2, but maybe this is expected behaviour. Anyway, I
+changed the ROM initialization to prevent the optimizer from collapsing the
+BRAMs.
+
+## 2020-01-17
+I've been experimenting with git submodules, and the 65C02 CPU has now been
+split off into a separate repository at
+[https://github.com/MJoergen/65c02](https://github.com/MJoergen/65c02).
+

@@ -326,10 +326,16 @@ begin
    end process p_val;
 
 
-   ----------------
-   -- Drive output
-   ----------------
-   val_o <= val_r;
+   --------------------------
+   -- Instantiate sine table
+   --------------------------
+
+   i_sine_rom : entity work.sine_rom
+      port map (
+         clk_i     => clk_i,
+         addr_i    => val_r,
+         rd_data_o => val_o
+      ); -- i_sine_rom
 
 end architecture structural;
 

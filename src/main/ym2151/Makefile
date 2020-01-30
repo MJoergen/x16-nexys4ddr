@@ -1,4 +1,6 @@
 SRC    = src/ym2151.vhd
+SRC   += src/sine_rom.vhd
+SRC   += src/phaseinc_rom.vhd
 TB     = ym2151_tb
 TB_SRC = test/$(TB).vhd
 WAVE   = build/$(TB).ghw

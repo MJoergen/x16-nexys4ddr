@@ -22,6 +22,7 @@ end cdc;
 
 architecture structural of cdc is
 
+   signal src_dat_r : std_logic_vector(G_SIZE-1 downto 0);
    signal dst_dat_r : std_logic_vector(G_SIZE-1 downto 0);
    signal dst_dat_d : std_logic_vector(G_SIZE-1 downto 0);
 
@@ -32,13 +33,20 @@ architecture structural of cdc is
 begin
 
    gen_cdc : if true generate
-      p_sync : process (dst_clk_i)
+      p_sync_src : process (src_clk_i)
+      begin
+         if rising_edge(src_clk_i) then
+            src_dat_r <= src_dat_i;
+         end if;
+      end process p_sync_src;
+
+      p_sync_dst : process (dst_clk_i)
       begin
          if rising_edge(dst_clk_i) then
-            dst_dat_r <= src_dat_i;
+            dst_dat_r <= src_dat_r;
             dst_dat_d <= dst_dat_r;
          end if;
-      end process p_sync;
+      end process p_sync_dst;
 
       dst_dat_o <= dst_dat_d;
    end generate gen_cdc;

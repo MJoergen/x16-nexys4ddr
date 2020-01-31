@@ -182,6 +182,17 @@ architecture structural of ym2151 is
    -- Current waveform value
    signal val_r : std_logic_vector(9 downto 0);
 
+   -- Current waveform value
+   signal sinval_s : std_logic_vector(9 downto 0);
+
+   -- Debug
+   constant DEBUG_MODE              : boolean := false; -- TRUE OR FALSE
+
+   attribute mark_debug             : boolean;
+   attribute mark_debug of cnt_r    : signal is DEBUG_MODE;
+   attribute mark_debug of val_r    : signal is DEBUG_MODE;
+   attribute mark_debug of sinval_s : signal is DEBUG_MODE;
+
 begin
 
    ----------------------
@@ -334,8 +345,10 @@ begin
       port map (
          clk_i     => clk_i,
          addr_i    => val_r,
-         rd_data_o => val_o
+         rd_data_o => sinval_s
       ); -- i_sine_rom
+
+   val_o <= sinval_s;
 
 end architecture structural;
 

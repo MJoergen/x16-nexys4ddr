@@ -77,17 +77,9 @@ architecture structural of x16 is
    signal spi_miso_s        : std_logic;
    signal spi_cs_s          : std_logic;
 
-   signal aud_val_s         : std_logic_vector(9 downto 0);
-   signal aud_pwm_s         : std_logic;
-
-   -- Debug
-   constant DEBUG_MODE                : boolean := false; -- TRUE OR FALSE
-
-   attribute mark_debug               : boolean;
-   attribute mark_debug of spi_sclk_s : signal is DEBUG_MODE;
-   attribute mark_debug of spi_mosi_s : signal is DEBUG_MODE;
-   attribute mark_debug of spi_miso_s : signal is DEBUG_MODE;
-   attribute mark_debug of spi_cs_s   : signal is DEBUG_MODE;
+   signal main_aud_val_s    : std_logic_vector(9 downto 0);
+   signal sys_aud_val_s     : std_logic_vector(9 downto 0);
+   signal sys_aud_pwm_s     : std_logic;
 
 begin
 
@@ -97,7 +89,7 @@ begin
    -- Generate AUD tristate buffers.
    ----------------------------------------------------------------
 
-   aud_pwm_o <= '0' when aud_pwm_s = '0' else 'Z';
+   aud_pwm_o <= '0' when sys_aud_pwm_s = '0' else 'Z';
 
 
    ----------------------------------------------------------------
@@ -196,14 +188,27 @@ begin
    -- Instantiate PWM module
    --------------------------------------------------------
 
-   aud_sd_o <= '1';
-   aud_pwm_o <= '0' when aud_pwm_s = '0' else 'Z';
+   i_cdc : entity work.cdc
+      generic map (
+         G_SIZE => 10
+      )
+      port map (
+         src_clk_i => main_clk_s,
+         src_dat_i => main_aud_val_s,
+         dst_clk_i => clk_i,
+         dst_dat_o => sys_aud_val_s
+      ); -- i_cdc
+
+
+   --------------------------------------------------------
+   -- Instantiate PWM module
+   --------------------------------------------------------
 
    i_pwm : entity work.pwm
       port map (
          clk_i    => clk_i,      -- 100 MHz
-         val_i    => aud_val_s,
-         pwm_o    => aud_pwm_s
+         val_i    => sys_aud_val_s,
+         pwm_o    => sys_aud_pwm_s
       ); -- i_pwm
 
 
@@ -234,7 +239,7 @@ begin
          ps2_clk_out_o  => ps2_clk_out_s,
          ps2_clken_o    => ps2_clken_s,
          --
-         aud_val_o      => aud_val_s,
+         aud_val_o      => main_aud_val_s,
          --
          eth_clk_i      => eth_clk_s,
          eth_txd_o      => eth_txd_o,

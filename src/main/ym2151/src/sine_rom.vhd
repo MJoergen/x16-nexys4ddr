@@ -25,7 +25,7 @@ architecture synthesis of sine_rom is
    begin
       for i in 0 to 1023 loop
          sin_v   := sin(real(i*2+1) * MATH_PI / 1024.0)+1.0;
-         ROM_v(i):= to_stdlogicvector(integer(sin_v*512.0), 10);
+         ROM_v(i):= to_stdlogicvector(integer(sin_v*511.5), 10);
       end loop;
       return ROM_v;
    end function;

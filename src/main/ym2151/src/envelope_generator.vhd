@@ -6,7 +6,7 @@ use work.ym2151_package.all;
 
 entity envelope_generator is
    generic (
-      G_CLK_HZ : integer
+      G_CLOCK_HZ : integer
    );
    port (
       clk_i        : in  std_logic;
@@ -27,12 +27,12 @@ architecture synthesis of envelope_generator is
 
    signal state_r : t_state_vector(0 to 31);
 
-   signal device_s : t_device;
+   signal device_s    : t_device;
    signal envelopes_r : t_envelope_vector(0 to 31);
 
 begin
 
-   -- Demultiples input
+   -- Demultiplex input
    device_s <= devices_i(device_cnt_i);
 
    p_fsm : process (clk_i)

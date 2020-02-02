@@ -22,7 +22,6 @@ package ym2151_package is
       pg : t_phase_generator;
       eg : t_envelope_generator;
    end record t_device;
-
    constant C_DEVICE_DEFAULT : t_device := 
             (pg => (key_code           => (others => '0')),
              eg => (total_level        => (others => '0'),
@@ -32,14 +31,13 @@ package ym2151_package is
                     second_decay_rate  => (others => '0'),
                     release_rate       => (others => '0'),
                     key_onoff          => '0'));
-
    type t_device_vector is array (natural range<>) of t_device;
 
    subtype t_envelope is std_logic_vector(9 downto 0);
-
    type t_envelope_vector is array (natural range<>) of t_envelope;
+
+   subtype t_phase is std_logic_vector(19 downto 0);
+   type t_phase_vector is array (natural range<>) of t_phase;
 
 end package ym2151_package;
 
-package body ym2151_package is
-end package body ym2151_package;

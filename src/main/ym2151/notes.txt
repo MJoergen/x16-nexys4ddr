@@ -1,0 +1,3 @@
+The output resolution is 10 bits (from zero to maximum). This corresponds to one
+sign bit, and 9 bits for the magnitude.  In other words, the output is in the
+range -512 to 511.

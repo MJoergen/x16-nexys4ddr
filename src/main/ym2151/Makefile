@@ -1,6 +1,10 @@
-SRC    = src/ym2151.vhd
+SRC    = src/ym2151_package.vhd
+SRC   += src/envelope_generator.vhd
 SRC   += src/sine_rom.vhd
-SRC   += src/phaseinc_rom.vhd
+SRC   += src/exp_rom.vhd
+SRC   += src/phase_increment_rom.vhd
+SRC   += src/phase_generator.vhd
+SRC   += src/ym2151.vhd
 TB     = ym2151_tb
 TB_SRC = test/$(TB).vhd
 WAVE   = build/$(TB).ghw

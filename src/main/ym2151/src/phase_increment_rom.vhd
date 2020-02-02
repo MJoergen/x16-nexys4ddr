@@ -9,7 +9,7 @@ use ieee.math_real.all;
 -- The input consists of 12*64 = 768 possible keys, represented as a 10-bit binary number.
 -- The output is the phase increment
 
-entity phaseinc_rom is
+entity phase_increment_rom is
    generic (
       G_CLOCK_HZ : integer -- Frequency of input clock
    );
@@ -18,9 +18,9 @@ entity phaseinc_rom is
       addr_i    : in  std_logic_vector( 9 downto 0);
       rd_data_o : out std_logic_vector(11 downto 0)
    );
-end phaseinc_rom;
+end phase_increment_rom;
 
-architecture synthesis of phaseinc_rom is
+architecture synthesis of phase_increment_rom is
 
    -- This defines a type containing an array of bytes
    type mem_t is array (0 to 1023) of std_logic_vector(11 downto 0);
@@ -34,7 +34,8 @@ architecture synthesis of phaseinc_rom is
       -- Index 0 corresponds to C#, which is 4 semitones above A.
       for i in 0 to 767 loop
          freq_v     := 440.0 * (2.0 ** (real(i+4*64)/768.0));
-         phaseinc_v := integer((2.0**24)*freq_v)/G_CLOCK_HZ;
+         phaseinc_v := integer((2.0**24)*freq_v/real(G_CLOCK_HZ));
+         report to_string(phaseinc_v);
          ROM_v(i)   := to_stdlogicvector(phaseinc_v, 12);
       end loop;
       return ROM_v;

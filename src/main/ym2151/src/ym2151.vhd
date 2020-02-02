@@ -62,7 +62,7 @@ use work.ym2151_package.all;
 
 entity ym2151 is
    generic (
-      G_CLK_HZ : integer := 8333333    -- Input clock frequency
+      G_CLOCK_HZ : integer := 8333333    -- Input clock frequency
    );
    port (
       clk_i     : in  std_logic;
@@ -95,6 +95,11 @@ architecture synthesis of ym2151 is
 
    signal devices_r    : t_device_vector(0 to 31);
    signal envelopes_s  : t_envelope_vector(0 to 31);
+   signal phases_s     : t_phase_vector(0 to 31);
+
+
+   signal exp_rom_addr_s : std_logic_vector(9 downto 0);
+   signal exp_rom_data_s : std_logic_vector(9 downto 0);
 
 
    ------------
@@ -218,12 +223,29 @@ begin
 
 
    -------------------------------------
+   -- Instantiate Phase Generators
+   -------------------------------------
+
+   i_phase_generator : entity work.phase_generator
+      generic map (
+         G_CLOCK_HZ => G_CLOCK_HZ
+      )
+      port map (
+         clk_i        => clk_i,
+         rst_i        => rst_i,
+         device_cnt_i => device_cnt_r,
+         devices_i    => devices_r,
+         phases_o     => phases_s
+      ); -- i_phase_generator
+
+
+   -------------------------------------
    -- Instantiate Envelope Generator
    -------------------------------------
 
    i_envelope_generator : entity work.envelope_generator
       generic map (
-         G_CLK_HZ => G_CLK_HZ
+         G_CLOCK_HZ => G_CLOCK_HZ
       )
       port map (
          clk_i        => clk_i,
@@ -232,6 +254,20 @@ begin
          devices_i    => devices_r,
          envelopes_o  => envelopes_s
       ); -- i_envelope_generator
+
+
+   exp_rom_addr_s <= phases_s(device_cnt_r)(19 downto 10) + envelopes_s(device_cnt_r);
+
+   -------------------------------------
+   -- Instantiate exp ROM 
+   -------------------------------------
+
+   i_exp_rom : entity work.exp_rom
+      port map (
+         clk_i  => clk_i,
+         addr_i => exp_rom_addr_s,
+         data_o => exp_rom_data_s
+      ); -- i_exp_rom
 
 
    -------------------------------------

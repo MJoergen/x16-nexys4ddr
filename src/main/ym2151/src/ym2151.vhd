@@ -72,7 +72,7 @@ entity ym2151 is
       wr_en_i   : in  std_logic;
       wr_data_i : in  std_logic_vector(7 downto 0);
       -- Waveform output
-      val_o     : out std_logic_vector(9 downto 0)
+      val_o     : out std_logic_vector(C_PDM_WIDTH-1 downto 0)
    );
 end ym2151;
 
@@ -312,9 +312,9 @@ begin
 
    i_sine_rom : entity work.sine_rom
       port map (
-         clk_i     => clk_i,
-         addr_i    => val_r,
-         rd_data_o => sinval_s
+         clk_i  => clk_i,
+         addr_i => val_r,
+         data_o => sinval_s
       ); -- i_sine_rom
 
    val_o <= sinval_s;

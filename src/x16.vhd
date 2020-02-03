@@ -78,7 +78,7 @@ architecture structural of x16 is
    signal spi_cs_s          : std_logic;
 
    signal main_aud_val_s    : std_logic_vector(9 downto 0);
-   signal sys_aud_val_s     : std_logic_vector(9 downto 0);
+   signal sys_aud_val_s     : std_logic_vector(11 downto 0);
    signal sys_aud_pwm_s     : std_logic;
 
 begin
@@ -196,20 +196,21 @@ begin
          src_clk_i => main_clk_s,
          src_dat_i => main_aud_val_s,
          dst_clk_i => clk_i,
-         dst_dat_o => sys_aud_val_s
+         dst_dat_o => sys_aud_val_s(11 downto 2)
       ); -- i_cdc
+   sys_aud_val_s(1 downto 0) <= "00";
 
 
    --------------------------------------------------------
    -- Instantiate PWM module
    --------------------------------------------------------
 
-   i_pwm : entity work.pwm
+   i_pdm : entity work.pdm
       port map (
-         clk_i    => clk_i,      -- 100 MHz
-         val_i    => sys_aud_val_s,
-         pwm_o    => sys_aud_pwm_s
-      ); -- i_pwm
+         clk_i     => clk_i,      -- 100 MHz
+         density_i => sys_aud_val_s,
+         pdm_o     => sys_aud_pwm_s
+      ); -- i_pdm
 
 
    --------------------------------------------------------

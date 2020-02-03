@@ -1,5 +1,5 @@
 # Specify install location of the Xilinx Vivado tool
-XILINX_DIR = /opt/Xilinx/Vivado/2019.2
+XILINX_DIR = /opt/Xilinx/Vivado/2019.1
 
 # This defines all the source files (VHDL) used in the project
 SUB      = sub
@@ -51,9 +51,13 @@ SOURCES += src/main/ethernet/fifo.vhd
 SOURCES += src/main/ethernet/rx_header.vhd
 SOURCES += src/main/ethernet/tx_dma.vhd
 SOURCES += src/main/ethernet/ethernet.vhd
-SOURCES += src/pwm.vhd
-SOURCES += src/main/ym2151/src/phaseinc_rom.vhd
+SOURCES += src/pdm.vhd
+SOURCES += src/main/ym2151/src/phase_increment_rom.vhd
+SOURCES += src/main/ym2151/src/phase_generator.vhd
+SOURCES += src/main/ym2151/src/envelope_generator.vhd
 SOURCES += src/main/ym2151/src/sine_rom.vhd
+SOURCES += src/main/ym2151/src/exp_rom.vhd
+SOURCES += src/main/ym2151/src/ym2151_package.vhd
 SOURCES += src/main/ym2151/src/ym2151.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file
@@ -79,7 +83,7 @@ build/x16.bit: build/x16.tcl $(SOURCES) src/x16.xdc
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
 
 # Generate the build script used by Vivado
-build/x16.tcl: src/rom.tcl src/debug.tcl src/x16.xdc build
+build/x16.tcl: src/rom.tcl src/debug.tcl src/x16.xdc build Makefile
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
 	echo "read_xdc src/x16.xdc" >> $@

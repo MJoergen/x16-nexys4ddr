@@ -24,7 +24,7 @@ entity main is
       ps2_clk_out_o  : out std_logic;
       ps2_clken_o    : out std_logic;
       --
-      aud_val_o      : out std_logic_vector(9 downto 0);
+      aud_val_o      : out std_logic_vector(11 downto 0);
       --
       eth_clk_i      : in    std_logic;
       eth_txd_o      : out   std_logic_vector(1 downto 0);

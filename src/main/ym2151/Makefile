@@ -1,6 +1,6 @@
 SRC    = src/ym2151_package.vhd
 SRC   += src/envelope_generator.vhd
-SRC   += src/sine_rom.vhd
+SRC   += src/logsine_rom.vhd
 SRC   += src/exp_rom.vhd
 SRC   += src/phase_increment_rom.vhd
 SRC   += src/phase_generator.vhd

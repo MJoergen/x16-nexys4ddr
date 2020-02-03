@@ -3,6 +3,8 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std_unsigned.all;
 use std.textio.all;
 
+use work.ym2151_package.all;
+
 -- This module is a test bench for the YM2151 module.
 
 entity ym2151_tb is
@@ -17,7 +19,7 @@ architecture structural of ym2151_tb is
    signal wr_en_s             : std_logic := '0';
    signal wr_data_s           : std_logic_vector(7 downto 0);
 
-   signal ym2151_val_s        : std_logic_vector(9 downto 0);
+   signal ym2151_val_s        : std_logic_vector(C_PDM_WIDTH-1 downto 0);
 
    -- Control the execution of the test.
    signal sim_test_running_s  : std_logic := '1';

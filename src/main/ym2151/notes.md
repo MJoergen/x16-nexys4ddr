@@ -30,6 +30,20 @@ I've therefore decided to use a density resolution of 12 bits which gives a
 signal-to-noise ratio of 4192.  With 6 dB for each bit, this corresponds to 72
 dB. This is the constant C\_PDM\_WIDTH.
 
+## Exponential ROM
+
+A big part of the YM2151 is the envelope generator, the so-called ADSR-profile,
+consisting of Attack, Decay, Sustain (also called second Decay), and Release.
+The last three steps all employ exponential decay. One common way to implement
+the exponential decay is to store the sign and absolute logarithm of the value.
+The exponential decay can be implemented as a simple subtraction.
+
+As a consequence, we need an easy way to compute the exponential of a function.
+This is done by a ROM.  So what should be the address and data widths of this
+ROM?  Well, the output of the ROM is always a positive number, so must be
+augmented with the sign. Therefore the width of the ROM need only be 11 bits.
+This is the constant C\_EXP\_WIDTH.
+
 
 ## Sine Wave Generation
 
@@ -42,6 +56,5 @@ sine function must be shifted up by 1, and scaled by a half.
 
 ## Frequency Generation
 
-   constant C_PHASE_WIDTH : integer := C_SINE_WIDTH+3;
 
 

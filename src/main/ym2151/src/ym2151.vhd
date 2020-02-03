@@ -111,18 +111,18 @@ architecture synthesis of ym2151 is
    signal cnt_r : std_logic_vector(7 downto 0);
 
    -- Current waveform value
-   signal val_r : std_logic_vector(9 downto 0);
+   signal val_r : std_logic_vector(C_LOGSINE_ADDR_WIDTH-1 downto 0);
 
    -- Current waveform value
-   signal sinval_s : std_logic_vector(9 downto 0);
+   signal logsine_s : std_logic_vector(C_LOGSINE_DATA_WIDTH-1 downto 0);
 
    -- Debug
-   constant DEBUG_MODE              : boolean := false; -- TRUE OR FALSE
+   constant DEBUG_MODE               : boolean := false; -- TRUE OR FALSE
 
-   attribute mark_debug             : boolean;
-   attribute mark_debug of cnt_r    : signal is DEBUG_MODE;
-   attribute mark_debug of val_r    : signal is DEBUG_MODE;
-   attribute mark_debug of sinval_s : signal is DEBUG_MODE;
+   attribute mark_debug              : boolean;
+   attribute mark_debug of cnt_r     : signal is DEBUG_MODE;
+   attribute mark_debug of val_r     : signal is DEBUG_MODE;
+   attribute mark_debug of logsine_s : signal is DEBUG_MODE;
 
 begin
 
@@ -207,68 +207,56 @@ begin
    end process p_config;
 
 
-   -------------------------------------
-   -- Cycle through the 32 devices
-   -------------------------------------
-
-   p_device_cnt : process (clk_i)
-   begin
-      if rising_edge(clk_i) then
-         device_cnt_r <= (device_cnt_r + 1) mod 32;
-         if rst_i = '1' then
-            device_cnt_r <= 0;
-         end if;
-      end if;
-   end process p_device_cnt;
-
-
-   -------------------------------------
-   -- Instantiate Phase Generators
-   -------------------------------------
-
-   i_phase_generator : entity work.phase_generator
-      generic map (
-         G_CLOCK_HZ => G_CLOCK_HZ
-      )
-      port map (
-         clk_i        => clk_i,
-         rst_i        => rst_i,
-         device_cnt_i => device_cnt_r,
-         devices_i    => devices_r,
-         phases_o     => phases_s
-      ); -- i_phase_generator
-
-
-   -------------------------------------
-   -- Instantiate Envelope Generator
-   -------------------------------------
-
-   i_envelope_generator : entity work.envelope_generator
-      generic map (
-         G_CLOCK_HZ => G_CLOCK_HZ
-      )
-      port map (
-         clk_i        => clk_i,
-         rst_i        => rst_i,
-         device_cnt_i => device_cnt_r,
-         devices_i    => devices_r,
-         envelopes_o  => envelopes_s
-      ); -- i_envelope_generator
-
-
-   exp_rom_addr_s <= phases_s(device_cnt_r)(19 downto 10) + envelopes_s(device_cnt_r);
-
-   -------------------------------------
-   -- Instantiate exp ROM 
-   -------------------------------------
-
-   i_exp_rom : entity work.exp_rom
-      port map (
-         clk_i  => clk_i,
-         addr_i => exp_rom_addr_s,
-         data_o => exp_rom_data_s
-      ); -- i_exp_rom
-
+--    -------------------------------------
+--    -- Cycle through the 32 devices
+--    -------------------------------------
+-- 
+--    p_device_cnt : process (clk_i)
+--    begin
+--       if rising_edge(clk_i) then
+--          device_cnt_r <= (device_cnt_r + 1) mod 32;
+--          if rst_i = '1' then
+--             device_cnt_r <= 0;
+--          end if;
+--       end if;
+--    end process p_device_cnt;
+-- 
+-- 
+--    -------------------------------------
+--    -- Instantiate Phase Generators
+--    -------------------------------------
+-- 
+--    i_phase_generator : entity work.phase_generator
+--       generic map (
+--          G_CLOCK_HZ => G_CLOCK_HZ
+--       )
+--       port map (
+--          clk_i        => clk_i,
+--          rst_i        => rst_i,
+--          device_cnt_i => device_cnt_r,
+--          devices_i    => devices_r,
+--          phases_o     => phases_s
+--       ); -- i_phase_generator
+-- 
+-- 
+--    -------------------------------------
+--    -- Instantiate Envelope Generator
+--    -------------------------------------
+-- 
+--    i_envelope_generator : entity work.envelope_generator
+--       generic map (
+--          G_CLOCK_HZ => G_CLOCK_HZ
+--       )
+--       port map (
+--          clk_i        => clk_i,
+--          rst_i        => rst_i,
+--          device_cnt_i => device_cnt_r,
+--          devices_i    => devices_r,
+--          envelopes_o  => envelopes_s
+--       ); -- i_envelope_generator
+-- 
+-- 
+--    exp_rom_addr_s <= phases_s(device_cnt_r)(19 downto 10) + envelopes_s(device_cnt_r);
 
    -------------------------------------
    -- Counter
@@ -310,14 +298,19 @@ begin
    -- Instantiate sine table
    --------------------------
 
-   i_sine_rom : entity work.sine_rom
+   i_logsine_rom : entity work.logsine_rom
       port map (
          clk_i  => clk_i,
          addr_i => val_r,
-         data_o => sinval_s
-      ); -- i_sine_rom
+         data_o => logsine_s
+      ); -- i_logsine_rom
 
-   val_o <= sinval_s;
+   i_exp_rom : entity work.exp_rom
+      port map (
+         clk_i  => clk_i,
+         addr_i => logsine_s,
+         data_o => val_o(C_EXP_DATA_WIDTH-1 downto 0)
+      ); -- i_exp_rom
 
 end architecture synthesis;
 

@@ -83,7 +83,7 @@ set_property -dict { PACKAGE_PIN D12 IOSTANDARD LVCMOS33 } [get_ports { aud_sd_o
 
 
 # Clock definition
-create_clock -name sys_clk -period 10.00 [get_ports {clk_i}];
+create_clock -name sys_clk -period 10.00 [get_ports {sys_clk_i}];
 
 # CDC
 set_false_path -from [get_clocks] -to [get_pins -hierarchical "*gen_cdc.dst_dat_r_reg[*]/D"]

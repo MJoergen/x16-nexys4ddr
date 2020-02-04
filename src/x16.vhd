@@ -77,7 +77,7 @@ architecture structural of x16 is
    signal spi_miso_s        : std_logic;
    signal spi_cs_s          : std_logic;
 
-   signal main_aud_val_s    : std_logic_vector(9 downto 0);
+   signal main_aud_val_s    : std_logic_vector(11 downto 0);
    signal sys_aud_val_s     : std_logic_vector(11 downto 0);
    signal sys_aud_pwm_s     : std_logic;
 
@@ -190,15 +190,14 @@ begin
 
    i_cdc : entity work.cdc
       generic map (
-         G_SIZE => 10
+         G_SIZE => 12
       )
       port map (
          src_clk_i => main_clk_s,
          src_dat_i => main_aud_val_s,
          dst_clk_i => sys_clk_i,
-         dst_dat_o => sys_aud_val_s(11 downto 2)
+         dst_dat_o => sys_aud_val_s
       ); -- i_cdc
-   sys_aud_val_s(1 downto 0) <= "00";
 
 
    --------------------------------------------------------

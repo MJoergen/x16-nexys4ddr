@@ -11,22 +11,24 @@ use work.ym2151_package.all;
 -- beween -1 and 1.
 -- 
 -- The function calculated is y=sin(2*pi*x).
+-- The RAM is initialized by calculating first (1+sin)/2, converting to integer,
+-- and then inverting the MSB.
 
-entity sine_rom is
+entity ym2151_sine_rom is
    port (
       clk_i  : in  std_logic;
       addr_i : in  std_logic_vector(C_SINE_ADDR_WIDTH-1 downto 0);
       data_o : out std_logic_vector(C_SINE_DATA_WIDTH-1 downto 0)
    );
-end sine_rom;
+end ym2151_sine_rom;
 
-architecture synthesis of sine_rom is
+architecture synthesis of ym2151_sine_rom is
 
    type mem_t is array (0 to 2**C_SINE_ADDR_WIDTH-1) of
                  std_logic_vector(C_SINE_DATA_WIDTH-1 downto 0);
    
-   constant scale_x : real := real(2**C_SINE_ADDR_WIDTH-1);
-   constant scale_y : real := real(2**C_SINE_DATA_WIDTH-1);
+   constant scale_x : real := real(2**C_SINE_ADDR_WIDTH);
+   constant scale_y : real := real(2**C_SINE_DATA_WIDTH-2);
 
    impure function InitRom return mem_t is
       variable phase_v : real;
@@ -35,8 +37,10 @@ architecture synthesis of sine_rom is
    begin
       for i in 0 to 2**C_SINE_ADDR_WIDTH-1 loop
          phase_v  := real(i*2) * MATH_PI / scale_x;
-         sine_v   := sin(phase_v);
-         ROM_v(i) := to_stdlogicvector(integer(sine_v*scale_y+0.5), C_SINE_DATA_WIDTH);
+         sine_v   := (sin(phase_v)+1.0)*0.5;
+         ROM_v(i) := to_stdlogicvector(integer(sine_v*scale_y+1.0), C_SINE_DATA_WIDTH);
+         ROM_v(i)(C_SINE_DATA_WIDTH-1) := not ROM_v(i)(C_SINE_DATA_WIDTH-1);
+         report to_hstring(to_stdlogicvector(i,C_SINE_ADDR_WIDTH)) & " -> " & to_hstring(ROM_v(i));
       end loop;
       return ROM_v;
    end function;

@@ -52,12 +52,9 @@ SOURCES += src/main/ethernet/rx_header.vhd
 SOURCES += src/main/ethernet/tx_dma.vhd
 SOURCES += src/main/ethernet/ethernet.vhd
 SOURCES += src/pdm.vhd
-SOURCES += src/main/ym2151/src/phase_increment_rom.vhd
-SOURCES += src/main/ym2151/src/phase_generator.vhd
-SOURCES += src/main/ym2151/src/envelope_generator.vhd
-SOURCES += src/main/ym2151/src/logsine_rom.vhd
-SOURCES += src/main/ym2151/src/exp_rom.vhd
 SOURCES += src/main/ym2151/src/ym2151_package.vhd
+SOURCES += src/main/ym2151/src/ym2151_sine_rom.vhd
+SOURCES += src/main/ym2151/src/ym2151_config.vhd
 SOURCES += src/main/ym2151/src/ym2151.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file

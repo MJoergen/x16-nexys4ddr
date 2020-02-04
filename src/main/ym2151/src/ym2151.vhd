@@ -58,7 +58,7 @@ begin
    -- Instantiate CPU configuration interface
    ----------------------------------------------------
 
-   i_config : entity work.config
+   i_ym2151_config : entity work.ym2151_config
       port map (
          clk_i     => clk_i,
          rst_i     => rst_i,
@@ -109,7 +109,7 @@ begin
    -- Instantiate sine table
    ----------------------------------------------------
 
-   i_sine_rom : entity work.sine_rom
+   i_ym2151_sine_rom : entity work.ym2151_sine_rom
       port map (
          clk_i  => clk_i,
          addr_i => phase_r,

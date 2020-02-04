@@ -60,7 +60,7 @@ use work.ym2151_package.all;
 --             : Bits 3-0 : Release rate
 -- Device: 0:Modulator1, 1:Modulator2, 2:Carrier1, 3:Carrier2
 
-entity config is
+entity ym2151_config is
    port (
       clk_i     : in  std_logic;
       rst_i     : in  std_logic;
@@ -71,9 +71,9 @@ entity config is
       -- Configuration output
       devices_o : out t_device_vector(0 to 31)
    );
-end config;
+end ym2151_config;
 
-architecture synthesis of config is
+architecture synthesis of ym2151_config is
 
    -------------------------------------
    -- CPU interface

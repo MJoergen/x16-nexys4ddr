@@ -5,3 +5,6 @@
 	path = sub/x16-rom
 	url = git@github.com:commanderx16/x16-rom.git
 	branch = ethernet
+[submodule "sub/ym2151"]
+	path = sub/ym2151
+	url = git@github.com:MJoergen/ym2151.git

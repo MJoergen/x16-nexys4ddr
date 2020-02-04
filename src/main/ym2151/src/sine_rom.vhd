@@ -36,7 +36,7 @@ architecture synthesis of sine_rom is
       for i in 0 to 2**C_SINE_ADDR_WIDTH-1 loop
          phase_v  := real(i*2) * MATH_PI / scale_x;
          sine_v   := sin(phase_v);
-         ROM_v(i) := to_stdlogicvector(integer(sine_v*scale_y+0.5)), C_SINE_DATA_WIDTH);
+         ROM_v(i) := to_stdlogicvector(integer(sine_v*scale_y+0.5), C_SINE_DATA_WIDTH);
       end loop;
       return ROM_v;
    end function;

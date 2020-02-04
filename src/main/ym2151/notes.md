@@ -27,7 +27,7 @@ proportional analog voltage on the audio output.
 Note that there is a tradeoff between resolution in the time domain (i.e.
 frequency response) and resolution in the voltage domain (i.e. signal-to-noise
 ratio). With a PDM sampling rate of 100 MHz and an audio cutoff frequency of 15
-kHz, the signal-to-noise ratio on the output of the PDM is 100000/15 =~ 6600.
+kHz, the signal-to-noise ratio on the output of the PDM is 100000/15 ~= 6600.
 I've therefore decided to use a density resolution of 12 bits, which gives a
 signal-to-noise ratio of 4192.  With 6 dB for each bit, this corresponds to 72
 dB. This is the constant C\_PDM\_WIDTH.
@@ -44,8 +44,8 @@ The important part is that all-zeros or all-ones on the input correspond to a
 "flat line" on the output, i.e. steady zero or steady one, respectively.
 
 ## Clock Domain Crossing
-The entire YN2151 will be running at the CPU clock frequency (because this
-makes it easier to handle the CPU writes to the YM2151 registers). However,
+The entire YM2151 will be running at the CPU clock frequency because this
+makes it easier to handle the CPU writes to the YM2151 registers. However,
 the input to the PDM module must be synchronous to the onboard clock. So
 there must be a CDC between the YM2151 module and the PDM module.
 

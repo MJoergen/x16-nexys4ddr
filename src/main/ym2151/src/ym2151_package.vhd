@@ -4,12 +4,10 @@ use ieee.numeric_std_unsigned.all;
 
 package ym2151_package is
 
-   constant C_PDM_WIDTH          : integer := 12;
-   constant C_EXP_DATA_WIDTH     : integer := C_PDM_WIDTH - 1;  -- Subtract one for sign.
-   constant C_EXP_ADDR_WIDTH     : integer := C_PDM_WIDTH;
-   constant C_LOGSINE_DATA_WIDTH : integer := C_PDM_WIDTH;
-   constant C_LOGSINE_ADDR_WIDTH : integer := C_PDM_WIDTH;
-   constant C_PHASE_WIDTH        : integer := C_LOGSINE_ADDR_WIDTH+3;
+   constant C_PDM_WIDTH       : integer := 12;
+   constant C_SINE_DATA_WIDTH : integer := C_PDM_WIDTH;
+   constant C_SINE_ADDR_WIDTH : integer := C_PDM_WIDTH+1;
+   constant C_PHASE_WIDTH     : integer := C_SINE_ADDR_WIDTH+3;
 
    type t_phase_generator is record
       key_code           : std_logic_vector(6 downto 0);

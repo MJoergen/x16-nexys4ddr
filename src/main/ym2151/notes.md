@@ -43,6 +43,12 @@ So we have the following correspondence:
 The important part is that all-zeros or all-ones on the input correspond to a
 "flat line" on the output, i.e. steady zero or steady one, respectively.
 
+## Clock Domain Crossing
+The entire YN2151 will be running at the CPU clock frequency (because this
+makes it easier to handle the CPU writes to the YM2151 registers). However,
+the input to the PDM module must be synchronous to the onboard clock. So
+there must be a CDC between the YM2151 module and the PDM module.
+
 ## Two's complement
 Since the sin function generates values in the interval -1 to 1, we will be
 dealing with signed values. These signed values will be scaled to signed

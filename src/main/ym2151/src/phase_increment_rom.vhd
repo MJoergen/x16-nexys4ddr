@@ -14,16 +14,17 @@ entity phase_increment_rom is
       G_CLOCK_HZ : integer -- Frequency of input clock
    );
    port (
-      clk_i     : in  std_logic;
-      addr_i    : in  std_logic_vector( 9 downto 0);
-      rd_data_o : out std_logic_vector(11 downto 0)
+      clk_i  : in  std_logic;
+      addr_i : in  std_logic_vector(C_PHASEINC_ADDR_WIDTH-1 downto 0);
+      data_o : out std_logic_vector(C_PHASEINC_DATA_WIDTH-1 downto 0)
    );
 end phase_increment_rom;
 
 architecture synthesis of phase_increment_rom is
 
    -- This defines a type containing an array of bytes
-   type mem_t is array (0 to 1023) of std_logic_vector(11 downto 0);
+   type mem_t is array (0 to 2**C_PHASEINC_ADDR_WIDTH-1) of
+                 std_logic_vector(C_PHASEINC_DATA_WIDTH-1 downto 0);
 
    -- This reads the ROM contents from a text file
    impure function InitRom return mem_t is
@@ -35,7 +36,6 @@ architecture synthesis of phase_increment_rom is
       for i in 0 to 767 loop
          freq_v     := 440.0 * (2.0 ** (real(i+4*64)/768.0));
          phaseinc_v := integer((2.0**24)*freq_v/real(G_CLOCK_HZ));
-         report to_string(phaseinc_v);
          ROM_v(i)   := to_stdlogicvector(phaseinc_v, 12);
       end loop;
       return ROM_v;
@@ -49,7 +49,7 @@ begin
    p_read : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         rd_data_o <= mem_r(to_integer(addr_i));
+         data_o <= mem_r(to_integer(addr_i));
       end if;
    end process p_read;
 

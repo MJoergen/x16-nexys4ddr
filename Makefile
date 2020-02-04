@@ -54,6 +54,7 @@ SOURCES += src/main/ethernet/ethernet.vhd
 SOURCES += src/pdm.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151_package.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151_sine_rom.vhd
+SOURCES += $(SUB)/ym2151/src/ym2151_phase_increment_rom.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151_config.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151.vhd
 

@@ -8,7 +8,7 @@ use ieee.std_logic_1164.all;
 
 entity x16 is
    port (
-      clk_i        : in    std_logic;                       -- 100 MHz
+      sys_clk_i    : in    std_logic;                       -- 100 MHz
 
       rstn_i       : in    std_logic;                       -- CPU reset, active low
 
@@ -132,7 +132,7 @@ begin
 
    i_clk : entity work.clk_wiz_0_clk_wiz
       port map (
-         clk_in1 => clk_i,      -- 100 MHz
+         clk_in1 => sys_clk_i,  -- 100 MHz
          eth_clk => eth_clk_s,  --  50 MHz
          vga_clk => vga_clk_s,  --  25.2 MHz
          cpu_clk => main_clk_s  --   8.33 MHz
@@ -195,7 +195,7 @@ begin
       port map (
          src_clk_i => main_clk_s,
          src_dat_i => main_aud_val_s,
-         dst_clk_i => clk_i,
+         dst_clk_i => sys_clk_i,
          dst_dat_o => sys_aud_val_s(11 downto 2)
       ); -- i_cdc
    sys_aud_val_s(1 downto 0) <= "00";
@@ -207,7 +207,7 @@ begin
 
    i_pdm : entity work.pdm
       port map (
-         clk_i     => clk_i,      -- 100 MHz
+         clk_i     => sys_clk_i,      -- 100 MHz
          density_i => sys_aud_val_s,
          pdm_o     => sys_aud_pwm_s
       ); -- i_pdm
@@ -233,14 +233,14 @@ begin
          vera_rd_data_i => main_rd_data_s,
          vera_debug_o   => main_debug_s,
          --
+         aud_val_o      => main_aud_val_s,   -- YM2151 audio output
+         --
          ps2_data_in_i  => ps2_data_in_s,
          ps2_data_out_o => ps2_data_out_s,
          ps2_dataen_o   => ps2_dataen_s,
          ps2_clk_in_i   => ps2_clk_in_s,
          ps2_clk_out_o  => ps2_clk_out_s,
          ps2_clken_o    => ps2_clken_s,
-         --
-         aud_val_o      => main_aud_val_s,
          --
          eth_clk_i      => eth_clk_s,
          eth_txd_o      => eth_txd_o,

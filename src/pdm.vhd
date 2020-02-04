@@ -28,15 +28,16 @@ begin
    begin
       if rising_edge(clk_i) then
          accumulator_v := accumulator_r + ("0" & density_i);
+         accumulator_r <= accumulator_v;
+
+         -- Handle mod 0xFFF
          if accumulator_v(12) = '1' then
             accumulator_r <= accumulator_v + 1;
-         else
-            accumulator_r <= accumulator_v;
          end if;
+
          pdm_o <= accumulator_v(12);
       end if;
    end process p_accumulator;
-
 
 end architecture synthesis;
 

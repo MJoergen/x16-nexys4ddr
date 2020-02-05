@@ -80,6 +80,14 @@ architecture structural of x16 is
    signal main_aud_val_s    : std_logic_vector(11 downto 0);
    signal sys_aud_val_s     : std_logic_vector(11 downto 0);
    signal sys_aud_pwm_s     : std_logic;
+   signal sys_clk_s         : std_logic;
+
+   -- Debug
+   constant DEBUG_MODE                   : boolean := true; -- TRUE OR FALSE
+
+   attribute mark_debug                  : boolean;
+   attribute mark_debug of sys_aud_val_s : signal is DEBUG_MODE;
+   attribute mark_debug of sys_aud_pwm_s : signal is DEBUG_MODE;
 
 begin
 
@@ -184,6 +192,12 @@ begin
       ); -- i_vera
 
 
+   sys_clk_buf : BUFG
+      port map (
+         I => sys_clk_i,
+         O => sys_clk_s
+      );
+
    --------------------------------------------------------
    -- Instantiate PWM module
    --------------------------------------------------------
@@ -195,7 +209,7 @@ begin
       port map (
          src_clk_i => main_clk_s,
          src_dat_i => main_aud_val_s,
-         dst_clk_i => sys_clk_i,
+         dst_clk_i => sys_clk_s,
          dst_dat_o => sys_aud_val_s
       ); -- i_cdc
 
@@ -206,7 +220,7 @@ begin
 
    i_pdm : entity work.pdm
       port map (
-         clk_i     => sys_clk_i,      -- 100 MHz
+         clk_i     => sys_clk_s,      -- 100 MHz
          density_i => sys_aud_val_s,
          pdm_o     => sys_aud_pwm_s
       ); -- i_pdm

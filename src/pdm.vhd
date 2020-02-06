@@ -35,6 +35,8 @@ begin
             accumulator_r <= accumulator_v + 1;
          end if;
 
+         accumulator_r(12) <= '0';
+
          pdm_o <= accumulator_v(12);
       end if;
    end process p_accumulator;

@@ -86,7 +86,10 @@ set_property -dict { PACKAGE_PIN D12 IOSTANDARD LVCMOS33 } [get_ports { aud_sd_o
 create_clock -name sys_clk -period 10.00 [get_ports {sys_clk_i}];
 
 # CDC
-set_false_path -from [get_clocks] -to [get_pins -hierarchical "*gen_cdc.dst_dat_r_reg[*]/D"]
+set_false_path -from [get_clocks -of_objects [get_pins i_clk/i_mmcm_adv/CLKOUT0]] -to [get_pins -hierarchical {*gen_cdc.dst_dat_r_reg[*]/D}]
+set_false_path -from [get_clocks -of_objects [get_pins i_clk/i_mmcm_adv/CLKOUT1]] -to [get_pins -hierarchical {*gen_cdc.dst_dat_r_reg[*]/D}]
+set_false_path -from [get_clocks -of_objects [get_pins i_clk/i_mmcm_adv/CLKOUT2]] -to [get_pins -hierarchical {*gen_cdc.dst_dat_r_reg[*]/D}]
+set_false_path -from [get_clocks -of_objects [get_pins i_clk/i_mmcm_adv/CLKOUT3]] -to [get_pins -hierarchical {*gen_cdc.dst_dat_r_reg[*]/D}]
 
 # Configuration Bank Voltage Select
 set_property CFGBVS VCCO [current_design]

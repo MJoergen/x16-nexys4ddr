@@ -76,7 +76,8 @@ entity clk_wiz_0_clk_wiz is
                                               -- Clock out ports
       eth_clk           : out    std_logic;   --  50    MHz
       vga_clk           : out    std_logic;   --  25.2  MHz
-      cpu_clk           : out    std_logic    --   8.33 MHz
+      cpu_clk           : out    std_logic;   --   8.33 MHz
+      pdm_clk           : out    std_logic    -- 100    MHz
    );
 end clk_wiz_0_clk_wiz;
 
@@ -90,12 +91,10 @@ architecture xilinx of clk_wiz_0_clk_wiz is
    signal eth_clk_wiz_0          : std_logic;
    signal vga_clk_wiz_0          : std_logic;
    signal cpu_clk_wiz_0          : std_logic;
+   signal pdm_clk_wiz_0          : std_logic;
    signal clkout0b_unused        : std_logic;
-   signal clkout1_unused         : std_logic;
    signal clkout1b_unused        : std_logic;
-   signal clkout2_unused         : std_logic;
    signal clkout2b_unused        : std_logic;
-   signal clkout3_unused         : std_logic;
    signal clkout3b_unused        : std_logic;
    signal clkout4_unused         : std_logic;
    signal clkout5_unused         : std_logic;
@@ -142,10 +141,14 @@ begin
          CLKOUT1_PHASE        => 0.000,
          CLKOUT1_DUTY_CYCLE   => 0.500,
          CLKOUT1_USE_FINE_PS  => FALSE,
-         CLKOUT2_DIVIDE       => 96,        -- CPU @  8.33 MHz
+         CLKOUT2_DIVIDE       => 96,        -- CPU @ 8.33 MHz
          CLKOUT2_PHASE        => 0.000,
          CLKOUT2_DUTY_CYCLE   => 0.500,
          CLKOUT2_USE_FINE_PS  => FALSE,
+         CLKOUT3_DIVIDE       => 8,         -- PDM @ 100 MHz
+         CLKOUT3_PHASE        => 0.000,
+         CLKOUT3_DUTY_CYCLE   => 0.500,
+         CLKOUT3_USE_FINE_PS  => FALSE,
          CLKIN1_PERIOD        => 10.0,
          REF_JITTER1          => 0.010
       )
@@ -159,7 +162,7 @@ begin
          CLKOUT1B            => clkout1b_unused,
          CLKOUT2             => cpu_clk_wiz_0,
          CLKOUT2B            => clkout2b_unused,
-         CLKOUT3             => clkout3_unused,
+         CLKOUT3             => pdm_clk_wiz_0,
          CLKOUT3B            => clkout3b_unused,
          CLKOUT4             => clkout4_unused,
          CLKOUT5             => clkout5_unused,
@@ -218,6 +221,12 @@ begin
       port map (
          O => cpu_clk,
          I => cpu_clk_wiz_0
+      );
+
+   clkout3_buf : BUFG
+      port map (
+         O => pdm_clk,
+         I => pdm_clk_wiz_0
       );
 
 end xilinx;

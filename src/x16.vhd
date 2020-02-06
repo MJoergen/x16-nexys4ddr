@@ -53,6 +53,8 @@ architecture structural of x16 is
 
    signal vga_clk_s         : std_logic;                    -- 25.2 MHz
 
+   signal pdm_clk_s         : std_logic;                    -- 100 MHz
+
    signal main_clk_s        : std_logic;                    -- 8.33 MHz
    signal main_clkn_s       : std_logic;                    -- Inverted clock
    signal main_addr_s       : std_logic_vector(15 downto 0);
@@ -78,16 +80,17 @@ architecture structural of x16 is
    signal spi_cs_s          : std_logic;
 
    signal main_aud_val_s    : std_logic_vector(11 downto 0);
-   signal sys_aud_val_s     : std_logic_vector(11 downto 0);
-   signal sys_aud_pwm_s     : std_logic;
-   signal sys_clk_s         : std_logic;
+   signal pdm_aud_val_s     : std_logic_vector(11 downto 0);
+   signal pdm_aud_val_r     : std_logic_vector(11 downto 0);
+   signal pdm_aud_pwm_s     : std_logic;
+   signal pdm_aud_pwm_r     : std_logic;
 
    -- Debug
    constant DEBUG_MODE                   : boolean := true; -- TRUE OR FALSE
 
    attribute mark_debug                  : boolean;
-   attribute mark_debug of sys_aud_val_s : signal is DEBUG_MODE;
-   attribute mark_debug of sys_aud_pwm_s : signal is DEBUG_MODE;
+   attribute mark_debug of pdm_aud_val_r : signal is DEBUG_MODE;
+   attribute mark_debug of pdm_aud_pwm_s : signal is DEBUG_MODE;
 
 begin
 
@@ -97,7 +100,7 @@ begin
    -- Generate AUD tristate buffers.
    ----------------------------------------------------------------
 
-   aud_pwm_o <= '0' when sys_aud_pwm_s = '0' else 'Z';
+   aud_pwm_o <= '0' when pdm_aud_pwm_r = '0' else 'Z';
 
 
    ----------------------------------------------------------------
@@ -143,7 +146,8 @@ begin
          clk_in1 => sys_clk_i,  -- 100 MHz
          eth_clk => eth_clk_s,  --  50 MHz
          vga_clk => vga_clk_s,  --  25.2 MHz
-         cpu_clk => main_clk_s  --   8.33 MHz
+         cpu_clk => main_clk_s, --   8.33 MHz
+         pdm_clk => pdm_clk_s   -- 100 MHz
       ); -- i_clk
 
 
@@ -192,12 +196,6 @@ begin
       ); -- i_vera
 
 
-   sys_clk_buf : BUFG
-      port map (
-         I => sys_clk_i,
-         O => sys_clk_s
-      );
-
    --------------------------------------------------------
    -- Instantiate PWM module
    --------------------------------------------------------
@@ -209,8 +207,8 @@ begin
       port map (
          src_clk_i => main_clk_s,
          src_dat_i => main_aud_val_s,
-         dst_clk_i => sys_clk_s,
-         dst_dat_o => sys_aud_val_s
+         dst_clk_i => pdm_clk_s,
+         dst_dat_o => pdm_aud_val_s
       ); -- i_cdc
 
 
@@ -218,12 +216,29 @@ begin
    -- Instantiate PWM module
    --------------------------------------------------------
 
+   -- Insert extra register to enable debugging with ILA.
+   p_pdm_aud_val : process (pdm_clk_s)
+   begin
+      if rising_edge(pdm_clk_s) then
+         pdm_aud_val_r <= pdm_aud_val_s;
+      end if;
+   end process p_pdm_aud_val;
+
    i_pdm : entity work.pdm
       port map (
-         clk_i     => sys_clk_s,      -- 100 MHz
-         density_i => sys_aud_val_s,
-         pdm_o     => sys_aud_pwm_s
+         clk_i     => pdm_clk_s,      -- 100 MHz
+         density_i => pdm_aud_val_r,
+         pdm_o     => pdm_aud_pwm_s
       ); -- i_pdm
+
+   -- Insert extra register to enable debugging with ILA.
+   p_pdm_aud_pwm : process (pdm_clk_s)
+   begin
+      if rising_edge(pdm_clk_s) then
+         pdm_aud_pwm_r <= pdm_aud_pwm_s;
+      end if;
+   end process p_pdm_aud_pwm;
+
 
 
    --------------------------------------------------------

@@ -45,11 +45,11 @@ foreach c [array names clock_list] {
    set ila_inst u_ila_$c
    set clk_net [get_nets -of_objects [get_pins [get_property SOURCE_PINS $clk]]]
 
-   puts "Creating ILA $ila_inst"
+   puts "Creating ILA $ila_inst with clock $clk_net"
    ##################################################################
    # create ILA and connect its clock
    create_debug_core  $ila_inst        ila
-   set_property       C_DATA_DEPTH     8192 [get_debug_cores $ila_inst]
+   set_property       C_DATA_DEPTH     16384 [get_debug_cores $ila_inst]
    set_property       port_width 1     [get_debug_ports $ila_inst/clk]
    connect_debug_port $ila_inst/clk    $clk_net
    ##################################################################
@@ -72,9 +72,10 @@ foreach c [array names clock_list] {
        }
        set_property port_width [llength $nets] [get_debug_ports $ila_inst/$prb]
        connect_debug_port $ila_inst/$prb $nets
+       puts " ... nets: $nets."
        incr nprobes
    }
-   puts " ... with $nprobes probes."
+   puts " ... TOTAL $nprobes probes."
 }
 
 ##################################################################

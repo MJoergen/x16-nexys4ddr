@@ -224,12 +224,12 @@ begin
       end if;
    end process p_pdm_aud_val;
 
-   i_pdm : entity work.pdm
+   i_pwm : entity work.pwm
       port map (
          clk_i     => pdm_clk_s,      -- 100 MHz
          density_i => pdm_aud_val_r,
-         pdm_o     => pdm_aud_pwm_s
-      ); -- i_pdm
+         pwm_o     => pdm_aud_pwm_s
+      ); -- i_pwm
 
    -- Insert extra register to enable debugging with ILA.
    p_pdm_aud_pwm : process (pdm_clk_s)

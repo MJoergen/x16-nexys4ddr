@@ -82,7 +82,8 @@ build/x16.bit: build/x16.tcl $(SOURCES) src/x16.xdc
 	bash -c "source $(XILINX_DIR)/settings64.sh ; vivado -mode tcl -source $<"
 
 # Generate the build script used by Vivado
-build/x16.tcl: src/rom.tcl src/debug.tcl src/x16.xdc build Makefile
+build/x16.tcl: src/rom.tcl src/debug.tcl src/x16.xdc Makefile
+	mkdir -p build
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
 	echo "read_xdc src/x16.xdc" >> $@

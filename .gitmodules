@@ -3,7 +3,7 @@
 	url = git@github.com:MJoergen/65c02.git
 [submodule "sub/x16-rom"]
 	path = sub/x16-rom
-	url = git@github.com:commanderx16/x16-rom.git
+	url = git@github.com:MJoergen/x16-rom.git
 	branch = ethernet
 [submodule "sub/ym2151"]
 	path = sub/ym2151

@@ -72,7 +72,7 @@ build/x16-rom.bit: build/x16.bit build/x16.mmi build/rom.mem
 
 build/rom.mem:
 	make -C $(SUB)/x16-rom
-	src/main/bin2hex.py $(SUB)/x16-rom/build/x16/rom.bin build/rom.txt
+	src/main/bin2hex.py $(SUB)/x16-rom/rom.bin build/rom.txt
 	echo "@0000" > $@
 	cat build/rom.txt >> $@
 

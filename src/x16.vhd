@@ -86,7 +86,7 @@ architecture structural of x16 is
    signal pdm_aud_pwm_r     : std_logic;
 
    -- Debug
-   constant DEBUG_MODE                   : boolean := true; -- TRUE OR FALSE
+   constant DEBUG_MODE                   : boolean := false; -- TRUE OR FALSE
 
    attribute mark_debug                  : boolean;
    attribute mark_debug of pdm_aud_val_r : signal is DEBUG_MODE;

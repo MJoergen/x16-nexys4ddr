@@ -57,6 +57,8 @@ SOURCES += $(SUB)/ym2151/src/ym2151_sine_rom.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151_phase_increment_rom.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151_phase_increment.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151_config.vhd
+SOURCES += $(SUB)/ym2151/src/ym2151_decay.vhd
+SOURCES += $(SUB)/ym2151/src/ym2151_envelope_generator.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151.vhd
 
 # Configure the FPGA on the Nexys4DDR board with the generated bit-file

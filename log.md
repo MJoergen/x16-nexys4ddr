@@ -465,7 +465,7 @@ with my philosophy:
 * Implementing small steps at a time
 * Repeated testing.
 
-So how do we test the implementation? My first through was to consider the
+So how do we test the implementation? My first thought was to consider the
 YM2151 as a simple data converter: Some data (in the form of register writes)
 goes into the module, and some other data (the waveform) goes out again.  So if
 we know what the expected output is, given some input, then that can be used as
@@ -473,7 +473,7 @@ the test.
 
 ## 2020-01-16
 I spent quite a long time debugging a possible bug in Vivado 2019.2, where it
-would incorrectly optimize aways most of the BRAMs in the ROM. This used to
+would incorrectly optimize away most of the BRAMs in the ROM. This used to
 work fine in Vivado 2018.2, but maybe this is expected behaviour. Anyway, I
 changed the ROM initialization to prevent the optimizer from collapsing the
 BRAMs.
@@ -482,4 +482,17 @@ BRAMs.
 I've been experimenting with git submodules, and the 65C02 CPU has now been
 split off into a separate repository at
 [https://github.com/MJoergen/65c02](https://github.com/MJoergen/65c02).
+
+## 2020-02-10
+So I've been working on the YM2151 implementation for some time now. One thing
+I found out is that the FPGA is connected to a low-pass filter around 15 kHz,
+which works surprisingly well. That is, when the FPGA outputs a PWM signal at a
+constant rate of approximately 24.4 kHz. I tried implementing a PDM signal
+instead, but the waveform was distorted in a way I didn't understand. So I went
+back to PWM, and the YM2151 can now generate a pure sine wave. Analyzing the
+generated output in audacity shows no distortion at all!
+
+I'm now working on getting the envelope generator to work, and after that I
+want to add multiple channels.
+
 

@@ -32,16 +32,16 @@ addr  = 0
 for byte in pathlib.Path(file_name).read_bytes():
     if state == 0:
         if byte != 1:
-            printf("ERROR");
+            print("ERROR");
         state = 1
     elif state == 1:
         if byte != 8:
-            printf("ERROR");
+            print("ERROR");
         addr = 0x0800
         state = 2
     elif state == 2:
         if addr != ptr:
-            printf("ERROR");
+            print("ERROR");
         ptr = byte
         state = 3
     elif state == 3:

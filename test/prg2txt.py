@@ -5,7 +5,7 @@ import pathlib
 
 tokens = [ 
     "EBD"   , "FOR"   , "NEXT"  , "DATA"  , "VPOKE" , "INPUT" , "DIM"   , "READ"  , 
-    "LET"   , "GOTO"  , "RUN"   , "IF"    , "RESTOR", "GOSUB" , "RETURN", "VPEEK" , 
+    "LET"   , "GOTO"  , "RUN"   , "IF"    , "RESTOR", "GOSUB" , "RETURN", "REM"   ,
 
     "STOP"  , "ON"    , "WAIT"  , "LOAD"  , "SAVE"  , "VERIFY", "DEF"   , "POKE"  , 
     "PRINT#", "PRINT" , "CONT"  , "LIST"  , "CLS"   , "CMD"   , "SYS"   , "OPEN"  , 

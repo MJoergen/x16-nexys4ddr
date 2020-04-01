@@ -8,3 +8,6 @@
 [submodule "sub/ym2151"]
 	path = sub/ym2151
 	url = git@github.com:MJoergen/ym2151.git
+[submodule "sub/cdc"]
+	path = sub/cdc
+	url = git@github.com:MJoergen/cdc.git

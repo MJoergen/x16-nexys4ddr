@@ -12,38 +12,41 @@ entity main is
       G_ROM_INIT_FILE : string
    );
    port (
-      clk_i          : in  std_logic;
-      rst_i          : in  std_logic;
-      nmi_i          : in  std_logic;
-      irq_i          : in  std_logic;
+      clk_i            : in  std_logic;
+      rst_i            : in  std_logic;
+      nmi_i            : in  std_logic;
+      irq_i            : in  std_logic;
       --
-      ps2_data_in_i  : in  std_logic;
-      ps2_data_out_o : out std_logic;
-      ps2_dataen_o   : out std_logic;
-      ps2_clk_in_i   : in  std_logic;
-      ps2_clk_out_o  : out std_logic;
-      ps2_clken_o    : out std_logic;
+      ps2_data_in_i    : in  std_logic;
+      ps2_data_out_o   : out std_logic;
+      ps2_dataen_o     : out std_logic;
+      ps2_clk_in_i     : in  std_logic;
+      ps2_clk_out_o    : out std_logic;
+      ps2_clken_o      : out std_logic;
       --
-      aud_val_o      : out std_logic_vector(11 downto 0);
+      ym2151_valid_o   : out std_logic;
+      ym2151_ready_i   : in  std_logic;
+      ym2151_addr_o    : out std_logic_vector(7 downto 0);
+      ym2151_data_o    : out std_logic_vector(7 downto 0);
       --
-      eth_clk_i      : in    std_logic;
-      eth_txd_o      : out   std_logic_vector(1 downto 0);
-      eth_txen_o     : out   std_logic;
-      eth_rxd_i      : in    std_logic_vector(1 downto 0);
-      eth_rxerr_i    : in    std_logic;
-      eth_crsdv_i    : in    std_logic;
-      eth_intn_i     : in    std_logic;
-      eth_mdio_io    : inout std_logic;
-      eth_mdc_o      : out   std_logic;
-      eth_rstn_o     : out   std_logic;
-      eth_refclk_o   : out   std_logic;
+      eth_clk_i        : in    std_logic;
+      eth_txd_o        : out   std_logic_vector(1 downto 0);
+      eth_txen_o       : out   std_logic;
+      eth_rxd_i        : in    std_logic_vector(1 downto 0);
+      eth_rxerr_i      : in    std_logic;
+      eth_crsdv_i      : in    std_logic;
+      eth_intn_i       : in    std_logic;
+      eth_mdio_io      : inout std_logic;
+      eth_mdc_o        : out   std_logic;
+      eth_rstn_o       : out   std_logic;
+      eth_refclk_o     : out   std_logic;
       --
-      vera_addr_o    : out std_logic_vector(2 downto 0);
-      vera_wr_en_o   : out std_logic;
-      vera_wr_data_o : out std_logic_vector(7 downto 0);
-      vera_rd_en_o   : out std_logic;
-      vera_rd_data_i : in  std_logic_vector(7 downto 0);
-      vera_debug_o   : out std_logic_vector(15 downto 0)
+      vera_addr_o      : out std_logic_vector(2 downto 0);
+      vera_wr_en_o     : out std_logic;
+      vera_wr_data_o   : out std_logic_vector(7 downto 0);
+      vera_rd_en_o     : out std_logic;
+      vera_rd_data_i   : in  std_logic_vector(7 downto 0);
+      vera_debug_o     : out std_logic_vector(15 downto 0)
    );
 end main;
 
@@ -65,7 +68,7 @@ architecture structural of main is
    signal via1_cs_s        : std_logic;   -- 0x9F60 - 0x9F6F
    signal via2_cs_s        : std_logic;   -- 0x9F70 - 0x9F7F
    signal eth_cs_s         : std_logic;   -- 0x9FC0 - 0x9FCF
-   signal aud_cs_s         : std_logic;   -- 0x9FE0 - 0x9FEF
+   signal ym2151_cs_s      : std_logic;   -- 0x9FE0 - 0x9FEF
    signal hiram_cs_s       : std_logic;   -- 0xA000 - 0xBFFF
    signal rom_cs_s         : std_logic;   -- 0xC000 - 0xFFFF
 
@@ -81,7 +84,7 @@ architecture structural of main is
    signal via1_wr_en_s     : std_logic;
    signal via2_wr_en_s     : std_logic;
    signal eth_wr_en_s      : std_logic;
-   signal aud_wr_en_s      : std_logic;
+   signal ym2151_wr_en_s   : std_logic;
    signal hiram_wr_en_s    : std_logic;
 
    -- Read enable
@@ -99,6 +102,7 @@ architecture structural of main is
    signal via1_rd_data_s   : std_logic_vector(7 downto 0);
    signal via2_rd_data_s   : std_logic_vector(7 downto 0);
    signal eth_rd_data_s    : std_logic_vector(7 downto 0);
+   signal ym2151_rd_data_s : std_logic_vector(7 downto 0);
    signal hiram_rd_data_s  : std_logic_vector(7 downto 0);
    signal rom_rd_data_s    : std_logic_vector(7 downto 0);
 
@@ -112,80 +116,58 @@ architecture structural of main is
 
    signal via2_portb_s     : std_logic_vector(7 downto 0);
 
-   signal ps2_clk_in_s     : std_logic;
-   signal ps2_clk_out_s    : std_logic;
-   signal ps2_clken_s      : std_logic;
-   signal ps2_data_in_s    : std_logic;
-   signal ps2_data_out_s   : std_logic;
-   signal ps2_dataen_s     : std_logic;
+   signal ym2151_valid_r   : std_logic;
+   signal ym2151_addr_r    : std_logic_vector(7 downto 0);
+   signal ym2151_data_r    : std_logic_vector(7 downto 0);
 
    -- Debug
-   constant DEBUG_MODE                   : boolean := false; -- TRUE OR FALSE
+   constant C_DEBUG_MODE                    : boolean := false; -- TRUE OR FALSE
 
-   attribute mark_debug                  : boolean;
-   attribute mark_debug of via1_porta_s  : signal is DEBUG_MODE;
-   attribute mark_debug of via1_portb_s  : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_debug_s   : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_addr_s    : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_wr_en_s   : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_wr_data_s : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_rd_en_s   : signal is DEBUG_MODE;
-   attribute mark_debug of cpu_rd_data_s : signal is DEBUG_MODE;
+   attribute mark_debug                     : boolean;
+   attribute mark_debug of ym2151_cs_s      : signal is C_DEBUG_MODE;
+   attribute mark_debug of ym2151_rd_data_s : signal is C_DEBUG_MODE;
+   attribute mark_debug of ym2151_valid_o   : signal is C_DEBUG_MODE;
+   attribute mark_debug of ym2151_ready_i   : signal is C_DEBUG_MODE;
+   attribute mark_debug of ym2151_addr_o    : signal is C_DEBUG_MODE;
+   attribute mark_debug of ym2151_data_o    : signal is C_DEBUG_MODE;
+
+   attribute mark_debug of cpu_addr_s       : signal is C_DEBUG_MODE;
+   attribute mark_debug of cpu_wr_en_s      : signal is C_DEBUG_MODE;
+   attribute mark_debug of cpu_wr_data_s    : signal is C_DEBUG_MODE;
+   attribute mark_debug of cpu_rd_en_s      : signal is C_DEBUG_MODE;
+   attribute mark_debug of cpu_rd_data_s    : signal is C_DEBUG_MODE;
 
 begin
 
+   --------------------------------------------------
+   -- Inverted clock
+   --------------------------------------------------
+
    clkn_s <= not clk_i;
 
-   -- Debug
-   ps2_clk_in_s   <= ps2_clk_in_i;
-   ps2_clk_out_o  <= ps2_clk_out_s;
-   ps2_clken_o    <= ps2_clken_s;
-   ps2_data_in_s  <= ps2_data_in_i;
-   ps2_data_out_o <= ps2_data_out_s;
-   ps2_dataen_o   <= ps2_dataen_s;
 
-   -----------------------
-   -- Connect to keyboard
-   -----------------------
+   --------------------------------------------------
+   -- Instantiate 65C02 CPU module
+   --------------------------------------------------
 
-   i_ps2_buffer : entity work.ps2_buffer
+   i_cpu_65c02 : entity work.cpu_65c02
       port map (
-         clk_i         => clk_i,
-         rst_i         => rst_i,
-         kbd_clk_i     => ps2_clk_in_s,
-         kbd_clk_o     => ps2_clk_out_s,
-         kbd_clken_o   => ps2_clken_s,
-         kbd_data_i    => ps2_data_in_s,
-         kbd_data_o    => ps2_data_out_s,
-         kbd_dataen_o  => ps2_dataen_s,
-         main_clk_o    => via2_porta_in_s(1),
-         main_clk_i    => via2_porta_out_s(1),
-         main_clken_i  => via2_porta_en_s(1),
-         main_data_o   => via2_porta_in_s(0),
-         main_data_i   => via2_porta_out_s(0),
-         main_dataen_i => via2_porta_en_s(0)
-      ); -- i_ps2_buffer
+         clk_i     => clk_i,
+         rst_i     => rst_i,
+         nmi_i     => nmi_i,
+         irq_i     => irq_i,
+         addr_o    => cpu_addr_s,
+         wr_en_o   => cpu_wr_en_s,
+         wr_data_o => cpu_wr_data_s,
+         rd_en_o   => cpu_rd_en_s,
+         debug_o   => cpu_debug_s,
+         rd_data_i => cpu_rd_data_s
+      ); -- i_cpu_65c02
 
 
-   -----------------------
-   -- VIA1 port mapping
-   -----------------------
-
-   hiram_bank_s <= via1_porta_s(3 downto 0); -- TBD: Should be 7 downto 0.
-   rom_bank_s   <= via1_portb_s(2 downto 0);
-
-
-   -----------------------
-   -- ROM and RAM banking
-   -----------------------
-
-   hiram_addr_s <= hiram_bank_s & cpu_addr_s(12 downto 0);  -- 64 *  8 kB = 512 kB
-   rom_addr_s   <= rom_bank_s   & cpu_addr_s(13 downto 0);  --  8 * 16 kB = 128 kB
-
-
-   --------------------
+   --------------------------------------------------
    -- Address decoding      
-   --------------------
+   --------------------------------------------------
 
    loram_cs_s  <= '1' when cpu_addr_s(15 downto 15) = "0"    else '0';  -- 0x0000 - 0x7FFF
    medram_cs_s <= '1' when cpu_addr_s(15 downto 13) = "100"  else '0';  -- 0x8000 - 0x9FFF
@@ -193,7 +175,7 @@ begin
    via1_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F6" else '0';  -- 0x9F60 - 0x9F6F
    via2_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F7" else '0';  -- 0x9F70 - 0x9F7F
    eth_cs_s    <= '1' when cpu_addr_s(15 downto  4) = X"9FC" else '0';  -- 0x9FC0 - 0x9FCF
-   aud_cs_s    <= '1' when cpu_addr_s(15 downto  4) = X"9FE" else '0';  -- 0x9FE0 - 0x9FEF
+   ym2151_cs_s <= '1' when cpu_addr_s(15 downto  4) = X"9FE" else '0';  -- 0x9FE0 - 0x9FEF
    hiram_cs_s  <= '1' when cpu_addr_s(15 downto 13) = "101"  else '0';  -- 0xA000 - 0xBFFF
    rom_cs_s    <= '1' when cpu_addr_s(15 downto 14) = "11"   else '0';  -- 0xC000 - 0xFFFF
 
@@ -202,7 +184,8 @@ begin
                     via1_rd_data_s   when via1_cs_s   = '1' else
                     via2_rd_data_s   when via2_cs_s   = '1' else
                     eth_rd_data_s    when eth_cs_s    = '1' else
-                    medram_rd_data_s when medram_cs_s = '1' else  -- Lower priority than VERA and VIA.
+                    ym2151_rd_data_s when ym2151_cs_s = '1' else
+                    medram_rd_data_s when medram_cs_s = '1' else  -- Lower priority than I/O devices in 0x9Fxx range.
                     hiram_rd_data_s  when hiram_cs_s  = '1' else
                     rom_rd_data_s    when rom_cs_s    = '1' else
                     (others => '0');
@@ -222,13 +205,13 @@ begin
    via1_wr_en_s   <= cpu_wr_en_s and via1_cs_s;
    via2_wr_en_s   <= cpu_wr_en_s and via2_cs_s;
    eth_wr_en_s    <= cpu_wr_en_s and eth_cs_s;
-   aud_wr_en_s    <= cpu_wr_en_s and aud_cs_s;
+   ym2151_wr_en_s <= cpu_wr_en_s and ym2151_cs_s;
    hiram_wr_en_s  <= cpu_wr_en_s and hiram_cs_s;
 
 
-   -----------------------
+   --------------------------------------------------
    -- Instantiate low RAM
-   -----------------------
+   --------------------------------------------------
 
    i_loram : entity work.ram
       generic map (
@@ -244,9 +227,9 @@ begin
       ); -- i_loram
 
 
-   -----------------------
+   --------------------------------------------------
    -- Instantiate med RAM
-   -----------------------
+   --------------------------------------------------
 
    i_medram : entity work.ram
       generic map (
@@ -260,15 +243,6 @@ begin
          rd_en_i   => medram_rd_en_s,
          rd_data_o => medram_rd_data_s
       ); -- i_medram
-
-
-   ----------------
-   -- Connect VERA
-   ----------------
-
-   vera_addr_o    <= cpu_addr_s(2 downto 0);
-   vera_wr_data_o <= cpu_wr_data_s;
-   vera_debug_o   <= cpu_debug_s(15 downto 0);  -- Program Counter
 
 
    --------------------------------------------------
@@ -294,6 +268,22 @@ begin
 
 
    --------------------------------------------------
+   -- VIA1 port mapping
+   --------------------------------------------------
+
+   hiram_bank_s <= via1_porta_s(3 downto 0); -- TBD: Should be 7 downto 0.
+   rom_bank_s   <= via1_portb_s(2 downto 0);
+
+
+   --------------------------------------------------
+   -- ROM and RAM banking
+   --------------------------------------------------
+
+   hiram_addr_s <= hiram_bank_s & cpu_addr_s(12 downto 0);  -- 64 *  8 kB = 512 kB
+   rom_addr_s   <= rom_bank_s   & cpu_addr_s(13 downto 0);  --  8 * 16 kB = 128 kB
+
+
+   --------------------------------------------------
    -- Instantiate VIA2
    --------------------------------------------------
 
@@ -316,27 +306,32 @@ begin
       ); -- i_via2
 
 
-   --------------------------------------------------------
-   -- Instantiate YM2151 module
-   --------------------------------------------------------
+   --------------------------------------------------
+   -- VIA2 port mapping
+   --------------------------------------------------
 
-   i_ym2151 : entity work.ym2151
-      generic map (
-         G_CLOCK_HZ => 8333333                  -- Input clock frequency
-      )
+   i_ps2_buffer : entity work.ps2_buffer
       port map (
-         clk_i     => clk_i,
-         rst_i     => rst_i,
-         addr_i    => cpu_addr_s(0 downto 0),
-         wr_en_i   => aud_wr_en_s,
-         wr_data_i => cpu_wr_data_s,
-         val_o     => aud_val_o
-      ); -- i_ym2151
+         clk_i         => clk_i,
+         rst_i         => rst_i,
+         kbd_clk_i     => ps2_clk_in_i,
+         kbd_clk_o     => ps2_clk_out_o,
+         kbd_clken_o   => ps2_clken_o,
+         kbd_data_i    => ps2_data_in_i,
+         kbd_data_o    => ps2_data_out_o,
+         kbd_dataen_o  => ps2_dataen_o,
+         main_clk_o    => via2_porta_in_s(1),
+         main_clk_i    => via2_porta_out_s(1),
+         main_clken_i  => via2_porta_en_s(1),
+         main_data_o   => via2_porta_in_s(0),
+         main_data_i   => via2_porta_out_s(0),
+         main_dataen_i => via2_porta_en_s(0)
+      ); -- i_ps2_buffer
 
 
-   -------------------------------
+   --------------------------------------------------
    -- Instantiate Ethernet module
-   -------------------------------
+   --------------------------------------------------
 
    i_ethernet : entity work.ethernet
       port map (
@@ -362,9 +357,9 @@ begin
       ); -- i_ethernet
 
 
-   --------------------------
+   --------------------------------------------------
    -- Instantiate banked RAM
-   --------------------------
+   --------------------------------------------------
 
    i_hiram : entity work.ram
       generic map (
@@ -380,9 +375,9 @@ begin
       ); -- i_hiram
       
 
-   -------------------
+   --------------------------------------------------
    -- Instantiate ROM
-   -------------------
+   --------------------------------------------------
 
    i_rom : entity work.rom
       generic map (
@@ -398,22 +393,39 @@ begin
       
       
    --------------------------------------------------
-   -- Instantiate 65C02 CPU module
+   -- Connect to YM2151
    --------------------------------------------------
 
-   i_cpu_65c02 : entity work.cpu_65c02
-      port map (
-         clk_i     => clk_i,
-         rst_i     => rst_i,
-         nmi_i     => nmi_i,
-         irq_i     => irq_i,
-         addr_o    => cpu_addr_s,
-         wr_en_o   => cpu_wr_en_s,
-         wr_data_o => cpu_wr_data_s,
-         rd_en_o   => cpu_rd_en_s,
-         debug_o   => cpu_debug_s,
-         rd_data_i => cpu_rd_data_s
-      ); -- i_cpu_65c02
-      
+   p_ym2151 : process (clk_i)
+   begin
+      if rising_edge(clk_i) then
+         if ym2151_ready_i = '1' then
+            ym2151_valid_r <= '0';
+         end if;
+
+         if ym2151_wr_en_s = '1' then
+            case cpu_addr_s(0) is
+               when '0' => ym2151_addr_r <= cpu_wr_data_s;
+               when '1' => ym2151_data_r <= cpu_wr_data_s;
+                           ym2151_valid_r <= '1';
+            end case;
+         end if;
+      end if;
+   end process p_ym2151;
+
+   ym2151_rd_data_s <= (7 => not ym2151_ready_i, others => '0');
+   ym2151_valid_o   <= ym2151_valid_r;
+   ym2151_addr_o    <= ym2151_addr_r;
+   ym2151_data_o    <= ym2151_data_r;
+
+
+   --------------------------------------------------
+   -- Connect to VERA
+   --------------------------------------------------
+
+   vera_addr_o    <= cpu_addr_s(2 downto 0);
+   vera_wr_data_o <= cpu_wr_data_s;
+   vera_debug_o   <= cpu_debug_s(15 downto 0);  -- Program Counter
+
 end architecture structural;
 

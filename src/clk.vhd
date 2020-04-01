@@ -1,4 +1,4 @@
--- file: clk_wiz_0_clk_wiz.vhd
+-- file: clk_wiz_0.vhd
 -- 
 -- (c) Copyright 2008 - 2013 Xilinx, Inc. All rights reserved.
 -- 
@@ -65,65 +65,41 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std_unsigned.all;
 
 library unisim;
 use unisim.vcomponents.all;
 
-entity clk_wiz_0_clk_wiz is
+entity clk_wiz_0 is
    port (
-      -- Clock in ports
-      clk_in1           : in     std_logic;   -- 100    MHz
-                                              -- Clock out ports
-      eth_clk           : out    std_logic;   --  50    MHz
-      vga_clk           : out    std_logic;   --  25.2  MHz
-      cpu_clk           : out    std_logic;   --   8.33 MHz
-      pdm_clk           : out    std_logic    -- 100    MHz
+      sys_clk_i    : in  std_logic;   -- 100    MHz
+      eth_clk_o    : out std_logic;   --  50    MHz
+      vga_clk_o    : out std_logic;   --  25.2  MHz
+      cpu_clk_o    : out std_logic;   --   8.33 MHz
+      pwm_clk_o    : out std_logic;   -- 100    MHz
+      ym2151_clk_o : out std_logic    --   3.57 MHz
    );
-end clk_wiz_0_clk_wiz;
+end clk_wiz_0;
 
-architecture xilinx of clk_wiz_0_clk_wiz is
-   -- Input clock buffering / unused connectors
-   signal clk_in1_clk_wiz_0      : std_logic;
-   -- Output clock buffering / unused connectors
-   signal clkfbout_clk_wiz_0     : std_logic;
-   signal clkfbout_buf_clk_wiz_0 : std_logic;
-   signal clkfboutb_unused       : std_logic;
-   signal eth_clk_wiz_0          : std_logic;
-   signal vga_clk_wiz_0          : std_logic;
-   signal cpu_clk_wiz_0          : std_logic;
-   signal pdm_clk_wiz_0          : std_logic;
-   signal clkout0b_unused        : std_logic;
-   signal clkout1b_unused        : std_logic;
-   signal clkout2b_unused        : std_logic;
-   signal clkout3b_unused        : std_logic;
-   signal clkout4_unused         : std_logic;
-   signal clkout5_unused         : std_logic;
-   signal clkout6_unused         : std_logic;
-   -- Dynamic programming unused signals
-   signal do_unused              : std_logic_vector(15 downto 0);
-   signal drdy_unused            : std_logic;
-   -- Dynamic phase shift unused signals
-   signal psdone_unused          : std_logic;
-   signal locked_int             : std_logic;
-   -- Unused status signals
-   signal clkfbstopped_unused    : std_logic;
-   signal clkinstopped_unused    : std_logic;
+architecture xilinx of clk_wiz_0 is
+
+   signal clkfbout_0     : std_logic;
+   signal clkfbout_buf_0 : std_logic;
+   signal eth_0          : std_logic;
+   signal vga_0          : std_logic;
+   signal cpu_0          : std_logic;
+   signal pwm_0          : std_logic;
+   signal ym2151_0       : std_logic;
+
+   signal ym2151_clk_s   : std_logic;  -- 28.57 MHz
+   signal ym2151_cnt_r   : std_logic_vector(2 downto 0);
 
 begin
-
-   -------------------------------------
-   -- Input buffering
-   --------------------------------------
-
-   clk_in1_clk_wiz_0 <= clk_in1;
-
 
    --------------------------------------
    -- Clocking PRIMITIVE
    --------------------------------------
    -- Instantiation of the MMCM PRIMITIVE
-   --    * Unused inputs are tied off
-   --    * Unused outputs are labeled unused
    i_mmcm_adv : MMCME2_ADV
       generic map (
          BANDWIDTH            => "OPTIMIZED",
@@ -145,31 +121,35 @@ begin
          CLKOUT2_PHASE        => 0.000,
          CLKOUT2_DUTY_CYCLE   => 0.500,
          CLKOUT2_USE_FINE_PS  => FALSE,
-         CLKOUT3_DIVIDE       => 8,         -- PDM @ 100 MHz
+         CLKOUT3_DIVIDE       => 8,         -- PWM @ 100 MHz
          CLKOUT3_PHASE        => 0.000,
          CLKOUT3_DUTY_CYCLE   => 0.500,
          CLKOUT3_USE_FINE_PS  => FALSE,
+         CLKOUT4_DIVIDE       => 28,        -- 8*YM2151 @ 28.57 MHz
+         CLKOUT4_PHASE        => 0.000,
+         CLKOUT4_DUTY_CYCLE   => 0.500,
+         CLKOUT4_USE_FINE_PS  => FALSE,
          CLKIN1_PERIOD        => 10.0,
          REF_JITTER1          => 0.010
       )
       port map (
          -- Output clocks
-         CLKFBOUT            => clkfbout_clk_wiz_0,
-         CLKFBOUTB           => clkfboutb_unused,
-         CLKOUT0             => vga_clk_wiz_0,
-         CLKOUT0B            => clkout0b_unused,
-         CLKOUT1             => eth_clk_wiz_0,
-         CLKOUT1B            => clkout1b_unused,
-         CLKOUT2             => cpu_clk_wiz_0,
-         CLKOUT2B            => clkout2b_unused,
-         CLKOUT3             => pdm_clk_wiz_0,
-         CLKOUT3B            => clkout3b_unused,
-         CLKOUT4             => clkout4_unused,
-         CLKOUT5             => clkout5_unused,
-         CLKOUT6             => clkout6_unused,
+         CLKFBOUT            => clkfbout_0,
+         CLKFBOUTB           => open,
+         CLKOUT0             => vga_0,
+         CLKOUT0B            => open,
+         CLKOUT1             => eth_0,
+         CLKOUT1B            => open,
+         CLKOUT2             => cpu_0,
+         CLKOUT2B            => open,
+         CLKOUT3             => pwm_0,
+         CLKOUT3B            => open,
+         CLKOUT4             => ym2151_0,
+         CLKOUT5             => open,
+         CLKOUT6             => open,
          -- Input clock control
-         CLKFBIN             => clkfbout_buf_clk_wiz_0,
-         CLKIN1              => clk_in1_clk_wiz_0,
+         CLKFBIN             => clkfbout_buf_0,
+         CLKIN1              => sys_clk_i,
          CLKIN2              => '0',
          -- Tied to always select the primary input clock
          CLKINSEL            => '1',
@@ -178,18 +158,18 @@ begin
          DCLK                => '0',
          DEN                 => '0',
          DI                  => (others => '0'),
-         DO                  => do_unused,
-         DRDY                => drdy_unused,
+         DO                  => open,
+         DRDY                => open,
          DWE                 => '0',
          -- Ports for dynamic phase shift
          PSCLK               => '0',
          PSEN                => '0',
          PSINCDEC            => '0',
-         PSDONE              => psdone_unused,
+         PSDONE              => open,
          -- Other control and status signals
-         LOCKED              => locked_int,
-         CLKINSTOPPED        => clkinstopped_unused,
-         CLKFBSTOPPED        => clkfbstopped_unused,
+         LOCKED              => open,
+         CLKINSTOPPED        => open,
+         CLKFBSTOPPED        => open,
          PWRDWN              => '0',
          RST                 => '0'
       );
@@ -201,32 +181,51 @@ begin
 
    clkf_buf : BUFG
       port map (
-         O => clkfbout_buf_clk_wiz_0,
-         I => clkfbout_clk_wiz_0
+         I => clkfbout_0,
+         O => clkfbout_buf_0
       );
 
    clkout0_buf : BUFG
       port map (
-         O => vga_clk,
-         I => vga_clk_wiz_0
+         I => vga_0,
+         O => vga_clk_o
       );
 
    clkout1_buf : BUFG
       port map (
-         O => eth_clk,
-         I => eth_clk_wiz_0
+         I => eth_0,
+         O => eth_clk_o
       );
 
    clkout2_buf : BUFG
       port map (
-         O => cpu_clk,
-         I => cpu_clk_wiz_0
+         I => cpu_0,
+         O => cpu_clk_o
       );
 
    clkout3_buf : BUFG
       port map (
-         O => pdm_clk,
-         I => pdm_clk_wiz_0
+         I => pwm_0,
+         O => pwm_clk_o
+      );
+
+   clkout4_buf : BUFG
+      port map (
+         I => ym2151_0,
+         O => ym2151_clk_s
+      );
+
+   p_ym2151_clk : process (ym2151_clk_s)
+   begin
+      if rising_edge(ym2151_clk_s) then
+         ym2151_cnt_r <= ym2151_cnt_r + 1;
+      end if;
+   end process p_ym2151_clk;
+
+   clkout4a_buf : BUFG
+      port map (
+         I => ym2151_cnt_r(2),
+         O => ym2151_clk_o
       );
 
 end xilinx;

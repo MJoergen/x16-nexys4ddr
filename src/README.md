@@ -9,6 +9,3 @@ The reason for this division is because the VERA chip has a considerable amount
 of complexity, including multiple clock domains, and I prefer the
 "divide-and-conquer" approach to manage the complexity of the project.
 
-In this directory you just type "make", which will build the bit-file and
-configure the FPGA. And then it is ready to try out!
-

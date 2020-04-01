@@ -5,8 +5,9 @@ XILINX_DIR = /opt/Xilinx/Vivado/2019.1
 SUB      = sub
 SOURCES  = src/x16.vhd
 SOURCES += src/clk.vhd
-SOURCES += src/cdc.vhd
-SOURCES += src/pulse_conv.vhd
+SOURCES += $(SUB)/cdc/src/cdc_vector.vhd
+SOURCES += $(SUB)/cdc/src/cdc.vhd
+SOURCES += $(SUB)/cdc/src/pulse_conv.vhd
 SOURCES += src/vera/vera.vhd
 SOURCES += src/vera/vram.vhd
 SOURCES += src/vera/palette.vhd
@@ -61,6 +62,7 @@ SOURCES += $(SUB)/ym2151/src/calc_phase_inc.vhd
 SOURCES += $(SUB)/ym2151/src/calc_product.vhd
 SOURCES += $(SUB)/ym2151/src/calc_waveform.vhd
 SOURCES += $(SUB)/ym2151/src/calc_delay.vhd
+SOURCES += $(SUB)/ym2151/src/calc_output.vhd
 SOURCES += $(SUB)/ym2151/src/update_state.vhd
 SOURCES += $(SUB)/ym2151/src/ym2151.vhd
 
@@ -92,12 +94,10 @@ build/x16.tcl: src/rom.tcl src/debug.tcl src/x16.xdc Makefile
 	echo "# This is a tcl command script for the Vivado tool chain" > $@
 	echo "read_vhdl -vhdl2008 { $(SOURCES)  }" >> $@
 	echo "read_xdc src/x16.xdc" >> $@
-	echo "set_param synth.elaboration.rodinMoreOptions \"rt::set_parameter max_loop_limit 200000\"" >> $@
 	echo "synth_design -top x16 -part xc7a100tcsg324-1 -flatten_hierarchy none" >> $@
 	echo "write_checkpoint -force build/post_synth.dcp" >> $@
 	echo "source src/debug.tcl" >> $@
 	echo "opt_design -directive NoBramPowerOpt" >> $@
-	echo "write_checkpoint -force build/post_opt.dcp" >> $@
 	echo "place_design" >> $@
 	echo "route_design" >> $@
 	echo "write_checkpoint -force build/x16.dcp" >> $@
@@ -113,4 +113,5 @@ clean:
 	rm -rf updatemem*
 	rm -rf .Xil
 	rm -rf usage_statistics_webtalk.*
+	rm -rf webtalk.*
 

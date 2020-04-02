@@ -61,9 +61,9 @@ architecture structural of x16 is
    signal pwm_clk_s                   : std_logic;
    signal main_clk_s                  : std_logic;
    signal main_clkn_s                 : std_logic;                    -- Inverted clock
-   signal main_rst_s                  : std_logic_vector(3 downto 0) := (others => '1');
+   signal main_rst_s                  : std_logic;
    signal ym2151_clk_s                : std_logic;
-   signal ym2151_rst_s                : std_logic_vector(3 downto 0) := (others => '1');
+   signal ym2151_rst_s                : std_logic;
 
    signal main_addr_s                 : std_logic_vector(15 downto 0);
    signal main_wr_en_s                : std_logic;
@@ -167,43 +167,21 @@ begin
 
 
    --------------------------------------------------------
-   -- Instantiate Clock generation
+   -- Instantiate Clock and Reset
    --------------------------------------------------------
 
-   i_clk : entity work.clk_wiz_0
+   i_clk_rst : entity work.clk_rst
       port map (
          sys_clk_i    => sys_clk_i,      -- 100 MHz
+         sys_rstn_i   => sys_rstn_i,
          eth_clk_o    => eth_clk_s,      --  50 MHz
          vga_clk_o    => vga_clk_s,      --  25.2 MHz
-         cpu_clk_o    => main_clk_s,     --   8.33 MHz
+         main_clk_o   => main_clk_s,     --   8.33 MHz
+         main_rst_o   => main_rst_s,
          pwm_clk_o    => pwm_clk_s,      -- 100 MHz
-         ym2151_clk_o => ym2151_clk_s    --   3.579545 MHz
-      ); -- i_clk
-
-
-   --------------------------------------------------------
-   -- Generate reset signal.
-   --------------------------------------------------------
-
-   p_main_rst : process (main_clk_s)
-   begin
-      if rising_edge(main_clk_s) then
-         main_rst_s <= main_rst_s(2 downto 0) & "0";  -- Shift left one bit
-         if sys_rstn_i = '0' then
-            main_rst_s <= (others => '1');
-         end if;
-      end if;
-   end process p_main_rst;
-
-   p_ym2151_rst : process (ym2151_clk_s)
-   begin
-      if rising_edge(ym2151_clk_s) then
-         ym2151_rst_s <= ym2151_rst_s(2 downto 0) & "0";  -- Shift left one bit
-         if sys_rstn_i = '0' then
-            ym2151_rst_s <= (others => '1');
-         end if;
-      end if;
-   end process p_ym2151_rst;
+         ym2151_clk_o => ym2151_clk_s,   --   3.579545 MHz
+         ym2151_rst_o => ym2151_rst_s
+      ); -- i_clk_rst
 
    main_clkn_s <= not main_clk_s;
 
@@ -215,7 +193,7 @@ begin
    i_vera : entity work.vera
       port map (
          cpu_clk_i     => main_clkn_s,
-         cpu_rst_i     => main_rst_s(3),
+         cpu_rst_i     => main_rst_s,
          cpu_addr_i    => main_addr_s(2 downto 0),
          cpu_wr_en_i   => main_wr_en_s,
          cpu_wr_data_i => main_wr_data_s,
@@ -246,7 +224,7 @@ begin
       )
       port map (
          clk_i            => main_clk_s,
-         rst_i            => main_rst_s(3),
+         rst_i            => main_rst_s,
          nmi_i            => '0',
          irq_i            => main_vera_irq_s,
          vera_addr_o      => main_addr_s(2 downto 0),
@@ -318,7 +296,7 @@ begin
       )
       port map (
          clk_i       => ym2151_clk_s,
-         rst_i       => ym2151_rst_s(3),
+         rst_i       => ym2151_rst_s,
          cfg_valid_i => ym2151_cfg_valid_s,
          cfg_ready_o => ym2151_cfg_ready_s,
          cfg_addr_i  => ym2151_cfg_addr_s,

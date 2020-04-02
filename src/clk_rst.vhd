@@ -1,4 +1,4 @@
--- file: clk_wiz_0.vhd
+-- file: clk_rst.vhd
 -- 
 -- (c) Copyright 2008 - 2013 Xilinx, Inc. All rights reserved.
 -- 
@@ -70,29 +70,35 @@ use ieee.numeric_std_unsigned.all;
 library unisim;
 use unisim.vcomponents.all;
 
-entity clk_wiz_0 is
+entity clk_rst is
    port (
       sys_clk_i    : in  std_logic;   -- 100    MHz
+      sys_rstn_i   : in  std_logic;
       eth_clk_o    : out std_logic;   --  50    MHz
       vga_clk_o    : out std_logic;   --  25.2  MHz
-      cpu_clk_o    : out std_logic;   --   8.33 MHz
+      main_clk_o   : out std_logic;   --   8.33 MHz
+      main_rst_o   : out std_logic;
       pwm_clk_o    : out std_logic;   -- 100    MHz
-      ym2151_clk_o : out std_logic    --   3.57 MHz
+      ym2151_clk_o : out std_logic;   --   3.57 MHz
+      ym2151_rst_o : out std_logic
    );
-end clk_wiz_0;
+end clk_rst;
 
-architecture xilinx of clk_wiz_0 is
+architecture xilinx of clk_rst is
 
    signal clkfbout_0     : std_logic;
    signal clkfbout_buf_0 : std_logic;
    signal eth_0          : std_logic;
    signal vga_0          : std_logic;
-   signal cpu_0          : std_logic;
+   signal main_0         : std_logic;
    signal pwm_0          : std_logic;
    signal ym2151_0       : std_logic;
 
    signal ym2151_clk_s   : std_logic;  -- 28.57 MHz
    signal ym2151_cnt_r   : std_logic_vector(2 downto 0);
+
+   signal main_rst_r     : std_logic_vector(3 downto 0) := (others => '1');
+   signal ym2151_rst_r   : std_logic_vector(3 downto 0) := (others => '1');
 
 begin
 
@@ -140,7 +146,7 @@ begin
          CLKOUT0B            => open,
          CLKOUT1             => eth_0,
          CLKOUT1B            => open,
-         CLKOUT2             => cpu_0,
+         CLKOUT2             => main_0,
          CLKOUT2B            => open,
          CLKOUT3             => pwm_0,
          CLKOUT3B            => open,
@@ -199,8 +205,8 @@ begin
 
    clkout2_buf : BUFG
       port map (
-         I => cpu_0,
-         O => cpu_clk_o
+         I => main_0,
+         O => main_clk_o
       );
 
    clkout3_buf : BUFG
@@ -227,6 +233,34 @@ begin
          I => ym2151_cnt_r(2),
          O => ym2151_clk_o
       );
+
+
+   --------------------------------------------------------
+   -- Generate reset signal.
+   --------------------------------------------------------
+
+   p_main_rst : process (main_clk_o)
+   begin
+      if rising_edge(main_clk_o) then
+         main_rst_r <= main_rst_r(2 downto 0) & "0";  -- Shift left one bit
+         if sys_rstn_i = '0' then
+            main_rst_r <= (others => '1');
+         end if;
+      end if;
+   end process p_main_rst;
+
+   p_ym2151_rst : process (ym2151_clk_o)
+   begin
+      if rising_edge(ym2151_clk_o) then
+         ym2151_rst_r <= ym2151_rst_r(2 downto 0) & "0";  -- Shift left one bit
+         if sys_rstn_i = '0' then
+            ym2151_rst_r <= (others => '1');
+         end if;
+      end if;
+   end process p_ym2151_rst;
+
+   main_rst_o   <= main_rst_r(3);
+   ym2151_rst_o <= ym2151_rst_r(3);
 
 end xilinx;
 

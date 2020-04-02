@@ -4,7 +4,7 @@ XILINX_DIR = /opt/Xilinx/Vivado/2019.1
 # This defines all the source files (VHDL) used in the project
 SUB      = sub
 SOURCES  = src/x16.vhd
-SOURCES += src/clk.vhd
+SOURCES += src/clk_rst.vhd
 SOURCES += $(SUB)/cdc/src/cdc_vector.vhd
 SOURCES += $(SUB)/cdc/src/cdc.vhd
 SOURCES += $(SUB)/cdc/src/pulse_conv.vhd

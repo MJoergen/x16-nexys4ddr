@@ -495,4 +495,28 @@ generated output in audacity shows no distortion at all!
 I'm now working on getting the envelope generator to work, and after that I
 want to add multiple channels.
 
+## 2020-04-01
+Wov, a long time has passed.
+
+First of all, I've now got 8 channels working simultaneously, as well as the
+envelope generator. However, only one device per channel, instead of four.  So
+that will be the next step.
+
+Then I've written a tutorial on how to program the YM2151 from the X16 projexct.
+This tutorial is located [here](https://github.com/MJoergen/x16-ym2151-tutorial).
+
+Then I've worked on making an example design for the YM2151, so it can be
+programmed on the Nexys4DDR board without having to use the entire X16 project.
+That gave a lot of problems, partly because at the same time I changed the
+clock frequency from 8.33 MHz to 3.58 MHz. That single change broke things in
+the YM2151 tables, because the values changed width, and that caused overflow.
+
+Furthermore, I had to implement a more complete CDC module, in order to make
+the CPU and the YM2151 communicate with each other. That lead to moving all the
+CDC related stuff to a separate submodule.
+
+Next on my TODO list is to update the X16-ROM to release R37. This will require
+rewriting the VERA module, as well as updating the Ethernet part of the ROM.
+
+And after that work some more on the YM2151.
 

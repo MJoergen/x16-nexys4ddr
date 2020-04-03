@@ -6,7 +6,7 @@
 SUB = ../../sub
 SOURCES  = vera.vhd vram.vhd palette.vhd
 SOURCES += $(SUB)/cdc/src/cdc.vhd $(SUB)/cdc/src/pulse_conv.vhd         # Mixed clock domain
-SOURCES += cpu/mmu.vhd cpu/config.vhd cpu/cpu.vhd                       # All CPU clock domain
+SOURCES += cpu/config.vhd cpu/cpu.vhd                                   # All CPU clock domain
 SOURCES += vga/pix.vhd vga/sync.vhd vga/vga.vhd vga/layer.vhd           # All VGA clock domain
 SOURCES += vga/mode0.vhd vga/mode7.vhd                                  # All VGA clock domain
 SOURCES += cpu/spi_master.vhd cpu/spi_slave.vhd cpu/spi.vhd

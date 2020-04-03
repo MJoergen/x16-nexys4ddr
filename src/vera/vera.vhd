@@ -16,7 +16,7 @@ entity vera is
    port (
       cpu_clk_i     : in  std_logic;                        -- 8.33 MHz
       cpu_rst_i     : in  std_logic;
-      cpu_addr_i    : in  std_logic_vector( 2 downto 0);
+      cpu_addr_i    : in  std_logic_vector( 4 downto 0);
       cpu_wr_en_i   : in  std_logic;
       cpu_wr_data_i : in  std_logic_vector( 7 downto 0);
       cpu_rd_en_i   : in  std_logic;
@@ -53,8 +53,8 @@ architecture structural of vera is
    signal cpu_pal_wr_data_s  : std_logic_vector( 7 downto 0);
    signal cpu_pal_rd_data_s  : std_logic_vector( 7 downto 0);
    -- configuration registers
-   signal cpu_map_base_s     : std_logic_vector(17 downto 0);
-   signal cpu_tile_base_s    : std_logic_vector(17 downto 0);
+   signal cpu_map_base_s     : std_logic_vector(16 downto 0);
+   signal cpu_tile_base_s    : std_logic_vector(16 downto 0);
    signal cpu_mode_s         : std_logic_vector( 2 downto 0);
    signal cpu_hscale_s       : std_logic_vector( 7 downto 0);
    signal cpu_vscale_s       : std_logic_vector( 7 downto 0);
@@ -73,8 +73,8 @@ architecture structural of vera is
    signal vga_pal_addr_s     : std_logic_vector( 7 downto 0);
    signal vga_pal_rd_data_s  : std_logic_vector(11 downto 0);
    -- configuration registers
-   signal vga_map_base_r     : std_logic_vector(17 downto 0);
-   signal vga_tile_base_r    : std_logic_vector(17 downto 0);
+   signal vga_map_base_r     : std_logic_vector(16 downto 0);
+   signal vga_tile_base_r    : std_logic_vector(16 downto 0);
    signal vga_mode_r         : std_logic_vector( 2 downto 0);
    signal vga_hscale_r       : std_logic_vector( 7 downto 0);
    signal vga_vscale_r       : std_logic_vector( 7 downto 0);
@@ -180,21 +180,21 @@ begin
 
    i_cdc : entity work.cdc
       generic map (
-         G_SIZE => 55
+         G_SIZE => 53
       )
       port map (
          src_clk_i               => cpu_clk_i,
-         src_dat_i(17 downto  0) => cpu_map_base_s,
-         src_dat_i(35 downto 18) => cpu_tile_base_s,
-         src_dat_i(38 downto 36) => cpu_mode_s,
-         src_dat_i(46 downto 39) => cpu_hscale_s,
-         src_dat_i(54 downto 47) => cpu_vscale_s,
+         src_dat_i(16 downto  0) => cpu_map_base_s,
+         src_dat_i(33 downto 17) => cpu_tile_base_s,
+         src_dat_i(36 downto 34) => cpu_mode_s,
+         src_dat_i(44 downto 37) => cpu_hscale_s,
+         src_dat_i(52 downto 45) => cpu_vscale_s,
          dst_clk_i               => vga_clk_i,
-         dst_dat_o(17 downto  0) => vga_map_base_r,
-         dst_dat_o(35 downto 18) => vga_tile_base_r,
-         dst_dat_o(38 downto 36) => vga_mode_r,
-         dst_dat_o(46 downto 39) => vga_hscale_r,
-         dst_dat_o(54 downto 47) => vga_vscale_r
+         dst_dat_o(16 downto  0) => vga_map_base_r,
+         dst_dat_o(33 downto 17) => vga_tile_base_r,
+         dst_dat_o(36 downto 34) => vga_mode_r,
+         dst_dat_o(44 downto 37) => vga_hscale_r,
+         dst_dat_o(52 downto 45) => vga_vscale_r
       ); -- i_cdc
 
 

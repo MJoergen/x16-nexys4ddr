@@ -8,8 +8,8 @@ entity vga is
    port (
       clk_i          : in  std_logic;                       -- 25.2 MHz
       -- From Layer settings
-      mapbase_i      : in  std_logic_vector(17 downto 0);
-      tilebase_i     : in  std_logic_vector(17 downto 0);
+      mapbase_i      : in  std_logic_vector(16 downto 0);
+      tilebase_i     : in  std_logic_vector(16 downto 0);
       mode_i         : in  std_logic_vector( 2 downto 0);
       hscale_i       : in  std_logic_vector( 7 downto 0);
       vscale_i       : in  std_logic_vector( 7 downto 0);
@@ -69,8 +69,8 @@ begin
    i_layer : entity work.layer
       port map (
          clk_i          => clk_i,
-         mapbase_i      => mapbase_i(16 downto 0),
-         tilebase_i     => tilebase_i(16 downto 0),
+         mapbase_i      => mapbase_i,
+         tilebase_i     => tilebase_i,
          mode_i         => mode_i,
          pix_x_i        => pix_x_scaled_s,
          pix_y_i        => pix_y_scaled_s,

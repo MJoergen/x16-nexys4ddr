@@ -7,25 +7,49 @@ use ieee.numeric_std_unsigned.all;
 -- It is also used during simulation to test the VERA block.
 --
 -- Upon startup the KERNAL/BASIC performs the following sequence of writes to the VERA:
--- 1. 0x0F800 - 0x0FFFF : Tile data.
--- 2. 0xF3000 - 0xF3009 : Layer 2.  Values 01:06:00:00:00:3E:00:00:00:00
--- 3. 0xF0000 - 0xF0008 : Composer. Values 01:80:80:0E:00:80:00:E0:28
--- 4. 0x00000 - 0x03FFF : Clear screen. Values 20:61 repeated.
--- 5. 0x00000 - 0x008FF : Display welcome screen.
+-- 1. Enable VSYNC interrupt
+--    0x9F26 := 0x01
+-- 2. Configure Tile data:
+--    VRAM 0x0F800 - 0x0FFFF
+-- 3. Configure Layer 1:
+--    0x9F34 := 0x60 : L1_CONFIG
+--    0x9F35 := 0x00 : L1_MAPBASE
+--    0x9F36 := 0x7C : L1_TILEBASE
+--    0x9F37 := 0x00 : L1_HSCROLL_L
+--    0x9F38 := 0x00 : L1_HSCROLL_H
+--    0x9F39 := 0x00 : L1_VSCROLL_L
+--    0x9F3A := 0x00 : L1_VSCROLL_H
+-- 4. Configure Display Composer:
+--    0x9F29 := 00   : DC_HSTART
+--    0x9F2A := A0   : DC_HSTOP
+--    0x9F2B := 00   : DC_VSTART
+--    0x9F2C := 78   : DC_VSTOP
+--    0x9F29 := 21   : DC_VIDEO
+--    0x9F2A := 80   : DC_HSCALE
+--    0x9F2B := 80   : DC_VSCALE
+--    0x9F2C := 00   : DC_BORDER
+-- 5. Clear Sprite attributes
+--    VRAM 0x1FC00 - 0x1FFFF
+-- 6. Clear screen
+--    VRAM 0x00000 - 0x03FFF : Values 20:61 repeated.
+-- 7. Display welcome screen.
+--    VRAM 0x00000 - 0x008FF
 --
 -- The default values of the composer settings are interpreted as follows:
 -- * VGA output
+-- * Layer 1 enabled, Layer 0 disabled.
+-- * No sprites.
 -- * HSCALE = VSCALE = 0x80, which means 1 output pixel for every input pixel.
 -- * HSTART = 0, HSTOP = 640
 -- * VSTART = 0, VSTOP = 480
 --
 -- The default values of the layer settings are interpreted as follows:
+-- * Map Base Address 0x00000
+-- * TIle Base Address 0x0F800
 -- * MODE = 0, which means 16 colour text mode
 -- * MAPW = 2, which means 128 tiles wide
 -- * MAPH = 1, which means 64 tiles high
 -- * TILEW = TILEH = 0, which means each tile is 8x8
--- * MAPBASE = 0, which means the MAP area starts at 0x00000
--- * TILEBASE = 0x3E00, which means the TILE area starts at 0x0F800
 -- * HSCROLL = VSCROLL = 0
 
 entity cpu_dummy is
@@ -55,50 +79,46 @@ architecture structural of cpu_dummy is
 
    constant commands : command_vector := (
       -- Configure layer 1
-      (X"9F25", X"00", '1'), -- Select address port 0
-      (X"9F20", X"00", '1'),
-      (X"9F21", X"30", '1'),
-      (X"9F22", X"1F", '1'), -- Set address to 0xF3000 and increment to 1.
-      (X"9F23", X"01", '1'), -- 0xF3000
-      (X"9F23", X"06", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"3E", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"00", '1'),
+      (X"9F34", X"60", '1'),  -- L1_CONFIG
+      (X"9F35", X"00", '1'),  -- L1_MAPBASE
+      (X"9F36", X"7C", '1'),  -- L1_TILEBASE
+      (X"9F37", X"00", '1'),  -- L1_HSCROLL_L
+      (X"9F38", X"00", '1'),  -- L1_HSCROLL_H
+      (X"9F39", X"00", '1'),  -- L1_VSCROLL_L
+      (X"9F3A", X"00", '1'),  -- L1_VSCROLL_H
 
-      (X"9F20", X"0A", '0'), -- VERIFY read from address 0x9F20
-      (X"9F21", X"30", '0'), -- VERIFY read from address 0x9F21
-      (X"9F22", X"1F", '0'), -- VERIFY read from address 0x9F22
-
-      (X"9F20", X"04", '1'),
-      (X"9F21", X"30", '1'),
-      (X"9F22", X"1F", '1'), -- Set address to 0xF3004 and increment to 1.
-      (X"9F23", X"00", '0'), -- VERIFY read from configuraton register 0xF3004
-      (X"9F23", X"3E", '0'), -- VERIFY read from configuraton register 0xF3005
-
-      (X"9F20", X"06", '1'),
-      (X"9F21", X"10", '1'),
-      (X"9F22", X"1F", '1'), -- Set address to 0xF1003 and increment to 1.
-      (X"9F23", X"0A", '0'), -- VERIFY read from configuraton register 0xF1006
-      (X"9F23", X"FE", '0'), -- VERIFY read from configuraton register 0xF1007
+      -- Verify read from layer 1 configuration
+      (X"9F34", X"60", '0'),  -- L1_CONFIG
+      (X"9F35", X"00", '0'),  -- L1_MAPBASE
+      (X"9F36", X"7C", '0'),  -- L1_TILEBASE
+      (X"9F37", X"00", '0'),  -- L1_HSCROLL_L
+      (X"9F38", X"00", '0'),  -- L1_HSCROLL_H
+      (X"9F39", X"00", '0'),  -- L1_VSCROLL_L
+      (X"9F3A", X"00", '0'),  -- L1_VSCROLL_H
 
       -- Configure display composer
-      (X"9F20", X"00", '1'),
-      (X"9F21", X"00", '1'),
-      (X"9F22", X"1F", '1'), -- Set address to 0xF0000 and increment to 1.
-      (X"9F23", X"01", '1'), -- 0xF0000
-      (X"9F23", X"80", '1'),
-      (X"9F23", X"80", '1'),
-      (X"9F23", X"0E", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"80", '1'),
-      (X"9F23", X"00", '1'),
-      (X"9F23", X"E0", '1'),
-      (X"9F23", X"28", '1'),
+      (X"9F25", X"02", '1'),  -- CTRL
+      (X"9F29", X"00", '1'),  -- DC_HSTART
+      (X"9F2A", X"A0", '1'),  -- DC_HSTOP
+      (X"9F2B", X"00", '1'),  -- DC_VSTART
+      (X"9F2C", X"78", '1'),  -- DC_VSTOP
+      (X"9F25", X"00", '1'),  -- CTRL
+      (X"9F29", X"21", '1'),  -- DC_VIDEO
+      (X"9F2A", X"80", '1'),  -- DC_HSCALE
+      (X"9F2B", X"80", '1'),  -- DC_VSCALE
+      (X"9F2C", X"00", '1'),  -- DC_BORDER
+
+      -- Verify read from display composer
+      (X"9F25", X"02", '1'),  -- CTRL
+      (X"9F29", X"00", '0'),  -- DC_HSTART
+      (X"9F2A", X"A0", '0'),  -- DC_HSTOP
+      (X"9F2B", X"00", '0'),  -- DC_VSTART
+      (X"9F2C", X"78", '0'),  -- DC_VSTOP
+      (X"9F25", X"00", '1'),  -- CTRL
+      (X"9F29", X"21", '0'),  -- DC_VIDEO
+      (X"9F2A", X"80", '0'),  -- DC_HSCALE
+      (X"9F2B", X"80", '0'),  -- DC_VSCALE
+      (X"9F2C", X"00", '0'),  -- DC_BORDER
 
       -- The first part is the map area, i.e. the characters and colours.
       (X"9F20", X"00", '1'),
@@ -2483,7 +2503,7 @@ architecture structural of cpu_dummy is
       (X"9F23", X"F0", '1')
    );
 
-   signal index : integer := 0;
+   signal index_r : integer := 0;
 
 begin
 
@@ -2491,30 +2511,31 @@ begin
    p_wr : process (clk_i)
    begin
       if rising_edge(clk_i) then
-         addr_o <= X"9F20";
+         addr_o  <= (others => '0');
          wr_en_o <= '0';
          rd_en_o <= '0';
-         if index < commands'length then
-            addr_o(2 downto 0) <= commands(index).addr(2 downto 0);
-            if commands(index).wr_en = '1' then
+         if index_r < commands'length then
+            addr_o <= commands(index_r).addr;
+            if commands(index_r).wr_en = '1' then
                wr_en_o   <= '1';
-               wr_data_o <= commands(index).data;
+               wr_data_o <= commands(index_r).data;
             else
                rd_en_o <= '1';
-               exp_data_r <= commands(index).data;
+               exp_data_r <= commands(index_r).data;
             end if;
-            index  <= index + 1;
+            index_r  <= index_r + 1;
          end if;
+
          if rst_i = '1' then
             addr_o  <= (others => '0');
             wr_en_o <= '0';
             rd_en_o <= '0';
-            index   <= 0;
+            index_r <= 0;
          end if;
       end if;
    end process p_wr;
 
-   debug_o <= to_stdlogicvector(index, 16);
+   debug_o <= to_stdlogicvector(index_r, 16);
 
    -- This process verifies the result of the CPU reads.
    p_rd : process (clk_i)

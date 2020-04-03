@@ -69,7 +69,7 @@ begin
       port map (
          cpu_clk_i     => cpu_clkn_s,
          cpu_rst_i     => cpu_rst_s,
-         cpu_addr_i    => cpu_addr_s(2 downto 0),
+         cpu_addr_i    => cpu_addr_s(4 downto 0),
          cpu_wr_en_i   => cpu_wr_en_s,
          cpu_wr_data_i => cpu_wr_data_s,
          cpu_rd_en_i   => cpu_rd_en_s,

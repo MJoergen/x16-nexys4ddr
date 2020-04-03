@@ -18,7 +18,7 @@ use ieee.numeric_std_unsigned.all;
 -- * HSCALE = VSCALE = 0x80, which means 1 output pixel for every input pixel.
 -- * HSTART = 0, HSTOP = 640
 -- * VSTART = 0, VSTOP = 480
--- 
+--
 -- The default values of the layer settings are interpreted as follows:
 -- * MODE = 0, which means 16 colour text mode
 -- * MAPW = 2, which means 128 tiles wide
@@ -31,6 +31,7 @@ use ieee.numeric_std_unsigned.all;
 entity cpu_dummy is
    port (
       clk_i     : in  std_logic;
+      rst_i     : in  std_logic;
       addr_o    : out std_logic_vector(15 downto 0);
       wr_en_o   : out std_logic;
       wr_data_o : out std_logic_vector( 7 downto 0);
@@ -82,8 +83,8 @@ architecture structural of cpu_dummy is
       (X"9F20", X"06", '1'),
       (X"9F21", X"10", '1'),
       (X"9F22", X"1F", '1'), -- Set address to 0xF1003 and increment to 1.
-      (X"9F23", X"FE", '0'), -- VERIFY read from configuraton register 0xF1006
-      (X"9F23", X"0A", '0'), -- VERIFY read from configuraton register 0xF1007
+      (X"9F23", X"0A", '0'), -- VERIFY read from configuraton register 0xF1006
+      (X"9F23", X"FE", '0'), -- VERIFY read from configuraton register 0xF1007
 
       -- Configure display composer
       (X"9F20", X"00", '1'),
@@ -2503,6 +2504,12 @@ begin
                exp_data_r <= commands(index).data;
             end if;
             index  <= index + 1;
+         end if;
+         if rst_i = '1' then
+            addr_o  <= (others => '0');
+            wr_en_o <= '0';
+            rd_en_o <= '0';
+            index   <= 0;
          end if;
       end if;
    end process p_wr;

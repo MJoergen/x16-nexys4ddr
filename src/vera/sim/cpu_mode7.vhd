@@ -17,7 +17,7 @@ use ieee.numeric_std_unsigned.all;
 -- * HSCALE = VSCALE = 0x80, which means 1 output pixel for every input pixel.
 -- * HSTART = 0, HSTOP = 640
 -- * VSTART = 0, VSTOP = 480
--- 
+--
 -- The default values of the layer settings are interpreted as follows:
 -- * MODE = 0, which means 16 colour text mode
 -- * MAPW = 2, which means 128 tiles wide

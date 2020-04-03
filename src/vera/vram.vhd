@@ -28,7 +28,7 @@ architecture structural of vram is
    type mem_t is array (0 to 2*65536-1) of std_logic_vector(7 downto 0);
 
    -- Initialize memory contents
-   signal mem_r : mem_t;
+   signal mem_r : mem_t := (others => X"00");
 
 begin
 

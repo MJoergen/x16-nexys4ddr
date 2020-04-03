@@ -24,7 +24,7 @@ the dyoc project, where I just need to modify it for the 65C02.
 I've generated a list of all the writes performed by the KERNAL/BASIC during
 startup, and this gives information on how to initialize the VERA. I will need
 to emulate this when testing (before I implement the CPU). See the
-[README](fpga/vera/README.md) in the vera subdirectory.
+[README](src/vera/README.md) in the vera subdirectory.
 
 I've started implementing mode 0 (the default text mode). However, I've
 immediately run into a problem. For each pixel being displayed, the VERA must
@@ -149,7 +149,7 @@ process I've uncovered what I believe is a bug in Vivado.
 
 But first, I noticed a very bad design decision in my 6502 implementation. For
 some instructions (e.g. INC d) the processor needs to do a read-modify-write
-operation on a given memory address. I had implememted that by having the
+operation on a given memory address. I had implemented that by having the
 processor do the read and the write in the same clock cycle. That does actually
 work, because the read happens on the falling edge, while the write takes place
 on the following rising edge.
@@ -434,12 +434,13 @@ So the plan at the moment is to implement a MIDI player on the X16 :-)
 A guide to the MIDI file format is
 [http://www.music.mcgill.ca/~ich/classes/mumt306/midiformat.pdf](here).  And
 [https://www.cs.cmu.edu/~music/cmsip/readings/MIDI%20tutorial%20for%20programmers.html](this)
-webpage has some more information.
+webpage has some more information.  And here is a repository for [playing MIDI
+on the YM2151](https://github.com/AidanHockey5/YM2151_VGM_STM32).
 
 The audio output of the Nexys4DDR is Pulse Width Modulated with an additional
 inverted shutdown pin. So pin aud\_sd\_o should always be driven high, whereas
 the digital output aud\_pwn\_o should be a PWM signal. The Nexys4DDR board has
-a low-pass filter with a cut-off frequency around 10 kHz. The signal
+a low-pass filter with a cut-off frequency around 15 kHz. The signal
 aud\_pwm\_o is an open-drain signal, and must therefore either be driven low,
 or left in high-impedance; don't drive the signal high.  This is to reduce
 noise.
@@ -519,4 +520,7 @@ Next on my TODO list is to update the X16-ROM to release R37. This will require
 rewriting the VERA module, as well as updating the Ethernet part of the ROM.
 
 And after that work some more on the YM2151.
+
+## 2020-04-02
+Here is some more info on [playing MIDI on the YM2151](https://github.com/AidanHockey5/YM2151_VGM_STM32).
 

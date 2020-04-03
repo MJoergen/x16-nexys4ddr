@@ -31,6 +31,7 @@ implemented in the FPGA on the Digilent board.
 * 2 MB RAM (Banked)
 * VIA chips (Interfaces to keyboard)
 * SD card (TBD)
+* Sound chip (YM2151)
 
 The VERA chip contains additional 128 kB of video RAM.
 
@@ -38,6 +39,29 @@ The FPGA on the Digilent board is a Xilinx Artix-7 (XC7A100T), which contains
 540 kB of Block RAM. So, this project will not support the full 2 MB of RAM
 on the X16. It might be possible to use the DDR2 RAM avaiable on the board, but
 this is TBD.
+
+# Additions
+
+I've decided to add a connection to the Ethernet port, as a way of
+loading/saving programs. This requires modifications to the X16 Rom.
+
+# Sub-repositories
+
+I've split the implementation into a number of sub-repositories:
+* cdc     : This is a small library containing modules for Clock Domain Crossing.
+* 65c02   : This is an implementation of the 65C02 processor.
+* ym2151  : This is an implementation of the YM2151 sound chip.
+* x16-rom : This is a fork of the Commander X16 ROM, where I have added Ethernet support.
+
+# Implementation details
+
+This implementation relies on a single onboard crystal of 100 MHz. From that a number of clocks
+are generated:
+* MAIN   : This drives the CPU, RAM, ROM, etc, at 8.33 MHz
+* VERA   : This drives the VERA, at 25.2 MHz
+* ETH    : This drives the Ethernet port, at 50 MHz
+* YM2151 : This drives the YM2151 sound, at 3.57 MHz
+* PWM    : This drives the Pulse Width Modulator connected to the YM2151, at 100 MHz.
 
 # Pre-requisites
 So to use this project on real hardware you need the following:
@@ -47,11 +71,11 @@ So to use this project on real hardware you need the following:
 * A keyboard (with USB connector).
 
 # Try it out!
-Just go into the fpga directory and type "make".
+Just type "make", and a bit-file will be generated and programmed to the Nexys4DDR board.
 
 ## Running simulations
-* To test the VERA in simulation, go into the fpga/vera directory and type "make".
-* To test the CPU in simulation, go into the fpga/main directory and type "make".
+* To test the VERA in simulation, go into the src/vera directory and type "make".
+* To test the CPU in simulation, go into the src/main directory and type "make".
 
 ## Log
 I'm keeping a [log](log.md) of my progress, so I can keep track of all my

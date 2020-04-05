@@ -194,7 +194,7 @@ begin
       port map (
          cpu_clk_i     => main_clkn_s,
          cpu_rst_i     => main_rst_s,
-         cpu_addr_i    => main_addr_s(2 downto 0),
+         cpu_addr_i    => main_addr_s(4 downto 0),
          cpu_wr_en_i   => main_wr_en_s,
          cpu_wr_data_i => main_wr_data_s,
          cpu_rd_en_i   => main_rd_en_s,
@@ -227,7 +227,7 @@ begin
          rst_i            => main_rst_s,
          nmi_i            => '0',
          irq_i            => main_vera_irq_s,
-         vera_addr_o      => main_addr_s(2 downto 0),
+         vera_addr_o      => main_addr_s(4 downto 0),
          vera_wr_en_o     => main_wr_en_s,
          vera_wr_data_o   => main_wr_data_s,
          vera_rd_en_o     => main_rd_en_s,

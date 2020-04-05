@@ -41,7 +41,7 @@ entity main is
       eth_rstn_o       : out   std_logic;
       eth_refclk_o     : out   std_logic;
       --
-      vera_addr_o      : out std_logic_vector(2 downto 0);
+      vera_addr_o      : out std_logic_vector(4 downto 0);
       vera_wr_en_o     : out std_logic;
       vera_wr_data_o   : out std_logic_vector(7 downto 0);
       vera_rd_en_o     : out std_logic;
@@ -423,7 +423,7 @@ begin
    -- Connect to VERA
    --------------------------------------------------
 
-   vera_addr_o    <= cpu_addr_s(2 downto 0);
+   vera_addr_o    <= cpu_addr_s(4 downto 0);
    vera_wr_data_o <= cpu_wr_data_s;
    vera_debug_o   <= cpu_debug_s(15 downto 0);  -- Program Counter
 

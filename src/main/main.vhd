@@ -171,7 +171,8 @@ begin
 
    loram_cs_s  <= '1' when cpu_addr_s(15 downto 15) = "0"    else '0';  -- 0x0000 - 0x7FFF
    medram_cs_s <= '1' when cpu_addr_s(15 downto 13) = "100"  else '0';  -- 0x8000 - 0x9FFF
-   vera_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F2" else '0';  -- 0x9F20 - 0x9F2F
+   vera_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F2"            -- 0x9F20 - 0x9F3F
+                        or cpu_addr_s(15 downto  4) = X"9F3" else '0';
    via1_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F6" else '0';  -- 0x9F60 - 0x9F6F
    via2_cs_s   <= '1' when cpu_addr_s(15 downto  4) = X"9F7" else '0';  -- 0x9F70 - 0x9F7F
    eth_cs_s    <= '1' when cpu_addr_s(15 downto  4) = X"9FC" else '0';  -- 0x9FC0 - 0x9FCF

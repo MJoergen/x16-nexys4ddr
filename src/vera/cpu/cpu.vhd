@@ -33,7 +33,7 @@ entity cpu is
       pal_wr_en_o    : out std_logic;
       pal_wr_data_o  : out std_logic_vector( 7 downto 0);
       pal_rd_data_i  : in  std_logic_vector( 7 downto 0);
-      -- configruation settings
+      -- configuration settings
       map_base_o     : out std_logic_vector(16 downto 0);
       tile_base_o    : out std_logic_vector(16 downto 0);
       mode_o         : out std_logic_vector( 2 downto 0);
@@ -71,12 +71,8 @@ begin
          pal_rd_data_i  => pal_rd_data_i,
 
          ctrl_o         => open,
-         ien_o          => open,
          irq_line_o     => open,
-         irq_vsync_i    => vsync_irq_i,
-         irq_line_i     => '0',
-         irq_sprcol_i   => '0',
-         irq_aflow_i    => '0',
+         irq_i          => (3 downto 1 => '0', 0 => vsync_irq_i),
          dc_video_o     => open,
          dc_hscale_o    => hscale_o,
          dc_vscale_o    => vscale_o,

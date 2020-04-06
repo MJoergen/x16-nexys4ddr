@@ -76,14 +76,10 @@ entity config is
 
       -- VERA configuration
       ctrl_o             : out std_logic_vector(7 downto 0);
-      ien_o              : out std_logic_vector(7 downto 0);
       irq_line_o         : out std_logic_vector(8 downto 0);
 
       -- Interrupt sources
-      irq_vsync_i        : in  std_logic;
-      irq_line_i         : in  std_logic;
-      irq_sprcol_i       : in  std_logic;
-      irq_aflow_i        : in  std_logic;
+      irq_i              : in  std_logic_vector(3 downto 0);
 
       -- Display composer
       dc_video_o         : out std_logic_vector(7 downto 0);
@@ -133,6 +129,8 @@ architecture synthesis of config is
 
    signal config_rd_data_r : std_logic_vector(7 downto 0);
 
+   signal isr_r            : std_logic_vector(7 downto 0);
+
    alias addrsel_a         : std_logic_vector(0 downto 0) is config_r(5)(0 downto 0);
    alias dcsel_a           : std_logic_vector(0 downto 0) is config_r(5)(1 downto 1);
 
@@ -181,8 +179,11 @@ architecture synthesis of config is
 begin
 
    p_config : process (clk_i)
+      variable isr_v : std_logic_vector(7 downto 0);
    begin
       if rising_edge(clk_i) then
+         isr_v := isr_r;
+
          if wr_en_i = '1' then
             config_r(to_integer(addr_i)) <= wr_data_i;
 
@@ -210,6 +211,10 @@ begin
 
             if addr_i >= 9 and addr_i <= 12 then
                composer_r(to_integer(addr_i)-9 + 4*to_integer(dcsel_a)) <= wr_data_i;
+            end if;
+
+            if addr_i = 7 then
+               isr_v := isr_v and not wr_data_i;
             end if;
          end if;
 
@@ -241,12 +246,17 @@ begin
             if addr_i >= 9 and addr_i <= 12 then
                config_rd_data_r <= composer_r(to_integer(addr_i)-9 + 4*to_integer(dcsel_a));
             end if;
+
+            if addr_i = 7 then
+               config_rd_data_r <= isr_r;
+            end if;
          end if;
+
+         isr_r(3 downto 0) <= isr_v(3 downto 0) or irq_i;
       end if;
    end process p_config;
 
    ctrl_o        <= config_r(5);
-   ien_o         <= config_r(6);
    irq_line_o    <= config_r(6)(7) & config_r(8);
 
    dc_video_o    <= composer_r(0);
@@ -303,6 +313,8 @@ begin
    rd_data_o <= pal_rd_data_i  when pal_cs_s      = '1' else
                 vram_rd_data_i when internal_cs_s = '1' else   -- Must be after PAL
                 config_rd_data_r;
+
+   irq_o <= or (config_r(6) and isr_r);
 
 end architecture synthesis;
 

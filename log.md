@@ -524,3 +524,7 @@ And after that work some more on the YM2151.
 ## 2020-04-02
 Here is some more info on [playing MIDI on the YM2151](https://github.com/AidanHockey5/YM2151_VGM_STM32).
 
+## 2020-04-06
+I've now updated the VERA to version 0.9 so that it works with r37 of the ROM.
+Still need to fix the SD-card and Ethernet interfaces.
+

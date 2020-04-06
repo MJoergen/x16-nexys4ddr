@@ -40,7 +40,7 @@ use ieee.numeric_std_unsigned.all;
 -- VERA_L1_VSCROLL_H = $9F3A
 -- VERA_AUDIO_CTRL   = $9F3B
 -- VERA_AUDIO_RATE   = $9F3C
--- VERA_AUDIO_DATA   = $9F3D
+-- VERA_AUDIO_DATA   = $9F3D (write only)
 -- VERA_SPI_DATA     = $9F3E
 -- VERA_SPI_CTRL     = $9F3F
 

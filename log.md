@@ -526,5 +526,11 @@ Here is some more info on [playing MIDI on the YM2151](https://github.com/AidanH
 
 ## 2020-04-06
 I've now updated the VERA to version 0.9 so that it works with r37 of the ROM.
-Still need to fix the SD-card and Ethernet interfaces.
+
+TODO:
+* Check read from VERA (both config and VRAM and Palette and Sprite attributes).
+* Verify SD-card.
+* Port Ethernet to new ROM.
+* Implement RESET in CTRL register.
+* Implement IRQ\_LINE..
 

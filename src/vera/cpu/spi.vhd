@@ -8,11 +8,12 @@ use ieee.numeric_std_unsigned.all;
 -- 0 WRITE : Tx byte to send
 -- 0 READ  : Rx byte received
 -- 1 WRITE : bit 0 is card select
+--         : bit 1 is Slow clock (0: 12.5 MHz, 1: 390 kHz).
 -- 1 READ  : bit 0 is card select
 --           bit 7 is busy
 
 -- The Master must set the clock frequency, as well as polarity and phase (aka SPI mode).
--- Clock frequency : 
+-- Clock frequency : 390 kHz = 12.5 MHz / 32.
 -- SPI mode        : 0.  Data in and out is valid on rising edge of clock.
 -- The "out" side changes the data on the falling edge of the preceding clock
 -- cycle, while the "in" side captures the data on (or shortly after) the

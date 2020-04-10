@@ -7,3 +7,7 @@
 [submodule "sub/cdc"]
 	path = sub/cdc
 	url = git@github.com:MJoergen/cdc.git
+[submodule "sub/x16-rom"]
+	path = sub/x16-rom
+	url = git@github.com:MJoergen/x16-rom.git
+   branch = eth_new

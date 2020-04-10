@@ -1,10 +1,6 @@
 [submodule "sub/65c02"]
 	path = sub/65c02
 	url = git@github.com:MJoergen/65c02.git
-[submodule "sub/x16-rom"]
-	path = sub/x16-rom
-	url = git@github.com:MJoergen/x16-rom.git
-	branch = eth_new
 [submodule "sub/ym2151"]
 	path = sub/ym2151
 	url = git@github.com:MJoergen/ym2151.git

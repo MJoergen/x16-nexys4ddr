@@ -76,9 +76,11 @@ build:
 build/x16-rom.bit: build/x16.bit build/x16.mmi build/rom.mem
 	bash -c "source $(XILINX_DIR)/settings64.sh ; updatemem -debug -meminfo build/x16.mmi -data build/rom.mem -proc dummy -bit build/x16.bit -out build/x16-rom.bit -force > build/updatemem.txt"
 
-build/rom.mem:
+$(SUB)/x16-rom/build/x16/rom.bin:
 	make -C $(SUB)/x16-rom
-	src/main/bin2hex.py $(SUB)/x16-rom/build/x16/rom.bin build/rom.txt
+
+build/rom.mem: $(SUB)/x16-rom/build/x16/rom.bin
+	src/main/bin2hex.py $< build/rom.txt
 	echo "@0000" > $@
 	cat build/rom.txt >> $@
 

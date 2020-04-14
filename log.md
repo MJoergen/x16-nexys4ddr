@@ -534,3 +534,9 @@ TODO:
 * Implement RESET in CTRL register.
 * Implement IRQ\_LINE..
 
+## 2020-04-14
+I've been having problems understading how git works with forks and sub-repositories,
+but it should be working as expected now.
+
+I've now made a separate document [TODO](TODO.md), to keep track of concrete tasks.
+

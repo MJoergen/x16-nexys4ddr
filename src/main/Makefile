@@ -10,7 +10,7 @@ SOURCES  = main.vhd
 SOURCES += rom.vhd
 SOURCES += ram.vhd
 SOURCES += via.vhd
-SOURCES += ../cdc.vhd
+SOURCES += $(SUB)/cdc/src/cdc.vhd
 SOURCES += ps2/ps2_buffer.vhd
 SOURCES += ps2/ps2_reader.vhd
 SOURCES += $(SUB)/65c02/src/cpu_65c02.vhd
@@ -28,7 +28,6 @@ SOURCES += $(SUB)/65c02/src/datapath/xr.vhd
 SOURCES += $(SUB)/65c02/src/datapath/yr.vhd
 SOURCES += $(SUB)/65c02/src/datapath/zp.vhd
 SOURCES += $(SUB)/65c02/src/datapath/mr.vhd
-SOURCES += ../vera/cpu/mmu.vhd
 SOURCES += ../vera/cpu/config.vhd
 SOURCES += ../vera/cpu/cpu.vhd
 SOURCES += ../vera/vram.vhd
@@ -36,18 +35,26 @@ SOURCES += ../vera/cpu/spi.vhd
 SOURCES += ../vera/cpu/spi_master.vhd
 SOURCES += ps2/ps2_writer.vhd
 SOURCES += ../vera/cpu/spi_slave.vhd
-SOURCES += ethernet/lan8720a/lan8720a.vhd
-SOURCES += ethernet/lan8720a/rmii_rx.vhd
-SOURCES += ethernet/lan8720a/rmii_tx.vhd
+SOURCES += $(SUB)/lan8720a/src/lan8720a.vhd
+SOURCES += $(SUB)/lan8720a/src/rmii_rx.vhd
+SOURCES += $(SUB)/lan8720a/src/rmii_tx.vhd
 SOURCES += ethernet/rx_dma.vhd
 SOURCES += ethernet/fifo.vhd
 SOURCES += ethernet/rx_header.vhd
 SOURCES += ethernet/tx_dma.vhd
 SOURCES += ethernet/ethernet.vhd
-SOURCES += $(SUB)/ym2151/ym2151_package.vhd
-SOURCES += $(SUB)/ym2151/ym2151_config.vhd
-SOURCES += $(SUB)/ym2151/ym2151_sine_rom.vhd
-SOURCES += $(SUB)/ym2151/ym2151.vhd
+SOURCES += $(SUB)/ym2151/src/ym2151_package.vhd
+SOURCES += $(SUB)/ym2151/src/calc_delay.vhd
+SOURCES += $(SUB)/ym2151/src/calc_output.vhd
+SOURCES += $(SUB)/ym2151/src/calc_phase_inc.vhd
+SOURCES += $(SUB)/ym2151/src/calc_product.vhd
+SOURCES += $(SUB)/ym2151/src/calc_waveform.vhd
+SOURCES += $(SUB)/ym2151/src/get_config.vhd
+SOURCES += $(SUB)/ym2151/src/rambe.vhd
+SOURCES += $(SUB)/ym2151/src/rom_delay.vhd
+SOURCES += $(SUB)/ym2151/src/rom_phase_inc.vhd
+SOURCES += $(SUB)/ym2151/src/update_state.vhd
+SOURCES += $(SUB)/ym2151/src/ym2151.vhd
 SOURCES += test/tb.vhd
 SOURCES += test/phy_sim.vhd
 TB       = tb
@@ -59,14 +66,16 @@ SAVE     = test/tb.gtkw
 # Simulation
 #####################################
 
-sim: $(SOURCES) rom.txt
+show: $(WAVE) $(SAVE)
+	gtkwave $(WAVE) $(SAVE)
+
+$(WAVE): $(SOURCES) rom.txt
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/unisim_VCOMP.vhd
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/unisim_VPKG.vhd
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/primitive/*.vhd
 	ghdl -i --ieee=synopsys --std=08 --work=work $(SOURCES)
 	ghdl -m --ieee=synopsys --std=08 --ieee=synopsys -frelaxed-rules $(TB)
 	ghdl -r $(TB) --max-stack-alloc=16384 --assert-level=error --wave=$(WAVE) --stop-time=100us
-	gtkwave $(WAVE) $(SAVE)
 
 # Uncomment the line below to run the 6502 functional test suite.
 #rom.txt: test/65C02_extended_opcodes_test.s

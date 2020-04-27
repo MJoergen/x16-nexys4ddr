@@ -1,40 +1,48 @@
 XILINX_DIR = /opt/Xilinx/Vivado/2019.2
 
-SRC  = ethernet.vhd rx_dma.vhd fifo.vhd rx_header.vhd tx_dma.vhd \
-       lan8720a/lan8720a.vhd lan8720a/rmii_rx.vhd lan8720a/rmii_tx.vhd \
-       ../../cdc.vhd
-TB = ethernet_tb.vhd
-WAVE = ethernet_tb.ghw
-SAVE = ethernet_tb.gtkw
+SUB  = ../../../sub
+SRC  = ethernet.vhd
+SRC += rx_dma.vhd
+SRC += fifo.vhd
+SRC += rx_header.vhd
+SRC += tx_dma.vhd
+SRC += $(SUB)/lan8720a/src/lan8720a.vhd
+SRC += $(SUB)/lan8720a/src/rmii_rx.vhd
+SRC += $(SUB)/lan8720a/src/rmii_tx.vhd
+SRC += $(SUB)/cdc/src/cdc.vhd
+
+TB = ethernet_tb
+TB_SRC = $(TB).vhd
+WAVE = build/$(TB).ghw
+SAVE = $(TB).gtkw
 
 
 #####################################
 # Simulation
 #####################################
 
-sim: $(SRC) 
+show: $(WAVE) $(SAVE)
+	gtkwave $(WAVE) $(SAVE)
+
+$(WAVE): $(SRC) $(TB_SRC) build
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/unisim_VCOMP.vhd
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/unisim_VPKG.vhd
 	ghdl -i --ieee=synopsys --std=08 --work=unisim $(XILINX_DIR)/data/vhdl/src/unisims/primitive/*.vhd
-	ghdl -i --ieee=synopsys --std=08 --work=work $(SRC) $(TB)
-	ghdl -m --ieee=synopsys --std=08 -frelaxed-rules ethernet_tb
-	ghdl -r ethernet_tb --assert-level=error --wave=$(WAVE) --stop-time=250us
-	gtkwave $(WAVE) $(SAVE)
+	ghdl -i --ieee=synopsys --std=08 --work=work $(SRC) $(TB_SRC)
+	ghdl -m --ieee=synopsys --std=08 -frelaxed-rules $(TB)
+	ghdl -r $(TB) --assert-level=error --wave=$(WAVE) --stop-time=250us
 
+build:
+	mkdir -p build
 
 #####################################
 # Cleanup
 #####################################
 
 clean:
-	rm -rf usage_statistics_webtalk.*
-	rm -rf vivado*
+	rm -rf build
 	rm -rf *.o
-	rm -rf comp.dcp
-	rm -rf .Xil
-	rm -rf .cache
 	rm -rf work-obj08.cf
 	rm -rf unisim-obj08.cf
-	rm -rf ethernet_tb
-	rm -rf ethernet_tb.ghw
+	rm -rf $(TB)
 

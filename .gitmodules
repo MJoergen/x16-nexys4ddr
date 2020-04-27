@@ -11,3 +11,6 @@
 	path = sub/x16-rom
 	url = git@github.com:MJoergen/x16-rom.git
    branch = eth_new
+[submodule "sub/lan8720a"]
+	path = sub/lan8720a
+	url = git@github.com:MJoergen/lan8720a.git
